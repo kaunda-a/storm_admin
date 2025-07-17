@@ -13,7 +13,7 @@ export default async function MarqueePage() {
 
   const stats = await MarqueeService.getMessageStats()
 
-  const typeColors = {
+  const typeColors: Record<string, string> = {
     INFO: 'bg-blue-500/10 text-blue-600',
     SUCCESS: 'bg-green-500/10 text-green-600',
     WARNING: 'bg-yellow-500/10 text-yellow-600',
@@ -102,7 +102,7 @@ export default async function MarqueePage() {
                   <div className='flex-1 space-y-2'>
                     <div className='flex items-center space-x-3'>
                       <h3 className='font-semibold'>{message.title}</h3>
-                      <Badge className={typeColors[message.type]}>
+                      <Badge className={typeColors[message.type] || 'bg-gray-500/10 text-gray-600'}>
                         {message.type}
                       </Badge>
                       <Badge variant='outline'>
