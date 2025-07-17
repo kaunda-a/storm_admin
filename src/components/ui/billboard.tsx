@@ -18,7 +18,7 @@ interface BillboardProps {
   onAction?: (billboard: BillboardWithCreator) => void
 }
 
-const typeStyles = {
+const typeStyles: Record<string, string> = {
   PROMOTIONAL: 'bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-200',
   ANNOUNCEMENT: 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border-blue-200',
   PRODUCT_LAUNCH: 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-green-200',
@@ -59,7 +59,7 @@ export function Billboard({
     <div
       className={cn(
         'relative overflow-hidden rounded-lg border shadow-sm',
-        typeStyles[currentBillboard.type],
+        typeStyles[currentBillboard.type] || 'bg-gradient-to-r from-gray-500/10 to-slate-500/10 border-gray-200',
         className
       )}
       onMouseEnter={() => setIsPaused(true)}
@@ -228,7 +228,7 @@ export function CompactBillboard({
     <div
       className={cn(
         'relative overflow-hidden rounded-md border p-4',
-        typeStyles[billboard.type],
+        typeStyles[billboard.type] || 'bg-gradient-to-r from-gray-500/10 to-slate-500/10 border-gray-200',
         className
       )}
     >
@@ -236,7 +236,7 @@ export function CompactBillboard({
         <div className='flex-1 space-y-1'>
           <div className='flex items-center space-x-2'>
             <h3 className='font-semibold text-sm'>{billboard.title}</h3>
-            <Badge variant='outline' size='sm' className='text-xs'>
+            <Badge variant='outline' className='text-xs'>
               {billboard.type.replace('_', ' ').toLowerCase()}
             </Badge>
           </div>
