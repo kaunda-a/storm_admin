@@ -14,7 +14,7 @@ import {
 } from '@tabler/icons-react'
 import { CellAction } from './cell-action'
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   PENDING: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
   PROCESSING: 'bg-blue-500/10 text-blue-600 border-blue-200',
   SHIPPED: 'bg-purple-500/10 text-purple-600 border-purple-200',
@@ -23,14 +23,14 @@ const statusColors = {
   REFUNDED: 'bg-gray-500/10 text-gray-600 border-gray-200'
 }
 
-const paymentStatusColors = {
+const paymentStatusColors: Record<string, string> = {
   PENDING: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
   PAID: 'bg-green-500/10 text-green-600 border-green-200',
   FAILED: 'bg-red-500/10 text-red-600 border-red-200',
   REFUNDED: 'bg-gray-500/10 text-gray-600 border-gray-200'
 }
 
-const shippingStatusColors = {
+const shippingStatusColors: Record<string, string> = {
   PENDING: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
   PROCESSING: 'bg-blue-500/10 text-blue-600 border-blue-200',
   SHIPPED: 'bg-purple-500/10 text-purple-600 border-purple-200',
@@ -124,7 +124,7 @@ export const columns: ColumnDef<OrderWithDetails>[] = [
     cell: ({ row }) => {
       const order = row.original
       return (
-        <Badge className={statusColors[order.status]}>
+        <Badge className={statusColors[order.status] || 'bg-gray-500/10 text-gray-600 border-gray-200'}>
           {order.status.toLowerCase()}
         </Badge>
       )
@@ -137,7 +137,7 @@ export const columns: ColumnDef<OrderWithDetails>[] = [
     cell: ({ row }) => {
       const order = row.original
       return (
-        <Badge className={paymentStatusColors[order.paymentStatus]}>
+        <Badge className={paymentStatusColors[order.paymentStatus] || 'bg-gray-500/10 text-gray-600 border-gray-200'}>
           <IconCreditCard className='w-3 h-3 mr-1' />
           {order.paymentStatus.toLowerCase()}
         </Badge>
@@ -152,7 +152,7 @@ export const columns: ColumnDef<OrderWithDetails>[] = [
       const order = row.original
       return (
         <div className='space-y-1'>
-          <Badge className={shippingStatusColors[order.shippingStatus]}>
+          <Badge className={shippingStatusColors[order.shippingStatus] || 'bg-gray-500/10 text-gray-600 border-gray-200'}>
             <IconTruck className='w-3 h-3 mr-1' />
             {order.shippingStatus.toLowerCase()}
           </Badge>
