@@ -1,5 +1,17 @@
 import { db } from '@/lib/prisma'
-import { AnalyticsEventType } from '@prisma/client'
+
+// Define enum types locally to avoid Prisma client generation issues
+export type AnalyticsEventType =
+  | 'PAGE_VIEW'
+  | 'PRODUCT_VIEW'
+  | 'ADD_TO_CART'
+  | 'REMOVE_FROM_CART'
+  | 'CHECKOUT_START'
+  | 'CHECKOUT_COMPLETE'
+  | 'PURCHASE'
+  | 'SEARCH'
+  | 'FILTER'
+  | 'SORT'
 
 export type DashboardStats = {
   totalRevenue: number

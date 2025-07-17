@@ -28,7 +28,12 @@ export type {
   CreateAddressData
 } from './users'
 
+export {
+  AnalyticsService
+} from './analytics'
+
 export type {
+  AnalyticsEventType,
   DashboardStats,
   SalesData,
   TopProduct,
