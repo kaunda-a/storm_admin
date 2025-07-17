@@ -2,10 +2,10 @@
 import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import { ProductWithDetails } from '@/lib/services'
-import { ProductVariant } from '@prisma/client'
 
-// Type for product images
-type ProductImage = ProductWithDetails['images'][0];
+// Type for product images and variants
+type ProductImage = ProductWithDetails['images'][0]
+type ProductVariant = ProductWithDetails['variants'][0];
 import { Column, ColumnDef } from '@tanstack/react-table';
 import { CheckCircle2, Text, XCircle, Package } from 'lucide-react';
 import Image from 'next/image';
