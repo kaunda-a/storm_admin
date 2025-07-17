@@ -1,4 +1,7 @@
-import { OrderService } from '@/lib/services'
+import { OrderService, OrderWithDetails } from '@/lib/services'
+
+// Type for order items with product details
+type OrderItemWithDetails = OrderWithDetails['items'][0]
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,20 +25,31 @@ interface OrderViewPageProps {
   orderId: string
 }
 
-const statusColors = {
+const statusColors: Record<string, string> = {
   PENDING: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
   PROCESSING: 'bg-blue-500/10 text-blue-600 border-blue-200',
+  CONFIRMED: 'bg-blue-500/10 text-blue-600 border-blue-200',
   SHIPPED: 'bg-purple-500/10 text-purple-600 border-purple-200',
   DELIVERED: 'bg-green-500/10 text-green-600 border-green-200',
   CANCELLED: 'bg-red-500/10 text-red-600 border-red-200',
   REFUNDED: 'bg-gray-500/10 text-gray-600 border-gray-200'
 }
 
-const paymentStatusColors = {
+const paymentStatusColors: Record<string, string> = {
   PENDING: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
+  PROCESSING: 'bg-blue-500/10 text-blue-600 border-blue-200',
   PAID: 'bg-green-500/10 text-green-600 border-green-200',
   FAILED: 'bg-red-500/10 text-red-600 border-red-200',
   REFUNDED: 'bg-gray-500/10 text-gray-600 border-gray-200'
+}
+
+const shippingStatusColors: Record<string, string> = {
+  PENDING: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
+  PROCESSING: 'bg-blue-500/10 text-blue-600 border-blue-200',
+  IN_TRANSIT: 'bg-purple-500/10 text-purple-600 border-purple-200',
+  SHIPPED: 'bg-purple-500/10 text-purple-600 border-purple-200',
+  DELIVERED: 'bg-green-500/10 text-green-600 border-green-200',
+  RETURNED: 'bg-orange-500/10 text-orange-600 border-orange-200'
 }
 
 export async function OrderViewPage({ orderId }: OrderViewPageProps) {
@@ -97,7 +111,7 @@ export async function OrderViewPage({ orderId }: OrderViewPageProps) {
             </CardHeader>
             <CardContent>
               <div className='space-y-4'>
-                {order.items.map((item) => (
+                {order.items.map((item: OrderItemWithDetails) => (
                   <div key={item.id} className='flex items-center space-x-4 p-4 border rounded-lg'>
                     {item.product.images[0] && (
                       <div className='relative w-16 h-16 rounded-md overflow-hidden'>
@@ -136,7 +150,7 @@ export async function OrderViewPage({ orderId }: OrderViewPageProps) {
               <div className='space-y-2'>
                 <div className='flex justify-between'>
                   <span>Subtotal:</span>
-                  <span>{formatCurrency(order.subtotalAmount.toNumber())}</span>
+                  <span>{formatCurrency(order.subtotal.toNumber())}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Tax:</span>
@@ -167,7 +181,7 @@ export async function OrderViewPage({ orderId }: OrderViewPageProps) {
               <div>
                 <label className='text-sm font-medium'>Order Status</label>
                 <div className='mt-1'>
-                  <Badge className={statusColors[order.status]}>
+                  <Badge className={statusColors[order.status] || 'bg-gray-500/10 text-gray-600 border-gray-200'}>
                     {order.status.toLowerCase()}
                   </Badge>
                 </div>
@@ -176,7 +190,7 @@ export async function OrderViewPage({ orderId }: OrderViewPageProps) {
               <div>
                 <label className='text-sm font-medium'>Payment Status</label>
                 <div className='mt-1'>
-                  <Badge className={paymentStatusColors[order.paymentStatus]}>
+                  <Badge className={paymentStatusColors[order.paymentStatus] || 'bg-gray-500/10 text-gray-600 border-gray-200'}>
                     <IconCreditCard className='w-3 h-3 mr-1' />
                     {order.paymentStatus.toLowerCase()}
                   </Badge>
@@ -186,7 +200,7 @@ export async function OrderViewPage({ orderId }: OrderViewPageProps) {
               <div>
                 <label className='text-sm font-medium'>Shipping Status</label>
                 <div className='mt-1 space-y-1'>
-                  <Badge className={statusColors[order.shippingStatus]}>
+                  <Badge className={shippingStatusColors[order.shippingStatus] || 'bg-gray-500/10 text-gray-600 border-gray-200'}>
                     <IconTruck className='w-3 h-3 mr-1' />
                     {order.shippingStatus.toLowerCase()}
                   </Badge>
