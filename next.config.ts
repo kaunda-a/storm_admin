@@ -11,21 +11,7 @@ const baseConfig: NextConfig = {
       }
     ]
   },
-  transpilePackages: ['geist'],
-  // Exclude seed file from build
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-    }
-    return config
-  },
-  // Exclude prisma seed from TypeScript checking during build
-  typescript: {
-    ignoreBuildErrors: false,
-  },
-  experimental: {
-    typedRoutes: false,
-  }
+  transpilePackages: ['geist']
 };
 
 const nextConfig = baseConfig;
