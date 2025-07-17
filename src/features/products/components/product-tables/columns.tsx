@@ -1,7 +1,10 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
-import { ProductWithDetails } from '@/lib/services';
+import { ProductWithDetails } from '@/lib/services'
+
+// Type for product images
+type ProductImage = ProductWithDetails['images'][0];
 import { Column, ColumnDef } from '@tanstack/react-table';
 import { CheckCircle2, Text, XCircle, Package } from 'lucide-react';
 import Image from 'next/image';
@@ -14,7 +17,7 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
     header: 'IMAGE',
     cell: ({ row }) => {
       const product = row.original;
-      const primaryImage = product.images.find(img => img.isPrimary) || product.images[0];
+      const primaryImage = product.images.find((img: ProductImage) => img.isPrimary) || product.images[0];
 
       return (
         <div className='relative aspect-square w-16 h-16'>
