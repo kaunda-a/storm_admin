@@ -41,5 +41,6 @@ export type {
 export type {
   BillboardWithCreator,
   CreateBillboardData,
-  UpdateBillboardData
+  UpdateBillboardData,
+  BillboardPosition
 } from './billboard'

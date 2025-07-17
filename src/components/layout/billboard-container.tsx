@@ -1,6 +1,5 @@
-import { BillboardService } from '@/lib/services'
+import { BillboardService, BillboardPosition } from '@/lib/services'
 import { Billboard, CompactBillboard } from '@/components/ui/billboard'
-import { BillboardPosition } from '@prisma/client'
 
 interface BillboardContainerProps {
   position: BillboardPosition
