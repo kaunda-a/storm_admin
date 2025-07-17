@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { BillboardWithCreator } from '@/lib/services'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { IconX, IconExternalLink, IconPlay } from '@tabler/icons-react'
+import { IconX, IconExternalLink, IconPlayerPlay } from '@tabler/icons-react'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
@@ -146,7 +146,7 @@ export function Billboard({
 
                 {currentBillboard.videoUrl && (
                   <Button variant='ghost' size='lg' className='group'>
-                    <IconPlay className='mr-2 h-4 w-4 group-hover:scale-110 transition-transform' />
+                    <IconPlayerPlay className='mr-2 h-4 w-4 group-hover:scale-110 transition-transform' />
                     Watch Video
                   </Button>
                 )}
