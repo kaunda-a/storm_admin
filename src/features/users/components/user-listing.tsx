@@ -1,4 +1,4 @@
-import { UserService, UserWithDetails } from '@/lib/services'
+import { UserService } from '@/lib/services'
 import { searchParamsCache } from '@/lib/searchparams'
 import { UserTable } from './user-tables'
 import { columns } from './user-tables/columns'
@@ -17,8 +17,8 @@ export async function UserListingPage({}: UserListingPageProps) {
 
   // Get users from database
   const { users, pagination } = await UserService.getUsers({
-    search,
-    role: role as UserRole,
+    search: search || undefined,
+    role: (role as UserRole) || undefined,
     page: Number(page) || 1,
     limit: Number(pageLimit) || 10
   })
