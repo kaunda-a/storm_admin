@@ -15,7 +15,9 @@ export const searchParams = {
   search: parseAsString,
   status: parseAsString,
   paymentStatus: parseAsString,
-  shippingStatus: parseAsString
+  shippingStatus: parseAsString,
+  // User-specific parameters
+  role: parseAsString
   // advanced filter
   // filters: getFiltersStateParser().withDefault([]),
   // joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and')

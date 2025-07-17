@@ -3,6 +3,9 @@ import { searchParamsCache } from '@/lib/searchparams'
 import { UserTable } from './user-tables'
 import { columns } from './user-tables/columns'
 
+// Define UserRole type locally to avoid Prisma client generation issues
+type UserRole = 'CUSTOMER' | 'ADMIN' | 'SUPER_ADMIN' | 'MANAGER' | 'STAFF'
+
 type UserListingPageProps = {}
 
 export async function UserListingPage({}: UserListingPageProps) {
@@ -15,9 +18,9 @@ export async function UserListingPage({}: UserListingPageProps) {
   // Get users from database
   const { users, pagination } = await UserService.getUsers({
     search,
-    role: role as any,
-    page: page || 1,
-    limit: pageLimit || 10
+    role: role as UserRole,
+    page: Number(page) || 1,
+    limit: Number(pageLimit) || 10
   })
 
   return (
