@@ -2,6 +2,7 @@ import { OrderService, OrderWithDetails } from '@/lib/services'
 import { searchParamsCache } from '@/lib/searchparams'
 import { OrderTable } from './order-tables'
 import { columns } from './order-tables/columns'
+import { OrderStatus, PaymentStatus, ShippingStatus } from '@prisma/client'
 
 type OrderListingPageProps = {}
 
@@ -17,16 +18,16 @@ export async function OrderListingPage({}: OrderListingPageProps) {
   // Build filters for OrderService
   const filters = {
     ...(search && { search }),
-    ...(status && { status }),
-    ...(paymentStatus && { paymentStatus }),
-    ...(shippingStatus && { shippingStatus })
+    ...(status && { status: status as OrderStatus }),
+    ...(paymentStatus && { paymentStatus: paymentStatus as PaymentStatus }),
+    ...(shippingStatus && { shippingStatus: shippingStatus as ShippingStatus })
   }
 
   // Get orders from database
   const { orders, pagination } = await OrderService.getOrders({
     filters,
-    page: page || 1,
-    limit: pageLimit || 10
+    page: Number(page) || 1,
+    limit: Number(pageLimit) || 10
   })
 
   return (
