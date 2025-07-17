@@ -14,7 +14,7 @@ export default async function BillboardsPage() {
 
   const stats = await BillboardService.getBillboardStats()
 
-  const typeColors = {
+  const typeColors: Record<string, string> = {
     PROMOTIONAL: 'bg-purple-500/10 text-purple-600',
     ANNOUNCEMENT: 'bg-blue-500/10 text-blue-600',
     PRODUCT_LAUNCH: 'bg-green-500/10 text-green-600',
@@ -114,7 +114,7 @@ export default async function BillboardsPage() {
                   <div className='flex-1 space-y-2'>
                     <div className='flex items-center space-x-3'>
                       <h3 className='font-semibold'>{billboard.title}</h3>
-                      <Badge className={typeColors[billboard.type]}>
+                      <Badge className={typeColors[billboard.type] || 'bg-gray-500/10 text-gray-600'}>
                         {billboard.type.replace('_', ' ')}
                       </Badge>
                       <Badge variant='outline'>
