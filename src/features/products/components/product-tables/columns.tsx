@@ -2,6 +2,7 @@
 import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
 import { ProductWithDetails } from '@/lib/services'
+import { ProductVariant } from '@prisma/client'
 
 // Type for product images
 type ProductImage = ProductWithDetails['images'][0];
@@ -95,8 +96,8 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
     header: 'PRICE',
     cell: ({ row }) => {
       const product = row.original;
-      const minPrice = Math.min(...product.variants.map(v => v.price.toNumber()));
-      const maxPrice = Math.max(...product.variants.map(v => v.price.toNumber()));
+      const minPrice = Math.min(...product.variants.map((v: ProductVariant) => v.price.toNumber()));
+      const maxPrice = Math.max(...product.variants.map((v: ProductVariant) => v.price.toNumber()));
 
       return (
         <div className='font-medium'>
@@ -113,8 +114,8 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
     header: 'STOCK',
     cell: ({ row }) => {
       const product = row.original;
-      const totalStock = product.variants.reduce((sum, variant) => sum + variant.stock, 0);
-      const isLowStock = product.variants.some(variant => variant.stock <= variant.lowStockThreshold);
+      const totalStock = product.variants.reduce((sum, variant: ProductVariant) => sum + variant.stock, 0);
+      const isLowStock = product.variants.some((variant: ProductVariant) => variant.stock <= variant.lowStockThreshold);
 
       return (
         <Badge variant={isLowStock ? 'destructive' : totalStock > 0 ? 'default' : 'secondary'}>
