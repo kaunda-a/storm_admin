@@ -8,7 +8,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ProductVariant } from '@prisma/client'
+// Type for product variants - using local definition since ProductVariant isn't exported from Prisma
+type ProductVariant = {
+  id: string
+  productId: string
+  size: string
+  color: string
+  sku: string
+  price: { toNumber(): number }
+  stock: number
+  lowStockThreshold: number
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+}
 import { IconArrowLeft, IconSave } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
