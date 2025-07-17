@@ -1,9 +1,5 @@
 import { db } from '@/lib/prisma'
-import { User, Address } from '@prisma/client'
-
-// Define enum types locally to avoid Prisma client generation issues
-export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'STAFF' | 'CUSTOMER'
-export type AddressType = 'SHIPPING' | 'BILLING' | 'BOTH'
+import type { User, Address, UserRole, AddressType } from '@/types/database'
 
 export type UserWithDetails = User & {
   addresses: Address[]

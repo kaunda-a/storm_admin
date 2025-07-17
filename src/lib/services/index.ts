@@ -10,33 +10,41 @@ export * from './billboard'
 export type {
   ProductWithDetails,
   ProductFilters,
-  ProductSort,
-  ProductStatus
+  ProductSort
 } from './products'
 
 export type {
+  ProductStatus
+} from '@/types/database'
+
+export type {
   OrderWithDetails,
-  OrderFilters,
+  OrderFilters
+} from './orders'
+
+export type {
   OrderStatus,
   PaymentStatus,
   ShippingStatus
-} from './orders'
+} from '@/types/database'
 
 export type {
   UserWithDetails,
   CreateUserData,
   UpdateUserData,
-  CreateAddressData,
+  CreateAddressData
+} from './users'
+
+export type {
   UserRole,
   AddressType
-} from './users'
+} from '@/types/database'
 
 export {
   AnalyticsService
 } from './analytics'
 
 export type {
-  AnalyticsEventType,
   DashboardStats,
   SalesData,
   TopProduct,
@@ -44,16 +52,26 @@ export type {
 } from './analytics'
 
 export type {
+  AnalyticsEventType
+} from '@/types/database'
+
+export type {
   MarqueeMessageWithCreator,
   CreateMarqueeData,
-  UpdateMarqueeData,
-  MarqueeType
+  UpdateMarqueeData
 } from './marquee'
+
+export type {
+  MarqueeType
+} from '@/types/database'
 
 export type {
   BillboardWithCreator,
   CreateBillboardData,
-  UpdateBillboardData,
+  UpdateBillboardData
+} from './billboard'
+
+export type {
   BillboardPosition,
   BillboardType
-} from './billboard'
+} from '@/types/database'

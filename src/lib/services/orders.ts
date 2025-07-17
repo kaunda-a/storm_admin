@@ -1,10 +1,5 @@
 import { db } from '@/lib/prisma'
-import { Order, OrderItem, User, Address } from '@prisma/client'
-
-// Define enum types locally to avoid Prisma client generation issues
-export type OrderStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'REFUNDED'
-export type PaymentStatus = 'PENDING' | 'PAID' | 'FAILED' | 'REFUNDED'
-export type ShippingStatus = 'PENDING' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'RETURNED'
+import type { Order, OrderItem, User, Address, OrderStatus, PaymentStatus, ShippingStatus } from '@/types/database'
 
 export type OrderWithDetails = Order & {
   user: User

@@ -1,8 +1,5 @@
 import { db } from '@/lib/prisma'
-import { MarqueeMessage, User } from '@prisma/client'
-
-// Define enum types locally to avoid Prisma client generation issues
-export type MarqueeType = 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR' | 'ALERT' | 'PROMOTION' | 'SYSTEM' | 'INVENTORY' | 'ORDER'
+import type { MarqueeMessage, User, MarqueeType } from '@/types/database'
 
 export type MarqueeMessageWithCreator = MarqueeMessage & {
   creator: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>

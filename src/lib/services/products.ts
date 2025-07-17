@@ -1,8 +1,5 @@
 import { db } from '@/lib/prisma'
-import { Product, ProductVariant, Category, Brand } from '@prisma/client'
-
-// Define enum types locally to avoid Prisma client generation issues
-export type ProductStatus = 'DRAFT' | 'ACTIVE' | 'INACTIVE' | 'ARCHIVED'
+import type { Product, ProductVariant, Category, Brand, ProductStatus } from '@/types/database'
 
 export type ProductWithDetails = Product & {
   category: Category
