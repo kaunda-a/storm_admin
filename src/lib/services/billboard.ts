@@ -1,7 +1,8 @@
 import { db } from '@/lib/prisma'
-import { Billboard, BillboardType, User } from '@prisma/client'
+import { Billboard, User } from '@prisma/client'
 
 // Define enum types locally to avoid Prisma client generation issues
+export type BillboardType = 'PROMOTIONAL' | 'ANNOUNCEMENT' | 'PRODUCT_LAUNCH' | 'SALE' | 'SEASONAL' | 'SYSTEM_MESSAGE' | 'BRAND_CAMPAIGN'
 export type BillboardPosition = 'HEADER' | 'SIDEBAR' | 'FOOTER' | 'MODAL' | 'DASHBOARD_TOP'
 
 export type BillboardWithCreator = Billboard & {

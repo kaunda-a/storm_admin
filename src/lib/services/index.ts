@@ -10,7 +10,8 @@ export * from './billboard'
 export type {
   ProductWithDetails,
   ProductFilters,
-  ProductSort
+  ProductSort,
+  ProductStatus
 } from './products'
 
 export type {
@@ -25,7 +26,9 @@ export type {
   UserWithDetails,
   CreateUserData,
   UpdateUserData,
-  CreateAddressData
+  CreateAddressData,
+  UserRole,
+  AddressType
 } from './users'
 
 export {
@@ -43,12 +46,14 @@ export type {
 export type {
   MarqueeMessageWithCreator,
   CreateMarqueeData,
-  UpdateMarqueeData
+  UpdateMarqueeData,
+  MarqueeType
 } from './marquee'
 
 export type {
   BillboardWithCreator,
   CreateBillboardData,
   UpdateBillboardData,
-  BillboardPosition
+  BillboardPosition,
+  BillboardType
 } from './billboard'
