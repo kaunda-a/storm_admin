@@ -28,7 +28,7 @@ interface MarqueeProps {
   onDismiss?: (messageId: string) => void
 }
 
-const typeIcons = {
+const typeIcons: Record<string, any> = {
   INFO: IconInfoCircle,
   SUCCESS: IconCheck,
   WARNING: IconAlertTriangle,
@@ -40,7 +40,7 @@ const typeIcons = {
   ORDER: IconShoppingCart
 }
 
-const typeColors = {
+const typeColors: Record<string, string> = {
   INFO: 'bg-blue-500/10 text-blue-600 border-blue-200',
   SUCCESS: 'bg-green-500/10 text-green-600 border-green-200',
   WARNING: 'bg-yellow-500/10 text-yellow-600 border-yellow-200',
@@ -52,7 +52,7 @@ const typeColors = {
   ORDER: 'bg-emerald-500/10 text-emerald-600 border-emerald-200'
 }
 
-const speedClasses = {
+const speedClasses: Record<string, string> = {
   slow: 'animate-marquee-slow',
   normal: 'animate-marquee',
   fast: 'animate-marquee-fast'
@@ -84,13 +84,13 @@ export function Marquee({
   if (!messages.length) return null
 
   const currentMessage = messages[currentIndex]
-  const Icon = typeIcons[currentMessage.type]
+  const Icon = typeIcons[currentMessage.type] || IconInfoCircle
 
   return (
     <div
       className={cn(
         'relative overflow-hidden border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
-        typeColors[currentMessage.type],
+        typeColors[currentMessage.type] || 'bg-gray-500/10 text-gray-600 border-gray-200',
         className
       )}
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
@@ -196,7 +196,7 @@ export function SimpleMarquee({
       <div 
         className={cn(
           'py-2 px-4 whitespace-nowrap text-sm',
-          speedClasses[speed],
+          speedClasses[speed] || 'animate-marquee',
           direction === 'right' && 'animate-marquee-reverse'
         )}
       >
