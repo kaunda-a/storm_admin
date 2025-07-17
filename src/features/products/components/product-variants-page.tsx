@@ -1,4 +1,17 @@
 import { ProductService } from '@/lib/services'
+
+// Type for product variants - using any since ProductVariant isn't exported from Prisma
+type ProductVariant = {
+  id: string
+  productId: string
+  size: string
+  color: string
+  sku: string
+  price: { toNumber(): number }
+  stock: number
+  lowStockThreshold: number
+  isActive: boolean
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -120,7 +133,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
             </div>
           ) : (
             <div className='space-y-4'>
-              {variants.map((variant) => {
+              {variants.map((variant: ProductVariant) => {
                 const stockStatus = getStockStatus(variant.stock, variant.lowStockThreshold)
                 
                 return (
@@ -214,7 +227,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold'>
-                {variants.reduce((sum, variant) => sum + variant.stock, 0)}
+                {variants.reduce((sum: number, variant: ProductVariant) => sum + variant.stock, 0)}
               </div>
             </CardContent>
           </Card>
@@ -225,7 +238,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold text-yellow-600'>
-                {variants.filter(v => v.stock <= v.lowStockThreshold && v.stock > 0).length}
+                {variants.filter((v: ProductVariant) => v.stock <= v.lowStockThreshold && v.stock > 0).length}
               </div>
             </CardContent>
           </Card>
@@ -236,7 +249,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold text-red-600'>
-                {variants.filter(v => v.stock === 0).length}
+                {variants.filter((v: ProductVariant) => v.stock === 0).length}
               </div>
             </CardContent>
           </Card>
