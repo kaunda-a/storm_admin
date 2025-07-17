@@ -14,7 +14,7 @@ import {
 } from '@tabler/icons-react'
 import { CellAction } from './cell-action'
 
-const roleColors = {
+const roleColors: Record<string, string> = {
   CUSTOMER: 'bg-blue-500/10 text-blue-600 border-blue-200',
   STAFF: 'bg-green-500/10 text-green-600 border-green-200',
   MANAGER: 'bg-purple-500/10 text-purple-600 border-purple-200',
@@ -58,7 +58,7 @@ export const columns: ColumnDef<UserWithDetails>[] = [
     cell: ({ row }) => {
       const user = row.original
       return (
-        <Badge className={roleColors[user.role]}>
+        <Badge className={roleColors[user.role] || 'bg-gray-500/10 text-gray-600 border-gray-200'}>
           {user.role.replace('_', ' ').toLowerCase()}
         </Badge>
       )
