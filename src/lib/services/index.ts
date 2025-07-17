@@ -15,7 +15,10 @@ export type {
 
 export type {
   OrderWithDetails,
-  OrderFilters
+  OrderFilters,
+  OrderStatus,
+  PaymentStatus,
+  ShippingStatus
 } from './orders'
 
 export type {

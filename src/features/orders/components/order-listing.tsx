@@ -1,8 +1,7 @@
-import { OrderService, OrderWithDetails } from '@/lib/services'
+import { OrderService, OrderWithDetails, OrderStatus, PaymentStatus, ShippingStatus } from '@/lib/services'
 import { searchParamsCache } from '@/lib/searchparams'
 import { OrderTable } from './order-tables'
 import { columns } from './order-tables/columns'
-import { OrderStatus, PaymentStatus, ShippingStatus } from '@prisma/client'
 
 type OrderListingPageProps = {}
 
