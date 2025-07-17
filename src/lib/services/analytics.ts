@@ -1,0 +1,309 @@
+import { db } from '@/lib/prisma'
+import { AnalyticsEventType } from '@prisma/client'
+
+export type DashboardStats = {
+  totalRevenue: number
+  totalOrders: number
+  totalCustomers: number
+  totalProducts: number
+  revenueGrowth: number
+  ordersGrowth: number
+  customersGrowth: number
+  productsGrowth: number
+}
+
+export type SalesData = {
+  date: string
+  revenue: number
+  orders: number
+}
+
+export type TopProduct = {
+  id: string
+  name: string
+  slug: string
+  totalSold: number
+  revenue: number
+  image?: string
+}
+
+export type CategoryPerformance = {
+  id: string
+  name: string
+  totalSold: number
+  revenue: number
+  percentage: number
+}
+
+export class AnalyticsService {
+  static async getDashboardStats(): Promise<DashboardStats> {
+    const now = new Date()
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+    const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate())
+
+    // Current period stats
+    const [currentStats, previousStats] = await Promise.all([
+      this.getPeriodStats(lastMonth, now),
+      this.getPeriodStats(twoMonthsAgo, lastMonth)
+    ])
+
+    // Calculate growth percentages
+    const revenueGrowth = this.calculateGrowth(currentStats.revenue, previousStats.revenue)
+    const ordersGrowth = this.calculateGrowth(currentStats.orders, previousStats.orders)
+    const customersGrowth = this.calculateGrowth(currentStats.customers, previousStats.customers)
+    const productsGrowth = this.calculateGrowth(currentStats.products, previousStats.products)
+
+    return {
+      totalRevenue: currentStats.revenue,
+      totalOrders: currentStats.orders,
+      totalCustomers: currentStats.customers,
+      totalProducts: currentStats.products,
+      revenueGrowth,
+      ordersGrowth,
+      customersGrowth,
+      productsGrowth
+    }
+  }
+
+  private static async getPeriodStats(startDate: Date, endDate: Date) {
+    const [revenueResult, ordersCount, customersCount, productsCount] = await Promise.all([
+      db.order.aggregate({
+        where: {
+          createdAt: { gte: startDate, lte: endDate },
+          status: 'DELIVERED'
+        },
+        _sum: { totalAmount: true }
+      }),
+      db.order.count({
+        where: {
+          createdAt: { gte: startDate, lte: endDate }
+        }
+      }),
+      db.user.count({
+        where: {
+          createdAt: { gte: startDate, lte: endDate },
+          role: 'CUSTOMER'
+        }
+      }),
+      db.product.count({
+        where: {
+          createdAt: { gte: startDate, lte: endDate },
+          isActive: true
+        }
+      })
+    ])
+
+    return {
+      revenue: revenueResult._sum.totalAmount?.toNumber() || 0,
+      orders: ordersCount,
+      customers: customersCount,
+      products: productsCount
+    }
+  }
+
+  private static calculateGrowth(current: number, previous: number): number {
+    if (previous === 0) {
+      return current > 0 ? 100 : 0
+    }
+    const growth = ((current - previous) / previous) * 100
+    // Handle edge cases
+    if (!isFinite(growth)) return 0
+    return growth
+  }
+
+  static async getSalesData(days = 30): Promise<SalesData[]> {
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
+
+    const salesData = await db.order.groupBy({
+      by: ['createdAt'],
+      where: {
+        createdAt: { gte: startDate },
+        status: 'DELIVERED'
+      },
+      _sum: {
+        totalAmount: true
+      },
+      _count: true,
+      orderBy: {
+        createdAt: 'asc'
+      }
+    })
+
+    // Format data for charts
+    return salesData.map(item => ({
+      date: item.createdAt.toISOString().split('T')[0],
+      revenue: item._sum.totalAmount?.toNumber() || 0,
+      orders: item._count
+    }))
+  }
+
+  static async getTopProducts(limit = 10): Promise<TopProduct[]> {
+    const topProductsData = await db.orderItem.groupBy({
+      by: ['productId'],
+      _sum: {
+        quantity: true,
+        totalPrice: true
+      },
+      orderBy: {
+        _sum: {
+          quantity: 'desc'
+        }
+      },
+      take: limit
+    })
+
+    // Get product details
+    const productIds = topProductsData.map(item => item.productId)
+    const products = await db.product.findMany({
+      where: { id: { in: productIds } },
+      include: {
+        images: {
+          where: { isPrimary: true },
+          take: 1
+        }
+      }
+    })
+
+    return topProductsData.map(item => {
+      const product = products.find(p => p.id === item.productId)
+      return {
+        id: item.productId,
+        name: product?.name || 'Unknown Product',
+        slug: product?.slug || '',
+        totalSold: item._sum.quantity || 0,
+        revenue: item._sum.totalPrice?.toNumber() || 0,
+        image: product?.images[0]?.url
+      }
+    })
+  }
+
+  static async getCategoryPerformance(): Promise<CategoryPerformance[]> {
+    const categoryData = await db.orderItem.groupBy({
+      by: ['productId'],
+      _sum: {
+        quantity: true,
+        totalPrice: true
+      }
+    })
+
+    // Get products with categories
+    const productIds = categoryData.map(item => item.productId)
+    const products = await db.product.findMany({
+      where: { id: { in: productIds } },
+      include: { category: true }
+    })
+
+    // Group by category
+    const categoryMap = new Map<string, { name: string; totalSold: number; revenue: number }>()
+
+    categoryData.forEach(item => {
+      const product = products.find(p => p.id === item.productId)
+      if (product?.category) {
+        const existing = categoryMap.get(product.category.id) || {
+          name: product.category.name,
+          totalSold: 0,
+          revenue: 0
+        }
+        
+        existing.totalSold += item._sum.quantity || 0
+        existing.revenue += item._sum.totalPrice?.toNumber() || 0
+        
+        categoryMap.set(product.category.id, existing)
+      }
+    })
+
+    const totalRevenue = Array.from(categoryMap.values()).reduce((sum, cat) => sum + cat.revenue, 0)
+
+    return Array.from(categoryMap.entries()).map(([id, data]) => ({
+      id,
+      name: data.name,
+      totalSold: data.totalSold,
+      revenue: data.revenue,
+      percentage: totalRevenue > 0 ? (data.revenue / totalRevenue) * 100 : 0
+    }))
+  }
+
+  static async trackEvent(data: {
+    eventType: AnalyticsEventType
+    userId?: string
+    sessionId?: string
+    productId?: string
+    orderId?: string
+    data?: any
+    userAgent?: string
+    ipAddress?: string
+  }) {
+    return db.analyticsEvent.create({
+      data: {
+        eventType: data.eventType,
+        userId: data.userId,
+        sessionId: data.sessionId,
+        productId: data.productId,
+        orderId: data.orderId,
+        data: data.data,
+        userAgent: data.userAgent,
+        ipAddress: data.ipAddress
+      }
+    })
+  }
+
+  static async getRecentSales(limit = 10) {
+    return db.order.findMany({
+      where: {
+        status: 'DELIVERED'
+      },
+      include: {
+        user: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true
+          }
+        },
+        items: {
+          take: 1,
+          include: {
+            product: {
+              select: {
+                name: true,
+                images: {
+                  where: { isPrimary: true },
+                  take: 1,
+                  select: { url: true }
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: { deliveredAt: 'desc' },
+      take: limit
+    })
+  }
+
+  static async getInventoryAlerts() {
+    return db.productVariant.findMany({
+      where: {
+        stock: {
+          lte: db.productVariant.fields.lowStockThreshold
+        },
+        isActive: true
+      },
+      include: {
+        product: {
+          select: {
+            name: true,
+            slug: true,
+            images: {
+              where: { isPrimary: true },
+              take: 1,
+              select: { url: true }
+            }
+          }
+        }
+      },
+      orderBy: { stock: 'asc' }
+    })
+  }
+}

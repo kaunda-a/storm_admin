@@ -1,0 +1,460 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User Management
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  role      UserRole @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders          Order[]
+  reviews         Review[]
+  addresses       Address[]
+  marqueeMessages MarqueeMessage[]
+  billboards      Billboard[]
+
+  @@map("users")
+}
+
+model Address {
+  id           String      @id @default(cuid())
+  userId       String
+  type         AddressType @default(SHIPPING)
+  firstName    String
+  lastName     String
+  company      String?
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  province     String
+  postalCode   String
+  country      String      @default("South Africa")
+  phone        String?
+  isDefault    Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Relations
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shippingOrders Order[] @relation("ShippingAddress")
+  billingOrders  Order[] @relation("BillingAddress")
+
+  @@map("addresses")
+}
+
+// Product Management
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  products Product[]
+
+  @@map("categories")
+}
+
+model Brand {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  logoUrl     String?
+  website     String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  products Product[]
+
+  @@map("brands")
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String?
+  shortDescription String?
+  sku         String        @unique
+  categoryId  String
+  brandId     String
+  status      ProductStatus @default(DRAFT)
+  isActive    Boolean       @default(true)
+  isFeatured  Boolean       @default(false)
+  tags        String[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  category     Category        @relation(fields: [categoryId], references: [id])
+  brand        Brand           @relation(fields: [brandId], references: [id])
+  variants     ProductVariant[]
+  images       ProductImage[]
+  reviews      Review[]
+  orderItems   OrderItem[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id          String    @id @default(cuid())
+  productId   String
+  size        String
+  color       String
+  material    String?
+  sku         String    @unique
+  price       Decimal   @db.Decimal(10, 2)
+  comparePrice Decimal? @db.Decimal(10, 2)
+  costPrice   Decimal?  @db.Decimal(10, 2)
+  stock       Int       @default(0)
+  lowStockThreshold Int @default(5)
+  weight      Decimal?  @db.Decimal(8, 2)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@unique([productId, size, color])
+  @@map("product_variants")
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  url       String
+  altText   String?
+  sortOrder Int     @default(0)
+  isPrimary Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  // Relations
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+// Order Management
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  userId          String
+  status          OrderStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  shippingStatus  ShippingStatus @default(PENDING)
+
+  // Pricing
+  subtotal        Decimal     @db.Decimal(10, 2)
+  taxAmount       Decimal     @db.Decimal(10, 2)
+  shippingAmount  Decimal     @db.Decimal(10, 2)
+  discountAmount  Decimal     @default(0) @db.Decimal(10, 2)
+  totalAmount     Decimal     @db.Decimal(10, 2)
+
+  // Addresses
+  shippingAddressId String
+  billingAddressId  String
+
+  // Tracking
+  trackingNumber  String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+
+  // Notes
+  customerNotes   String?
+  adminNotes      String?
+
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  user            User        @relation(fields: [userId], references: [id])
+  shippingAddress Address     @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  billingAddress  Address     @relation("BillingAddress", fields: [billingAddressId], references: [id])
+  items           OrderItem[]
+  payments        Payment[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id               String  @id @default(cuid())
+  orderId          String
+  productId        String
+  productVariantId String
+  quantity         Int
+  unitPrice        Decimal @db.Decimal(10, 2)
+  totalPrice       Decimal @db.Decimal(10, 2)
+
+  // Snapshot data (in case product changes)
+  productName      String
+  productSku       String
+  variantSize      String
+  variantColor     String
+
+  createdAt        DateTime @default(now())
+
+  // Relations
+  order           Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product        @relation(fields: [productId], references: [id])
+  productVariant  ProductVariant @relation(fields: [productVariantId], references: [id])
+
+  @@map("order_items")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  orderId       String
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @default("ZAR")
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  transactionId String?
+  gatewayResponse Json?
+  processedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// Reviews and Ratings
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  rating    Int      // 1-5 stars
+  title     String?
+  comment   String?
+  isVerified Boolean @default(false) // Verified purchase
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId]) // One review per user per product
+  @@map("reviews")
+}
+
+// Analytics and Reporting
+model AnalyticsEvent {
+  id         String            @id @default(cuid())
+  eventType  AnalyticsEventType
+  userId     String?
+  sessionId  String?
+  productId  String?
+  orderId    String?
+  data       Json?
+  userAgent  String?
+  ipAddress  String?
+  createdAt  DateTime          @default(now())
+
+  @@map("analytics_events")
+}
+
+// Marquee and Billboard Content
+model MarqueeMessage {
+  id          String        @id @default(cuid())
+  title       String
+  message     String
+  type        MarqueeType   @default(INFO)
+  priority    Int           @default(1) // 1 = low, 5 = critical
+  isActive    Boolean       @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdBy   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  creator     User          @relation(fields: [createdBy], references: [id])
+
+  @@map("marquee_messages")
+}
+
+model Billboard {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String?
+  videoUrl    String?
+  linkUrl     String?
+  linkText    String?
+  type        BillboardType @default(PROMOTIONAL)
+  position    BillboardPosition @default(HEADER)
+  isActive    Boolean       @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  sortOrder   Int           @default(0)
+  createdBy   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  creator     User          @relation(fields: [createdBy], references: [id])
+
+  @@map("billboards")
+}
+
+// Enums
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+  STAFF
+  CUSTOMER
+}
+
+enum AddressType {
+  SHIPPING
+  BILLING
+  BOTH
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum ShippingStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  EFT
+  PAYPAL
+  APPLE_PAY
+  GOOGLE_PAY
+  CASH_ON_DELIVERY
+
+  // South African Payment Gateways
+  PAYFAST
+  PAYGATE
+  PEACH_PAYMENTS
+  OZOW
+  SNAPSCAN
+  ZAPPER
+  MASTERPASS
+  VISA_CHECKOUT
+  MOBICRED
+  PAYFLEX
+  LAYUP
+  CAPITEC_PAY
+  FNB_PAY
+  NEDBANK_PAY
+  STANDARD_BANK_PAY
+  ABSA_PAY
+  DISCOVERY_PAY
+  YOCO
+  PAYSTACK_ZA
+  FLUTTERWAVE_ZA
+}
+
+enum AnalyticsEventType {
+  PAGE_VIEW
+  PRODUCT_VIEW
+  ADD_TO_CART
+  REMOVE_FROM_CART
+  CHECKOUT_START
+  CHECKOUT_COMPLETE
+  PURCHASE
+  SEARCH
+  FILTER
+  SORT
+}
+
+enum MarqueeType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  ALERT
+  PROMOTION
+  SYSTEM
+  INVENTORY
+  ORDER
+}
+
+enum BillboardType {
+  PROMOTIONAL
+  ANNOUNCEMENT
+  PRODUCT_LAUNCH
+  SALE
+  SEASONAL
+  SYSTEM_MESSAGE
+  BRAND_CAMPAIGN
+}
+
+enum BillboardPosition {
+  HEADER
+  SIDEBAR
+  FOOTER
+  MODAL
+  DASHBOARD_TOP
+  DASHBOARD_BOTTOM
+  PRODUCT_PAGE
+  CHECKOUT
+}

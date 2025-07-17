@@ -1,0 +1,93 @@
+import { NavItem } from '@/types';
+
+// Utility function for delays (used in parallel routes)
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+//Info: The following data is used for the sidebar navigation and Cmd K bar.
+export const navItems: NavItem[] = [
+  {
+    title: 'Dashboard',
+    url: '/dashboard/overview',
+    icon: 'dashboard',
+    isActive: false,
+    shortcut: ['d', 'd'],
+    items: [] // Empty array as there are no child items for Dashboard
+  },
+  {
+    title: 'Product',
+    url: '/dashboard/product',
+    icon: 'product',
+    shortcut: ['p', 'p'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
+    title: 'Orders',
+    url: '/dashboard/orders',
+    icon: 'shoppingBag',
+    shortcut: ['o', 'r'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
+    title: 'Users',
+    url: '/dashboard/users',
+    icon: 'user',
+    shortcut: ['u', 's'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
+    title: 'Content',
+    url: '#',
+    icon: 'media',
+    isActive: false,
+    items: [
+      {
+        title: 'Marquee Messages',
+        url: '/dashboard/content/marquee',
+        icon: 'notification',
+        shortcut: ['m', 'q']
+      },
+      {
+        title: 'Billboards',
+        url: '/dashboard/content/billboards',
+        icon: 'announcement',
+        shortcut: ['b', 'b']
+      }
+    ]
+  },
+  {
+    title: 'Account',
+    url: '#', // Placeholder as there is no direct link for the parent
+    icon: 'billing',
+    isActive: true,
+
+    items: [
+      {
+        title: 'Profile',
+        url: '/dashboard/profile',
+        icon: 'userPen',
+        shortcut: ['m', 'm']
+      },
+      {
+        title: 'Login',
+        shortcut: ['l', 'l'],
+        url: '/',
+        icon: 'login'
+      }
+    ]
+  },
+  {
+    title: 'Kanban',
+    url: '/dashboard/kanban',
+    icon: 'kanban',
+    shortcut: ['k', 'k'],
+    isActive: false,
+    items: [] // No child items
+  }
+];
+
+
+
+
