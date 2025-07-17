@@ -22,7 +22,7 @@ type ProductVariant = {
   createdAt: Date
   updatedAt: Date
 }
-import { IconArrowLeft, IconSave } from '@tabler/icons-react'
+import { IconArrowLeft, IconDeviceFloppy } from '@tabler/icons-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -360,7 +360,7 @@ export function VariantForm({ productId, variant, onSubmit }: VariantFormProps) 
               </Link>
             </Button>
             <Button type='submit'>
-              <IconSave className='h-4 w-4 mr-2' />
+              <IconDeviceFloppy className='h-4 w-4 mr-2' />
               {isEditing ? 'Update Variant' : 'Create Variant'}
             </Button>
           </div>
