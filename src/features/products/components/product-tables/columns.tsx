@@ -114,7 +114,7 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
     header: 'STOCK',
     cell: ({ row }) => {
       const product = row.original;
-      const totalStock = product.variants.reduce((sum, variant: ProductVariant) => sum + variant.stock, 0);
+      const totalStock = product.variants.reduce((sum: number, variant: ProductVariant) => sum + variant.stock, 0);
       const isLowStock = product.variants.some((variant: ProductVariant) => variant.stock <= variant.lowStockThreshold);
 
       return (
