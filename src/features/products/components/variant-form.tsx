@@ -14,11 +14,16 @@ type ProductVariant = {
   productId: string
   size: string
   color: string
+  material?: string
   sku: string
   price: { toNumber(): number }
+  compareAtPrice?: { toNumber(): number } | null
+  costPrice?: { toNumber(): number } | null
   stock: number
   lowStockThreshold: number
+  weight?: { toNumber(): number } | null
   isActive: boolean
+  isDefault?: boolean
   createdAt: Date
   updatedAt: Date
 }
