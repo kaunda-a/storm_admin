@@ -131,7 +131,7 @@ export class AnalyticsService {
     })
 
     // Format data for charts
-    return salesData.map(item => ({
+    return salesData.map((item: any) => ({
       date: item.createdAt.toISOString().split('T')[0],
       revenue: item._sum.totalAmount?.toNumber() || 0,
       orders: item._count
@@ -154,7 +154,7 @@ export class AnalyticsService {
     })
 
     // Get product details
-    const productIds = topProductsData.map(item => item.productId)
+    const productIds = topProductsData.map((item: any) => item.productId)
     const products = await db.product.findMany({
       where: { id: { in: productIds } },
       include: {
@@ -165,8 +165,8 @@ export class AnalyticsService {
       }
     })
 
-    return topProductsData.map(item => {
-      const product = products.find(p => p.id === item.productId)
+    return topProductsData.map((item: any) => {
+      const product = products.find((p: any) => p.id === item.productId)
       return {
         id: item.productId,
         name: product?.name || 'Unknown Product',
@@ -188,7 +188,7 @@ export class AnalyticsService {
     })
 
     // Get products with categories
-    const productIds = categoryData.map(item => item.productId)
+    const productIds = categoryData.map((item: any) => item.productId)
     const products = await db.product.findMany({
       where: { id: { in: productIds } },
       include: { category: true }
@@ -197,8 +197,8 @@ export class AnalyticsService {
     // Group by category
     const categoryMap = new Map<string, { name: string; totalSold: number; revenue: number }>()
 
-    categoryData.forEach(item => {
-      const product = products.find(p => p.id === item.productId)
+    categoryData.forEach((item: any) => {
+      const product = products.find((p: any) => p.id === item.productId)
       if (product?.category) {
         const existing = categoryMap.get(product.category.id) || {
           name: product.category.name,

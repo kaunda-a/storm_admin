@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { OrderWithDetails } from '@/lib/services'
+import { OrderWithDetails, PaymentStatus } from '@/lib/services'
 import { 
   IconDotsVertical, 
   IconEye, 
@@ -43,7 +43,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   }
 
   const canCancel = data.status === 'PENDING' || data.status === 'PROCESSING'
-  const canShip = data.status === 'PROCESSING' && data.paymentStatus === 'PAID'
+  const canShip = data.status === 'PROCESSING' && (data.paymentStatus as PaymentStatus) === 'PAID'
   const canComplete = data.status === 'SHIPPED'
 
   return (
