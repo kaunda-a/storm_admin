@@ -16,12 +16,12 @@ type ProductVariant = {
   color: string
   material?: string
   sku: string
-  price: { toNumber(): number }
-  compareAtPrice?: { toNumber(): number } | null
-  costPrice?: { toNumber(): number } | null
+  price: number
+  compareAtPrice?: number | null
+  costPrice?: number | null
   stock: number
   lowStockThreshold: number
-  weight?: { toNumber(): number } | null
+  weight?: number | null
   isActive: boolean
   isDefault?: boolean
   createdAt: Date
@@ -76,7 +76,7 @@ export function VariantForm({ productId, variant, onSubmit }: VariantFormProps) 
       size: variant?.size || '',
       color: variant?.color || '',
       sku: variant?.sku || '',
-      price: variant?.price.toString() || '',
+      price: variant?.price?.toString() || '',
       compareAtPrice: variant?.compareAtPrice?.toString() || '',
       stock: variant?.stock.toString() || '0',
       lowStockThreshold: variant?.lowStockThreshold.toString() || '5',

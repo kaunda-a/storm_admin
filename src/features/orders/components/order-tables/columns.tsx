@@ -110,7 +110,7 @@ export const columns: ColumnDef<OrderWithDetails>[] = [
       return (
         <div className='font-medium flex items-center'>
           <IconCurrencyDollar className='w-3 h-3 mr-1' />
-          R{order.totalAmount.toNumber().toFixed(2)}
+          R{order.totalAmount.toFixed(2)}
         </div>
       )
     }

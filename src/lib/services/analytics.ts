@@ -110,12 +110,7 @@ export class AnalyticsService {
       ])
 
       // Handle Decimal conversion safely
-      let revenue = 0
-      if (revenueResult._sum.totalAmount) {
-        revenue = typeof revenueResult._sum.totalAmount.toNumber === 'function'
-          ? revenueResult._sum.totalAmount.toNumber()
-          : Number(revenueResult._sum.totalAmount) || 0
-      }
+      let revenue = Number(revenueResult._sum.totalAmount) || 0
 
       return {
         revenue,
@@ -166,7 +161,7 @@ export class AnalyticsService {
     // Format data for charts
     return salesData.map((item: any) => ({
       date: item.createdAt.toISOString().split('T')[0],
-      revenue: item._sum.totalAmount?.toNumber() || 0,
+      revenue: Number(item._sum.totalAmount) || 0,
       orders: item._count
     }))
   }

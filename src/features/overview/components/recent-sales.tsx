@@ -64,7 +64,7 @@ export async function RecentSales() {
                 </div>
                 <div className='ml-auto space-y-1 text-right'>
                   <div className='font-medium'>
-                    {formatCurrency(sale.totalAmount.toNumber())}
+                    {formatCurrency(sale.totalAmount)}
                   </div>
                   <div className='text-xs text-muted-foreground'>
                     {formatDate(sale.deliveredAt || sale.createdAt)}

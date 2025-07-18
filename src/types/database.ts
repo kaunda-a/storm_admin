@@ -4,10 +4,7 @@
  */
 
 // Base types
-export type Decimal = {
-  toNumber(): number
-  toString(): string
-}
+
 
 // Enum types
 export type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'MANAGER' | 'STAFF' | 'CUSTOMER'
@@ -104,9 +101,9 @@ export type ProductVariant = {
   color: string
   material: string | null
   sku: string
-  price: Decimal
-  comparePrice: Decimal | null
-  costPrice: Decimal | null
+  price: number
+  comparePrice: number | null
+  costPrice: number | null
   stock: number
   lowStockThreshold: number
   weight: Decimal | null
@@ -157,8 +154,8 @@ export type OrderItem = {
   productId: string
   productVariantId: string
   quantity: number
-  unitPrice: Decimal
-  totalPrice: Decimal
+  unitPrice: number
+  totalPrice: number
   createdAt: Date
   updatedAt: Date
 }

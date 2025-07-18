@@ -7,7 +7,7 @@ type ProductVariant = {
   size: string
   color: string
   sku: string
-  price: { toNumber(): number }
+  price: number
   stock: number
   lowStockThreshold: number
   isActive: boolean
@@ -168,7 +168,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
                         <div className='flex items-center space-x-1'>
                           <IconCurrencyDollar className='h-4 w-4 text-muted-foreground' />
                           <span className='font-semibold'>
-                            {formatCurrency(variant.price.toNumber())}
+                            {formatCurrency(variant.price)}
                           </span>
                         </div>
                         <div className='text-sm text-muted-foreground'>
