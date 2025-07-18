@@ -216,7 +216,7 @@ async function main() {
           lowStockThreshold: 10,
           weight: 0.8,
           isActive: true,
-          isDefault: i === 0
+
         }
       })
     }
