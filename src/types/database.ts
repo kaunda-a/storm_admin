@@ -106,7 +106,7 @@ export type ProductVariant = {
   costPrice: number | null
   stock: number
   lowStockThreshold: number
-  weight: Decimal | null
+  weight: number | null
   isActive: boolean
   isDefault: boolean | null
   createdAt: Date
@@ -132,11 +132,11 @@ export type Order = {
   status: OrderStatus
   paymentStatus: PaymentStatus
   shippingStatus: ShippingStatus
-  subtotal: Decimal
-  taxAmount: Decimal
-  shippingAmount: Decimal
-  discountAmount: Decimal
-  totalAmount: Decimal
+  subtotal: number
+  taxAmount: number
+  shippingAmount: number
+  discountAmount: number
+  totalAmount: number
   shippingAddressId: string
   billingAddressId: string
   trackingNumber: string | null
@@ -163,7 +163,7 @@ export type OrderItem = {
 export type Payment = {
   id: string
   orderId: string
-  amount: Decimal
+  amount: number
   currency: string
   method: PaymentMethod
   status: PaymentStatus

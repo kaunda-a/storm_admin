@@ -200,7 +200,7 @@ export class AnalyticsService {
         name: product?.name || 'Unknown Product',
         slug: product?.slug || '',
         totalSold: item._sum.quantity || 0,
-        revenue: item._sum.totalPrice?.toNumber() || 0,
+        revenue: Number(item._sum.totalPrice) || 0,
         image: product?.images[0]?.url
       }
     })
