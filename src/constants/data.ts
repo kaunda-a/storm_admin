@@ -45,13 +45,13 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Marquee Messages',
-        url: '/dashboard/content/marquee',
+        url: '/dashboard/marquee',
         icon: 'notification',
         shortcut: ['m', 'q']
       },
       {
         title: 'Billboards',
-        url: '/dashboard/content/billboards',
+        url: '/dashboard/billboards',
         icon: 'announcement',
         shortcut: ['b', 'b']
       }

@@ -1,13 +1,13 @@
 import FormCardSkeleton from '@/components/form-card-skeleton'
 import PageContainer from '@/components/layout/page-container'
 import { Suspense } from 'react'
-import { ProductVariantsPage } from '@/features/products/components/product-variants-page'
+import { BillboardViewPage } from '@/features/billboards/components/billboard-view-page'
 
 export const metadata = {
-  title: 'Dashboard : Product Variants'
+  title: 'Dashboard : Billboard Details'
 }
 
-type PageProps = { params: Promise<{ productId: string }> }
+type PageProps = { params: Promise<{ billboardId: string }> }
 
 export default async function Page(props: PageProps) {
   const params = await props.params
@@ -15,7 +15,7 @@ export default async function Page(props: PageProps) {
     <PageContainer scrollable>
       <div className='flex-1 space-y-4'>
         <Suspense fallback={<FormCardSkeleton />}>
-          <ProductVariantsPage productId={params.productId} />
+          <BillboardViewPage billboardId={params.billboardId} />
         </Suspense>
       </div>
     </PageContainer>

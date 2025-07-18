@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { IconPlus, IconEdit, IconTrash, IconEye, IconEyeOff } from '@tabler/icons-react'
 import Link from 'next/link'
 
-export default async function MarqueePage() {
+export async function MarqueeManagementView() {
   const { messages, pagination } = await MarqueeService.getAllMessages({
     page: 1,
     limit: 20
@@ -36,7 +36,7 @@ export default async function MarqueePage() {
           </p>
         </div>
         <Button asChild>
-          <Link href='/dashboard/content/marquee/new'>
+          <Link href='/dashboard/marquee/new'>
             <IconPlus className='mr-2 h-4 w-4' />
             New Message
           </Link>
@@ -137,7 +137,7 @@ export default async function MarqueePage() {
                   </div>
                   <div className='flex items-center space-x-2'>
                     <Button variant='ghost' size='sm' asChild>
-                      <Link href={`/dashboard/content/marquee/${message.id}/edit`}>
+                      <Link href={`/dashboard/marquee/${message.id}`}>
                         <IconEdit className='h-4 w-4' />
                       </Link>
                     </Button>

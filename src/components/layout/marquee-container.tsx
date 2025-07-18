@@ -1,5 +1,5 @@
 import { MarqueeService } from '@/lib/services'
-import { Marquee } from '@/components/ui/marquee'
+import { Marquee } from '@/features/marquee/components/marquee-ui'
 
 export async function MarqueeContainer() {
   const messages = await MarqueeService.getActiveMessages()
