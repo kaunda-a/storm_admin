@@ -1,10 +1,10 @@
-import { IconCheck, IconX, IconInfo, IconAlertTriangle, IconAlertCircle, IconBolt, IconSpeakerphone, IconPackage } from '@tabler/icons-react';
+import { IconCheck, IconX, IconInbox, IconAlertTriangle, IconAlertCircle, IconBolt, IconSpeakerphone, IconPackage } from '@tabler/icons-react';
 
 export const marqueeTypes = [
   {
     value: 'INFO',
     label: 'Info',
-    icon: IconInfo
+    icon: IconInbox
   },
   {
     value: 'SUCCESS',
