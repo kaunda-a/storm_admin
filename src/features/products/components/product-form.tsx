@@ -3,6 +3,9 @@
 import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Form,
   FormControl,
@@ -26,7 +29,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
-const MAX_FILE_SIZE = 5000000;
+const MAX_FILE_SIZE = 10000000; // 10MB
 const ACCEPTED_IMAGE_TYPES = [
   'image/jpeg',
   'image/jpg',
@@ -40,7 +43,7 @@ const formSchema = z.object({
     .refine((files) => files?.length == 1, 'Image is required.')
     .refine(
       (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
+      `Max file size is 10MB.`
     )
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
@@ -66,6 +69,8 @@ export default function ProductForm({
   initialData: ProductWithDetails | null;
   pageTitle: string;
 }) {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const defaultValues = {
     name: initialData?.name || '',
     categoryId: initialData?.category?.id || '',
@@ -81,20 +86,40 @@ export default function ProductForm({
     values: defaultValues
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Form submission logic would be implemented here
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setLoading(true);
+
+      // Log the form data for now - replace with actual API call
+      console.log('Form submitted with values:', values);
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      toast.success(initialData ? 'Product updated successfully!' : 'Product created successfully!');
+
+      // Redirect to products list
+      router.push('/dashboard/products');
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <Card className='mx-auto w-full'>
-      <CardHeader>
-        <CardTitle className='text-left text-2xl font-bold'>
-          {pageTitle}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+    <div className='mx-auto w-full max-w-4xl'>
+      <Card>
+        <CardHeader>
+          <CardTitle className='text-left text-2xl font-bold'>
+            {pageTitle}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
             <FormField
               control={form.control}
               name='image'
@@ -107,7 +132,13 @@ export default function ProductForm({
                         value={field.value}
                         onValueChange={field.onChange}
                         maxFiles={4}
-                        maxSize={4 * 1024 * 1024}
+                        maxSize={10 * 1024 * 1024} // 10MB
+                        accept={{
+                          'image/jpeg': [],
+                          'image/jpg': [],
+                          'image/png': [],
+                          'image/webp': []
+                        }}
                         // disabled={loading}
                         // progresses={progresses}
                         // pass the onUpload function here for direct upload
@@ -121,7 +152,7 @@ export default function ProductForm({
               )}
             />
 
-            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+            <div className='grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2'>
               <FormField
                 control={form.control}
                 name='name'
@@ -224,7 +255,7 @@ export default function ProductForm({
               )}
             />
 
-            <div className='flex items-center space-x-4'>
+            <div className='flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4'>
               <FormField
                 control={form.control}
                 name='isActive'
@@ -262,12 +293,19 @@ export default function ProductForm({
               />
             </div>
 
-            <Button type='submit'>
-              {initialData ? 'Update Product' : 'Add Product'}
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+              <div className='flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-6'>
+                <Button
+                  type='submit'
+                  disabled={loading}
+                  className='w-full sm:w-auto'
+                >
+                  {loading ? 'Saving...' : (initialData ? 'Update Product' : 'Add Product')}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
