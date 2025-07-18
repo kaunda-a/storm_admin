@@ -2,5 +2,11 @@ node_modules
 # Keep environment variables out of version control
 .env
 
+# Next.js build output
+.next/
+out/
+build/
+
+# Generated files
 /generated/prisma
 git.txt
