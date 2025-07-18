@@ -32,7 +32,7 @@ return (
       <div className='flex flex-1 flex-col space-y-4'>
         <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0'>
           <Heading
-            title='billboards'
+            title='Billboards'
             description='Manage billboards (Server side table functionalities.)'
           />
           <Link

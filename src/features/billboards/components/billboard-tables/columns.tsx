@@ -6,21 +6,9 @@ import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-h
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Image from 'next/image';
+import { BillboardWithCreator } from '@/lib/services';
 
-export type BillboardData = {
-  id: string;
-  title: string;
-  description?: string;
-  imageUrl?: string;
-  type: string;
-  position: string;
-  isActive: boolean;
-  sortOrder: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-export const columns: ColumnDef<BillboardData>[] = [
+export const columns: ColumnDef<BillboardWithCreator>[] = [
   {
     id: 'select',
     header: ({ table }) => (
