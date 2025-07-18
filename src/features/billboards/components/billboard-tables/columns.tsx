@@ -71,10 +71,10 @@ export const columns: ColumnDef<BillboardData>[] = [
       const title = row.getValue('title') as string;
       const description = row.original.description;
       return (
-        <div className='max-w-[200px]'>
-          <div className='font-medium truncate'>{title}</div>
+        <div className='max-w-[150px] sm:max-w-[200px]'>
+          <div className='font-medium truncate text-sm sm:text-base'>{title}</div>
           {description && (
-            <div className='text-sm text-muted-foreground truncate'>
+            <div className='text-xs sm:text-sm text-muted-foreground truncate'>
               {description}
             </div>
           )}
@@ -90,7 +90,7 @@ export const columns: ColumnDef<BillboardData>[] = [
     cell: ({ row }) => {
       const type = row.getValue('type') as string;
       return (
-        <Badge variant='outline' className='capitalize'>
+        <Badge variant='outline' className='capitalize text-xs sm:text-sm'>
           {type.replace('_', ' ').toLowerCase()}
         </Badge>
       );
@@ -104,7 +104,7 @@ export const columns: ColumnDef<BillboardData>[] = [
     cell: ({ row }) => {
       const position = row.getValue('position') as string;
       return (
-        <Badge variant='secondary' className='capitalize'>
+        <Badge variant='secondary' className='capitalize text-xs sm:text-sm'>
           {position.replace('_', ' ').toLowerCase()}
         </Badge>
       );
@@ -118,7 +118,7 @@ export const columns: ColumnDef<BillboardData>[] = [
     cell: ({ row }) => {
       const isActive = row.getValue('isActive') as boolean;
       return (
-        <Badge variant={isActive ? 'default' : 'secondary'}>
+        <Badge variant={isActive ? 'default' : 'secondary'} className='text-xs sm:text-sm'>
           {isActive ? 'Active' : 'Inactive'}
         </Badge>
       );
@@ -142,7 +142,7 @@ export const columns: ColumnDef<BillboardData>[] = [
     cell: ({ row }) => {
       const date = row.getValue('createdAt') as Date;
       return (
-        <div className='text-sm text-muted-foreground'>
+        <div className='text-xs sm:text-sm text-muted-foreground'>
           {new Date(date).toLocaleDateString()}
         </div>
       );

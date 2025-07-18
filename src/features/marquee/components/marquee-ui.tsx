@@ -96,14 +96,14 @@ export function Marquee({
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
-      <div className='flex items-center justify-between px-4 py-2'>
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between px-3 sm:px-4 py-2 space-y-2 sm:space-y-0'>
         {/* Message Content */}
-        <div className='flex items-center space-x-3 flex-1 min-w-0'>
-          <Icon className='h-4 w-4 flex-shrink-0' />
-          
+        <div className='flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0'>
+          <Icon className='h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0' />
+
           <div className='flex-1 min-w-0'>
-            <div className='flex items-center space-x-2'>
-              <span className='font-medium text-sm truncate'>
+            <div className='flex flex-wrap items-center gap-1 sm:gap-2'>
+              <span className='font-medium text-xs sm:text-sm truncate'>
                 {currentMessage.title}
               </span>
               <Badge variant='outline' className='text-xs'>
@@ -111,9 +111,9 @@ export function Marquee({
               </Badge>
             </div>
             
-            <div 
+            <div
               className={cn(
-                'text-sm whitespace-nowrap',
+                'text-xs sm:text-sm whitespace-nowrap',
                 !isPaused && speedClasses[speed],
                 direction === 'right' && 'animate-marquee-reverse'
               )}
@@ -125,10 +125,10 @@ export function Marquee({
 
         {/* Controls */}
         {showControls && (
-          <div className='flex items-center space-x-2 flex-shrink-0'>
+          <div className='flex items-center space-x-1 sm:space-x-2 flex-shrink-0'>
             {/* Message Counter */}
             {messages.length > 1 && (
-              <div className='text-xs text-muted-foreground'>
+              <div className='text-xs text-muted-foreground hidden sm:block'>
                 {currentIndex + 1} / {messages.length}
               </div>
             )}
@@ -141,7 +141,7 @@ export function Marquee({
                     key={index}
                     onClick={() => setCurrentIndex(index)}
                     className={cn(
-                      'w-2 h-2 rounded-full transition-colors',
+                      'w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-colors',
                       index === currentIndex
                         ? 'bg-current'
                         : 'bg-current/30 hover:bg-current/50'
@@ -157,9 +157,9 @@ export function Marquee({
                 variant='ghost'
                 size='sm'
                 onClick={() => onDismiss(currentMessage.id)}
-                className='h-6 w-6 p-0 hover:bg-current/10'
+                className='h-5 w-5 sm:h-6 sm:w-6 p-0 hover:bg-current/10'
               >
-                <IconX className='h-3 w-3' />
+                <IconX className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
               </Button>
             )}
           </div>
@@ -193,9 +193,9 @@ export function SimpleMarquee({
 }) {
   return (
     <div className={cn('overflow-hidden bg-muted/50 border-b', className)}>
-      <div 
+      <div
         className={cn(
-          'py-2 px-4 whitespace-nowrap text-sm',
+          'py-1.5 sm:py-2 px-3 sm:px-4 whitespace-nowrap text-xs sm:text-sm',
           speedClasses[speed] || 'animate-marquee',
           direction === 'right' && 'animate-marquee-reverse'
         )}

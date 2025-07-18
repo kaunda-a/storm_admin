@@ -28,14 +28,14 @@ export async function MarqueeManagementView() {
   return (
     <div className='space-y-6'>
       {/* Header */}
-      <div className='flex items-center justify-between'>
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0'>
         <div>
-          <h1 className='text-3xl font-bold tracking-tight'>Marquee Messages</h1>
-          <p className='text-muted-foreground'>
+          <h1 className='text-2xl sm:text-3xl font-bold tracking-tight'>Marquee Messages</h1>
+          <p className='text-sm sm:text-base text-muted-foreground'>
             Manage scrolling messages and alerts for the admin dashboard
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className='w-fit sm:w-auto'>
           <Link href='/dashboard/marquee/new'>
             <IconPlus className='mr-2 h-4 w-4' />
             New Message
@@ -44,7 +44,7 @@ export async function MarqueeManagementView() {
       </div>
 
       {/* Stats */}
-      <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
         <Card>
           <CardHeader className='pb-2'>
             <CardTitle className='text-sm font-medium'>Total Messages</CardTitle>
@@ -97,45 +97,45 @@ export async function MarqueeManagementView() {
               messages.map((message) => (
                 <div
                   key={message.id}
-                  className='flex items-center justify-between p-4 border rounded-lg'
+                  className='flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg space-y-3 sm:space-y-0'
                 >
                   <div className='flex-1 space-y-2'>
-                    <div className='flex items-center space-x-3'>
-                      <h3 className='font-semibold'>{message.title}</h3>
-                      <Badge className={typeColors[message.type] || 'bg-gray-500/10 text-gray-600'}>
+                    <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
+                      <h3 className='font-semibold text-sm sm:text-base'>{message.title}</h3>
+                      <Badge className={`text-xs sm:text-sm ${typeColors[message.type] || 'bg-gray-500/10 text-gray-600'}`}>
                         {message.type}
                       </Badge>
-                      <Badge variant='outline'>
+                      <Badge variant='outline' className='text-xs sm:text-sm'>
                         Priority {message.priority}
                       </Badge>
                       {message.isActive ? (
-                        <Badge variant='default' className='bg-green-500'>
+                        <Badge variant='default' className='bg-green-500 text-xs sm:text-sm'>
                           <IconEye className='w-3 h-3 mr-1' />
                           Active
                         </Badge>
                       ) : (
-                        <Badge variant='secondary'>
+                        <Badge variant='secondary' className='text-xs sm:text-sm'>
                           <IconEyeOff className='w-3 h-3 mr-1' />
                           Inactive
                         </Badge>
                       )}
                     </div>
-                    <p className='text-sm text-muted-foreground line-clamp-2'>
+                    <p className='text-xs sm:text-sm text-muted-foreground line-clamp-2'>
                       {message.message}
                     </p>
-                    <div className='flex items-center space-x-4 text-xs text-muted-foreground'>
+                    <div className='flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-muted-foreground'>
                       <span>Created by {message.creator.firstName} {message.creator.lastName}</span>
-                      <span>•</span>
+                      <span className='hidden sm:inline'>•</span>
                       <span>{new Date(message.createdAt).toLocaleDateString()}</span>
                       {message.endDate && (
                         <>
-                          <span>•</span>
+                          <span className='hidden sm:inline'>•</span>
                           <span>Expires {new Date(message.endDate).toLocaleDateString()}</span>
                         </>
                       )}
                     </div>
                   </div>
-                  <div className='flex items-center space-x-2'>
+                  <div className='flex items-center space-x-2 flex-shrink-0'>
                     <Button variant='ghost' size='sm' asChild>
                       <Link href={`/dashboard/marquee/${message.id}`}>
                         <IconEdit className='h-4 w-4' />

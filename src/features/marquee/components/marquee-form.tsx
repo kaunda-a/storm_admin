@@ -120,14 +120,14 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
 
   return (
     <div className='flex-1 space-y-4'>
-      <div className='flex items-center space-x-4'>
-        <Button variant='ghost' size='sm' asChild>
+      <div className='flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4'>
+        <Button variant='ghost' size='sm' asChild className='w-fit'>
           <Link href='/dashboard/marquee'>
             <IconArrowLeft className='h-4 w-4 mr-2' />
             Back to Marquee
           </Link>
         </Button>
-        <h1 className='text-2xl font-bold'>{pageTitle}</h1>
+        <h1 className='text-xl sm:text-2xl font-bold'>{pageTitle}</h1>
       </div>
 
       <Card>
@@ -140,7 +140,7 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
                   name='title'
@@ -199,7 +199,7 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
                 )}
               />
 
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
                   name='priority'
@@ -275,16 +275,17 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
                 )}
               />
 
-              <div className='flex justify-end space-x-4'>
+              <div className='flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4'>
                 <Button
                   type='button'
                   variant='outline'
                   onClick={() => router.push('/dashboard/marquee')}
                   disabled={loading}
+                  className='w-full sm:w-auto'
                 >
                   Cancel
                 </Button>
-                <Button type='submit' disabled={loading}>
+                <Button type='submit' disabled={loading} className='w-full sm:w-auto'>
                   {loading && <IconLoader2 className='mr-2 h-4 w-4 animate-spin' />}
                   {initialData ? 'Update' : 'Create'} Marquee
                 </Button>

@@ -30,14 +30,14 @@ export default async function Page(props: pageProps) {
 return (
     <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
-        <div className='flex items-start justify-between'>
+        <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0'>
           <Heading
             title='billboards'
             description='Manage billboards (Server side table functionalities.)'
           />
           <Link
             href='/dashboard/billboards/new'
-            className={cn(buttonVariants(), 'text-xs md:text-sm')}
+            className={cn(buttonVariants(), 'text-xs md:text-sm w-fit')}
           >
             <IconPlus className='mr-2 h-4 w-4' /> Add New
           </Link>
