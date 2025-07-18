@@ -2,10 +2,11 @@ import { AnalyticsService } from '@/lib/services'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export async function SalesChart() {
-  const salesData = await AnalyticsService.getSalesData(30) // Last 30 days
+  try {
+    const salesData = await AnalyticsService.getSalesData(30) // Last 30 days
 
-  // Group data by date and aggregate
-  const chartData = salesData.reduce((acc, item) => {
+    // Group data by date and aggregate
+    const chartData = salesData.reduce((acc, item) => {
     const existingDate = acc.find(d => d.date === item.date)
     if (existingDate) {
       existingDate.revenue += item.revenue
@@ -104,4 +105,20 @@ export async function SalesChart() {
       </CardContent>
     </Card>
   )
+  } catch (error) {
+    console.error('Error loading sales chart:', error)
+    return (
+      <Card className="col-span-4">
+        <CardHeader>
+          <CardTitle>Sales Overview</CardTitle>
+          <CardDescription>Unable to load sales data</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center text-muted-foreground py-8">
+            <p>Error loading sales data. Please try again later.</p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 }

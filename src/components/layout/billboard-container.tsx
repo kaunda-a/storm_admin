@@ -7,30 +7,35 @@ interface BillboardContainerProps {
   className?: string
 }
 
-export async function BillboardContainer({ 
-  position, 
-  compact = false, 
-  className 
+export async function BillboardContainer({
+  position,
+  compact = false,
+  className
 }: BillboardContainerProps) {
-  const billboards = await BillboardService.getActiveBillboards(position)
+  try {
+    const billboards = await BillboardService.getActiveBillboards(position)
 
-  if (!billboards.length) return null
+    if (!billboards.length) return null
 
-  if (compact && billboards.length === 1) {
+    if (compact && billboards.length === 1) {
+      return (
+        <CompactBillboard
+          billboard={billboards[0]}
+          className={className}
+        />
+      )
+    }
+
     return (
-      <CompactBillboard
-        billboard={billboards[0]}
+      <Billboard
+        billboards={billboards}
         className={className}
+        autoRotate={billboards.length > 1}
+        showControls
       />
     )
+  } catch (error) {
+    console.error('Error loading billboards:', error)
+    return null
   }
-
-  return (
-    <Billboard
-      billboards={billboards}
-      className={className}
-      autoRotate={billboards.length > 1}
-      showControls
-    />
-  )
 }

@@ -37,67 +37,100 @@ export type CategoryPerformance = {
 
 export class AnalyticsService {
   static async getDashboardStats(): Promise<DashboardStats> {
-    const now = new Date()
-    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
-    const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate())
+    try {
+      const now = new Date()
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate())
+      const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, now.getDate())
 
-    // Current period stats
-    const [currentStats, previousStats] = await Promise.all([
-      this.getPeriodStats(lastMonth, now),
-      this.getPeriodStats(twoMonthsAgo, lastMonth)
-    ])
+      // Current period stats
+      const [currentStats, previousStats] = await Promise.all([
+        this.getPeriodStats(lastMonth, now),
+        this.getPeriodStats(twoMonthsAgo, lastMonth)
+      ])
 
-    // Calculate growth percentages
-    const revenueGrowth = this.calculateGrowth(currentStats.revenue, previousStats.revenue)
-    const ordersGrowth = this.calculateGrowth(currentStats.orders, previousStats.orders)
-    const customersGrowth = this.calculateGrowth(currentStats.customers, previousStats.customers)
-    const productsGrowth = this.calculateGrowth(currentStats.products, previousStats.products)
+      // Calculate growth percentages
+      const revenueGrowth = this.calculateGrowth(currentStats.revenue, previousStats.revenue)
+      const ordersGrowth = this.calculateGrowth(currentStats.orders, previousStats.orders)
+      const customersGrowth = this.calculateGrowth(currentStats.customers, previousStats.customers)
+      const productsGrowth = this.calculateGrowth(currentStats.products, previousStats.products)
 
-    return {
-      totalRevenue: currentStats.revenue,
-      totalOrders: currentStats.orders,
-      totalCustomers: currentStats.customers,
-      totalProducts: currentStats.products,
-      revenueGrowth,
-      ordersGrowth,
-      customersGrowth,
-      productsGrowth
+      return {
+        totalRevenue: currentStats.revenue,
+        totalOrders: currentStats.orders,
+        totalCustomers: currentStats.customers,
+        totalProducts: currentStats.products,
+        revenueGrowth,
+        ordersGrowth,
+        customersGrowth,
+        productsGrowth
+      }
+    } catch (error) {
+      console.error('Error in getDashboardStats:', error)
+      // Return default stats if there's an error
+      return {
+        totalRevenue: 0,
+        totalOrders: 0,
+        totalCustomers: 0,
+        totalProducts: 0,
+        revenueGrowth: 0,
+        ordersGrowth: 0,
+        customersGrowth: 0,
+        productsGrowth: 0
+      }
     }
   }
 
   private static async getPeriodStats(startDate: Date, endDate: Date) {
-    const [revenueResult, ordersCount, customersCount, productsCount] = await Promise.all([
-      db.order.aggregate({
-        where: {
-          createdAt: { gte: startDate, lte: endDate },
-          status: 'DELIVERED'
-        },
-        _sum: { totalAmount: true }
-      }),
-      db.order.count({
-        where: {
-          createdAt: { gte: startDate, lte: endDate }
-        }
-      }),
-      db.user.count({
-        where: {
-          createdAt: { gte: startDate, lte: endDate },
-          role: 'CUSTOMER'
-        }
-      }),
-      db.product.count({
-        where: {
-          createdAt: { gte: startDate, lte: endDate },
-          isActive: true
-        }
-      })
-    ])
+    try {
+      const [revenueResult, ordersCount, customersCount, productsCount] = await Promise.all([
+        db.order.aggregate({
+          where: {
+            createdAt: { gte: startDate, lte: endDate },
+            status: 'DELIVERED'
+          },
+          _sum: { totalAmount: true }
+        }),
+        db.order.count({
+          where: {
+            createdAt: { gte: startDate, lte: endDate }
+          }
+        }),
+        db.user.count({
+          where: {
+            createdAt: { gte: startDate, lte: endDate },
+            role: 'CUSTOMER'
+          }
+        }),
+        db.product.count({
+          where: {
+            createdAt: { gte: startDate, lte: endDate },
+            isActive: true
+          }
+        })
+      ])
 
-    return {
-      revenue: revenueResult._sum.totalAmount?.toNumber() || 0,
-      orders: ordersCount,
-      customers: customersCount,
-      products: productsCount
+      // Handle Decimal conversion safely
+      let revenue = 0
+      if (revenueResult._sum.totalAmount) {
+        revenue = typeof revenueResult._sum.totalAmount.toNumber === 'function'
+          ? revenueResult._sum.totalAmount.toNumber()
+          : Number(revenueResult._sum.totalAmount) || 0
+      }
+
+      return {
+        revenue,
+        orders: ordersCount || 0,
+        customers: customersCount || 0,
+        products: productsCount || 0
+      }
+    } catch (error) {
+      console.error('Error in getPeriodStats:', error)
+      return {
+        revenue: 0,
+        orders: 0,
+        customers: 0,
+        products: 0
+      }
     }
   }
 
