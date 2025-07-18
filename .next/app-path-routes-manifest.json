@@ -1,0 +1,23 @@
+{
+  "/favicon.ico/route": "/favicon.ico",
+  "/_not-found/page": "/_not-found",
+  "/page": "/",
+  "/auth/sign-in/[[...sign-in]]/page": "/auth/sign-in/[[...sign-in]]",
+  "/auth/sign-up/[[...sign-up]]/page": "/auth/sign-up/[[...sign-up]]",
+  "/dashboard/content/billboards/page": "/dashboard/content/billboards",
+  "/dashboard/content/marquee/page": "/dashboard/content/marquee",
+  "/dashboard/page": "/dashboard",
+  "/dashboard/kanban/page": "/dashboard/kanban",
+  "/dashboard/orders/[orderId]/page": "/dashboard/orders/[orderId]",
+  "/dashboard/orders/page": "/dashboard/orders",
+  "/dashboard/product/page": "/dashboard/product",
+  "/dashboard/product/[productId]/page": "/dashboard/product/[productId]",
+  "/dashboard/products/[productId]/variants/page": "/dashboard/products/[productId]/variants",
+  "/dashboard/users/page": "/dashboard/users",
+  "/dashboard/profile/[[...profile]]/page": "/dashboard/profile/[[...profile]]",
+  "/dashboard/overview/@area_stats/page": "/dashboard/overview",
+  "/dashboard/overview/@bar_stats/page": "/dashboard/overview",
+  "/dashboard/overview/@pie_stats/page": "/dashboard/overview",
+  "/dashboard/overview/@sales/page": "/dashboard/overview",
+  "/dashboard/overview/page": "/dashboard/overview"
+}

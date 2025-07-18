@@ -1,0 +1,152 @@
+{
+  "version": 3,
+  "pages404": true,
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "dynamicRoutes": [
+    {
+      "page": "/auth/sign-in/[[...sign-in]]",
+      "regex": "^/auth/sign\\-in(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPsignin": "nxtPsign-in"
+      },
+      "namedRegex": "^/auth/sign\\-in(?:/(?<nxtPsignin>.+?))?(?:/)?$"
+    },
+    {
+      "page": "/auth/sign-up/[[...sign-up]]",
+      "regex": "^/auth/sign\\-up(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPsignup": "nxtPsign-up"
+      },
+      "namedRegex": "^/auth/sign\\-up(?:/(?<nxtPsignup>.+?))?(?:/)?$"
+    },
+    {
+      "page": "/dashboard/orders/[orderId]",
+      "regex": "^/dashboard/orders/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPorderId": "nxtPorderId"
+      },
+      "namedRegex": "^/dashboard/orders/(?<nxtPorderId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dashboard/product/[productId]",
+      "regex": "^/dashboard/product/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPproductId": "nxtPproductId"
+      },
+      "namedRegex": "^/dashboard/product/(?<nxtPproductId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/dashboard/products/[productId]/variants",
+      "regex": "^/dashboard/products/([^/]+?)/variants(?:/)?$",
+      "routeKeys": {
+        "nxtPproductId": "nxtPproductId"
+      },
+      "namedRegex": "^/dashboard/products/(?<nxtPproductId>[^/]+?)/variants(?:/)?$"
+    },
+    {
+      "page": "/dashboard/profile/[[...profile]]",
+      "regex": "^/dashboard/profile(?:/(.+?))?(?:/)?$",
+      "routeKeys": {
+        "nxtPprofile": "nxtPprofile"
+      },
+      "namedRegex": "^/dashboard/profile(?:/(?<nxtPprofile>.+?))?(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/dashboard",
+      "regex": "^/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard(?:/)?$"
+    },
+    {
+      "page": "/dashboard/content/billboards",
+      "regex": "^/dashboard/content/billboards(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/content/billboards(?:/)?$"
+    },
+    {
+      "page": "/dashboard/content/marquee",
+      "regex": "^/dashboard/content/marquee(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/content/marquee(?:/)?$"
+    },
+    {
+      "page": "/dashboard/kanban",
+      "regex": "^/dashboard/kanban(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/kanban(?:/)?$"
+    },
+    {
+      "page": "/dashboard/orders",
+      "regex": "^/dashboard/orders(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/orders(?:/)?$"
+    },
+    {
+      "page": "/dashboard/overview",
+      "regex": "^/dashboard/overview(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/overview(?:/)?$"
+    },
+    {
+      "page": "/dashboard/product",
+      "regex": "^/dashboard/product(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/product(?:/)?$"
+    },
+    {
+      "page": "/dashboard/users",
+      "regex": "^/dashboard/users(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard/users(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "RSC",
+    "varyHeader": "RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch",
+    "prefetchHeader": "Next-Router-Prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSuffix": ".prefetch.rsc",
+    "prefetchSegmentHeader": "Next-Router-Segment-Prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments"
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  },
+  "rewrites": []
+}

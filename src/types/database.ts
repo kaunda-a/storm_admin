@@ -25,11 +25,12 @@ export type AnalyticsEventType = 'PAGE_VIEW' | 'PRODUCT_VIEW' | 'ADD_TO_CART' | 
 // User models
 export type User = {
   id: string
-  clerkId: string
   email: string
+  emailVerified: Date | null
   firstName: string | null
   lastName: string | null
   imageUrl: string | null
+  password: string | null
   role: UserRole
   createdAt: Date
   updatedAt: Date
