@@ -12,7 +12,7 @@ import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 
 export const metadata = {
-  title: 'Dashboard: Marquee'
+  title: 'Marquee Messages'
 };
 
 type pageProps = {

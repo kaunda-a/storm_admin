@@ -18,6 +18,19 @@ const META_THEME_COLORS = {
 export const metadata: Metadata = {
   title: 'Mzansi Footwear Admin',
   description: 'Admin dashboard for Mzansi Footwear - Manage products, orders, and analytics',
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'none',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
       { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },

@@ -7,8 +7,15 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
-  title: 'Mzansi Footwear Admin Dashboard',
-  description: 'Comprehensive admin dashboard for managing Mzansi Footwear operations'
+  title: {
+    template: '%s | Mzansi Footwear Admin',
+    default: 'Dashboard | Mzansi Footwear Admin'
+  },
+  description: 'Comprehensive admin dashboard for managing Mzansi Footwear operations',
+  robots: {
+    index: false,
+    follow: false
+  }
 };
 
 export default async function DashboardLayout({
