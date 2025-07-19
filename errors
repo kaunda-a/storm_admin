@@ -1,0 +1,24 @@
+status of 500 ()
+2562-4e442a56e64601b4.js:1 Error submitting brand form: Error: Failed to create brand
+    at k (page-5d888f4ae4f8efee.js:1:12941)
+    at async 9745-1cfbd3e5c3e078ea.js:1:21331
+window.console.error @ 2562-4e442a56e64601b4.js:1
+k @ page-5d888f4ae4f8efee.js:1
+367-4e8e7a9f406df526.js:1 Select is changing from uncontrolled to controlled. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.
+(anonymous) @ 367-4e8e7a9f406df526.js:1
+oq @ 6561e2db-7ee4d9ef5c84c386.js:1
+uh @ 6561e2db-7ee4d9ef5c84c386.js:1
+um @ 6561e2db-7ee4d9ef5c84c386.js:1
+
+367-4e8e7a9f406df526.js:1 Select is changing from controlled to uncontrolled. Components should not switch from controlled to uncontrolled (or vice versa). Decide between using a controlled or uncontrolled value for the lifetime of the component.
+
+/api/brands:1  Failed to load resource: the server responded with a status of 500 ()
+2562-4e442a56e64601b4.js:1 Error submitting brand form: Error: Failed to create brand
+    at k (page-5d888f4ae4f8efee.js:1:12941)
+    at async 9745-1cfbd3e5c3e078ea.js:1:21331
+window.console.error @ 2562-4e442a56e64601b4.js:1
+/api/categories:1  Failed to load resource: the server responded with a status of 500 ()
+2562-4e442a56e64601b4.js:1 Error submitting category form: Error: Failed to create category
+    at k (page-5d888f4ae4f8efee.js:1:9372)
+    at async 9745-1cfbd3e5c3e078ea.js:1:21331
+window.console.error @ 2562-4e442a56e64601b4.js:1

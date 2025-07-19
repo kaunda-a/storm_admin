@@ -288,7 +288,6 @@ export class ProductService {
     logoUrl?: string
     websiteUrl?: string
     isActive: boolean
-    createdBy: string
   }) {
     return db.brand.create({
       data: {
@@ -296,8 +295,7 @@ export class ProductService {
         description: data.description,
         logoUrl: data.logoUrl,
         websiteUrl: data.websiteUrl,
-        isActive: data.isActive,
-        createdBy: data.createdBy
+        isActive: data.isActive
       },
       include: {
         _count: {

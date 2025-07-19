@@ -10,6 +10,10 @@ pnpm db:reset --force
 echo "🔧 Generating Prisma client..."
 pnpm db:generate
 
+# Apply migrations to ensure tables exist
+echo "⬆️ Applying migrations..."
+pnpm prisma migrate deploy
+
 # Run the seed script
 echo "🌱 Seeding database..."
 pnpm db:seed
