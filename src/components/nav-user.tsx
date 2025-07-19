@@ -1,12 +1,12 @@
 'use client';
 
 import {
-  IconCircleCheck,
-  IconBell,
+  IconUser,
+  IconSettings,
   IconChevronsDown,
-  IconCreditCard,
   IconLogout,
-  IconSparkles
+  IconHelp,
+  IconHistory
 } from '@tabler/icons-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,6 +25,9 @@ import {
   SidebarMenuItem,
   useSidebar
 } from '@/components/ui/sidebar';
+import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export function NavUser({
   user
@@ -36,6 +39,11 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/login' });
+  };
 
   return (
     <SidebarMenu>
@@ -77,28 +85,27 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/profile">
+                  <IconUser className='mr-2 h-4 w-4' />
+                  Profile Settings
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem>
-                <IconSparkles className='mr-2 h-4 w-4' />
-                Upgrade to Pro
+                <IconSettings className='mr-2 h-4 w-4' />
+                Account Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <IconHistory className='mr-2 h-4 w-4' />
+                Activity Log
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <IconHelp className='mr-2 h-4 w-4' />
+                Help & Support
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconCircleCheck className='mr-2 h-4 w-4' />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard className='mr-2 h-4 w-4' />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconBell className='mr-2 h-4 w-4' />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
               <IconLogout className='mr-2 h-4 w-4' />
               Log out
             </DropdownMenuItem>

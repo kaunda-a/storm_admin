@@ -50,13 +50,11 @@ import { OrgSwitcher } from '../org-switcher';
 export const company = {
   name: 'Mzansi Footwear',
   logo: IconPhotoUp,
-  plan: 'Premium'
+  plan: 'Admin'
 };
 
 const tenants = [
-  { id: '1', name: 'Mzansi Footwear' },
-  { id: '2', name: 'Mzansi Retail' },
-  { id: '3', name: 'Mzansi Wholesale' }
+  { id: '1', name: 'Mzansi Footwear' }
 ];
 
 export default function AppSidebar() {
@@ -84,7 +82,7 @@ export default function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup>
-          <SidebarGroupLabel>Overview</SidebarGroupLabel>
+          <SidebarGroupLabel>Administration</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
