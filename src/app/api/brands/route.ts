@@ -20,3 +20,33 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// POST /api/brands - Create new brand
+export async function POST(request: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+
+    const brandData = {
+      name: body.name,
+      description: body.description || undefined,
+      logoUrl: body.logoUrl || undefined,
+      websiteUrl: body.websiteUrl || undefined,
+      isActive: body.isActive !== undefined ? body.isActive : true,
+      createdBy: session.user.id
+    };
+
+    const brand = await ProductService.createBrand(brandData);
+    return NextResponse.json(brand, { status: 201 });
+  } catch (error) {
+    console.error('Error creating brand:', error);
+    return NextResponse.json(
+      { error: 'Failed to create brand' },
+      { status: 500 }
+    );
+  }
+}

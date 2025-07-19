@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { CategoryFormDialog } from '@/components/forms/category-form-dialog';
+import { BrandFormDialog } from '@/components/forms/brand-form-dialog';
 import {
   Form,
   FormControl,
@@ -28,6 +30,7 @@ import { ProductWithDetails } from '@/lib/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { IconPlus } from '@tabler/icons-react';
 
 const MAX_FILE_SIZE = 10000000; // 10MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -106,29 +109,29 @@ export default function ProductForm({
 
   // Load categories and brands on component mount
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [categoriesRes, brandsRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/brands')
-        ]);
-
-        if (categoriesRes.ok) {
-          const categoriesData = await categoriesRes.json();
-          setCategories(categoriesData);
-        }
-
-        if (brandsRes.ok) {
-          const brandsData = await brandsRes.json();
-          setBrands(brandsData);
-        }
-      } catch (error) {
-        console.error('Error loading categories and brands:', error);
-      }
-    };
-
     loadData();
   }, []);
+
+  const loadData = async () => {
+    try {
+      const [categoriesRes, brandsRes] = await Promise.all([
+        fetch('/api/categories'),
+        fetch('/api/brands')
+      ]);
+
+      if (categoriesRes.ok) {
+        const categoriesData = await categoriesRes.json();
+        setCategories(categoriesData);
+      }
+
+      if (brandsRes.ok) {
+        const brandsData = await brandsRes.json();
+        setBrands(brandsData);
+      }
+    } catch (error) {
+      console.error('Error loading categories and brands:', error);
+    }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -248,7 +251,18 @@ export default function ProductForm({
                 name='categoryId'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Category</FormLabel>
+                      <CategoryFormDialog
+                        onSuccess={loadData}
+                        trigger={
+                          <Button type="button" variant="outline" size="sm">
+                            <IconPlus className="h-4 w-4 mr-1" />
+                            Add
+                          </Button>
+                        }
+                      />
+                    </div>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
                       value={field.value[field.value.length - 1]}
@@ -311,7 +325,18 @@ export default function ProductForm({
               name='brandId'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Brand</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Brand</FormLabel>
+                    <BrandFormDialog
+                      onSuccess={loadData}
+                      trigger={
+                        <Button type="button" variant="outline" size="sm">
+                          <IconPlus className="h-4 w-4 mr-1" />
+                          Add
+                        </Button>
+                      }
+                    />
+                  </div>
                   <Select
                     onValueChange={(value) => field.onChange(value)}
                     value={field.value}
