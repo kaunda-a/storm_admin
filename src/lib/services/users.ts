@@ -1,5 +1,5 @@
 import { db } from '@/lib/prisma'
-import type { User, Address, UserRole, AddressType } from '@/types/database'
+import type { User, Address, UserRole, AddressType } from '@prisma/client'
 
 export type UserWithDetails = User & {
   addresses: Address[]
@@ -10,7 +10,6 @@ export type UserWithDetails = User & {
 }
 
 export type CreateUserData = {
-  clerkId: string
   email: string
   firstName?: string
   lastName?: string
@@ -45,7 +44,6 @@ export class UserService {
   static async createUser(data: CreateUserData): Promise<User> {
     return db.user.create({
       data: {
-        clerkId: data.clerkId,
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
@@ -55,22 +53,7 @@ export class UserService {
     })
   }
 
-  static async getUserByClerkId(clerkId: string): Promise<UserWithDetails | null> {
-    return db.user.findUnique({
-      where: { clerkId },
-      include: {
-        addresses: {
-          orderBy: { isDefault: 'desc' }
-        },
-        _count: {
-          select: {
-            orders: true,
-            reviews: true
-          }
-        }
-      }
-    }) as Promise<UserWithDetails | null>
-  }
+  
 
   static async getUserById(id: string): Promise<UserWithDetails | null> {
     return db.user.findUnique({
@@ -93,6 +76,12 @@ export class UserService {
     return db.user.update({
       where: { id },
       data
+    })
+  }
+
+  static async deleteUser(id: string): Promise<void> {
+    await db.user.delete({
+      where: { id }
     })
   }
 
@@ -262,33 +251,5 @@ export class UserService {
     }
   }
 
-  static async syncClerkUser(clerkUser: {
-    id: string
-    emailAddresses: { emailAddress: string }[]
-    firstName?: string
-    lastName?: string
-    imageUrl?: string
-  }) {
-    const email = clerkUser.emailAddresses[0]?.emailAddress
-
-    if (!email) throw new Error('No email found for user')
-
-    return db.user.upsert({
-      where: { clerkId: clerkUser.id },
-      update: {
-        email,
-        firstName: clerkUser.firstName,
-        lastName: clerkUser.lastName,
-        imageUrl: clerkUser.imageUrl
-      },
-      create: {
-        clerkId: clerkUser.id,
-        email,
-        firstName: clerkUser.firstName,
-        lastName: clerkUser.lastName,
-        imageUrl: clerkUser.imageUrl,
-        role: 'CUSTOMER'
-      }
-    })
-  }
+  
 }

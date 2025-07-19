@@ -158,10 +158,10 @@ export async function OrderViewPage({ orderId }: OrderViewPageProps) {
                     </div>
                     <div className='text-right'>
                       <p className='font-semibold'>
-                        {formatCurrency(item.unitPrice)} × {item.quantity}
+                        {formatCurrency(Number(item.unitPrice))} × {item.quantity}
                       </p>
                       <p className='text-sm text-muted-foreground'>
-                        {formatCurrency(item.totalPrice)}
+                        {formatCurrency(Number(item.totalPrice))}
                       </p>
                     </div>
                   </div>
@@ -174,20 +174,20 @@ export async function OrderViewPage({ orderId }: OrderViewPageProps) {
               <div className='space-y-2'>
                 <div className='flex justify-between'>
                   <span>Subtotal:</span>
-                  <span>{formatCurrency(order.subtotal)}</span>
+                  <span>{formatCurrency(Number(order.subtotal))}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Tax:</span>
-                  <span>{formatCurrency(order.taxAmount)}</span>
+                  <span>{formatCurrency(Number(order.taxAmount))}</span>
                 </div>
                 <div className='flex justify-between'>
                   <span>Shipping:</span>
-                  <span>{formatCurrency(order.shippingAmount)}</span>
+                  <span>{formatCurrency(Number(order.shippingAmount))}</span>
                 </div>
                 <Separator />
                 <div className='flex justify-between font-semibold text-lg'>
                   <span>Total:</span>
-                  <span>{formatCurrency(order.totalAmount)}</span>
+                  <span>{formatCurrency(Number(order.totalAmount))}</span>
                 </div>
               </div>
             </CardContent>

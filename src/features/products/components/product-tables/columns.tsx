@@ -96,8 +96,8 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
     header: 'PRICE',
     cell: ({ row }) => {
       const product = row.original;
-      const minPrice = Math.min(...product.variants.map((v: ProductVariant) => v.price));
-      const maxPrice = Math.max(...product.variants.map((v: ProductVariant) => v.price));
+      const minPrice = Math.min(...product.variants.map((v: ProductVariant) => Number(v.price)));
+      const maxPrice = Math.max(...product.variants.map((v: ProductVariant) => Number(v.price)));
 
       return (
         <div className='font-medium'>

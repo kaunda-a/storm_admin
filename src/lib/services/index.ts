@@ -14,8 +14,17 @@ export type {
 } from './products'
 
 export type {
-  ProductStatus
-} from '@/types/database'
+  ProductStatus,
+  OrderStatus,
+  PaymentStatus,
+  ShippingStatus,
+  UserRole,
+  AddressType,
+  AnalyticsEventType,
+  MarqueeType,
+  BillboardPosition,
+  BillboardType
+} from '@prisma/client'
 
 export type {
   OrderWithDetails,
@@ -23,22 +32,11 @@ export type {
 } from './orders'
 
 export type {
-  OrderStatus,
-  PaymentStatus,
-  ShippingStatus
-} from '@/types/database'
-
-export type {
   UserWithDetails,
   CreateUserData,
   UpdateUserData,
   CreateAddressData
 } from './users'
-
-export type {
-  UserRole,
-  AddressType
-} from '@/types/database'
 
 export {
   AnalyticsService
@@ -52,26 +50,13 @@ export type {
 } from './analytics'
 
 export type {
-  AnalyticsEventType
-} from '@/types/database'
-
-export type {
   MarqueeMessageWithCreator,
   CreateMarqueeData,
   UpdateMarqueeData
 } from './marquee'
 
 export type {
-  MarqueeType
-} from '@/types/database'
-
-export type {
   BillboardWithCreator,
   CreateBillboardData,
   UpdateBillboardData
 } from './billboard'
-
-export type {
-  BillboardPosition,
-  BillboardType
-} from '@/types/database'

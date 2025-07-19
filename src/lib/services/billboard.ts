@@ -1,5 +1,5 @@
 import { db } from '@/lib/prisma'
-import type { Billboard, User, BillboardType, BillboardPosition } from '@/types/database'
+import type { Billboard, User, BillboardType, BillboardPosition } from '@prisma/client'
 
 export type BillboardWithCreator = Billboard & {
   creator: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>

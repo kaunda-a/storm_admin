@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { UserService } from '@/lib/services';
 import { auth } from '@/lib/auth';
+import { UserRole } from '@prisma/client';
 
 // GET /api/users - Get all users
 export async function GET(request: NextRequest) {
@@ -19,8 +20,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
-    const search = searchParams.get('search');
-    const role = searchParams.get('role');
+    const search = searchParams.get('search') || undefined;
+    const role = searchParams.get('role') as UserRole || undefined;
 
     const filters = {
       ...(search && { search }),
@@ -28,10 +29,10 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await UserService.getUsers({
-      filters,
+      search,
+      role,
       page,
       limit,
-      sort: { field: 'createdAt', direction: 'desc' }
     });
 
     return NextResponse.json(result);

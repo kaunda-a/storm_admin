@@ -1,5 +1,6 @@
 import { db } from '@/lib/prisma'
-import type { Order, OrderItem, User, Address, OrderStatus, PaymentStatus, ShippingStatus } from '@/types/database'
+import type { Order, OrderItem, User, Address } from '@prisma/client'
+import type { OrderStatus, PaymentStatus, ShippingStatus } from '@prisma/client'
 
 export type OrderWithDetails = Order & {
   user: User

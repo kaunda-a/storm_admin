@@ -1,5 +1,5 @@
 import { db } from '@/lib/prisma'
-import type { AnalyticsEventType } from '@/types/database'
+import type { AnalyticsEventType } from '@prisma/client'
 
 export type DashboardStats = {
   totalRevenue: number

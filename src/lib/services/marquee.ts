@@ -1,5 +1,5 @@
 import { db } from '@/lib/prisma'
-import type { MarqueeMessage, User, MarqueeType } from '@/types/database'
+import type { MarqueeMessage, User, MarqueeType } from '@prisma/client'
 
 export type MarqueeMessageWithCreator = MarqueeMessage & {
   creator: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>

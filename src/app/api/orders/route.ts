@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OrderService, type OrderFilters } from '@/lib/services';
 import { auth } from '@/lib/auth';
-import type { OrderStatus, PaymentStatus } from '@/types/database';
+import type { OrderStatus, PaymentStatus } from '@prisma/client';
+
 
 // GET /api/orders - Get all orders
 export async function GET(request: NextRequest) {
@@ -18,9 +19,9 @@ export async function GET(request: NextRequest) {
     const paymentStatus = searchParams.get('paymentStatus');
     const search = searchParams.get('search');
 
-    const filters = {
-      ...(status && { status }),
-      ...(paymentStatus && { paymentStatus }),
+    const filters: OrderFilters = {
+      ...(status && { status: status as OrderStatus }),
+      ...(paymentStatus && { paymentStatus: paymentStatus as PaymentStatus }),
       ...(search && { search }),
     };
 
