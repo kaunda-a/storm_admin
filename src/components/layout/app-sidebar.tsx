@@ -43,13 +43,14 @@ import {
 } from '@tabler/icons-react';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { OrgSwitcher } from '../org-switcher';
 export const company = {
   name: 'Mzansi Footwear',
-  logo: IconPhotoUp,
+  logo: '/logo.svg',
   plan: 'Admin'
 };
 
