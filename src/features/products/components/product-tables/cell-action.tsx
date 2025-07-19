@@ -12,17 +12,39 @@ import { ProductWithDetails } from '@/lib/services';
 import { IconEdit, IconDotsVertical, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface CellActionProps {
   data: ProductWithDetails;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
-  const onConfirm = async () => {};
+  const onConfirm = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(`/api/products/${data.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete product');
+      }
+
+      toast.success('Product deleted successfully');
+      router.refresh();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast.error('Something went wrong');
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  };
 
   return (
     <>

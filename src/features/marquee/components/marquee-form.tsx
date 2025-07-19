@@ -26,7 +26,6 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { MarqueeService } from '@/lib/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconArrowLeft, IconLoader2 } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -96,22 +95,31 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
 
       const formattedData = {
         ...data,
-        startDate: data.startDate ? new Date(data.startDate) : undefined,
-        endDate: data.endDate ? new Date(data.endDate) : undefined,
-        createdBy: session.user.id
+        startDate: data.startDate || undefined,
+        endDate: data.endDate || undefined,
       };
 
-      if (initialData) {
-        await MarqueeService.updateMessage(initialData.id, formattedData);
-        toast.success('Marquee message updated successfully');
-      } else {
-        await MarqueeService.createMessage(formattedData);
-        toast.success('Marquee message created successfully');
+      const url = initialData ? `/api/marquee/${initialData.id}` : '/api/marquee';
+      const method = initialData ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Something went wrong');
       }
 
+      toast.success(initialData ? 'Marquee message updated successfully' : 'Marquee message created successfully');
       router.push('/dashboard/marquee');
       router.refresh();
     } catch (error: any) {
+      console.error('Error submitting marquee form:', error);
       toast.error(error.message || 'Something went wrong');
     } finally {
       setLoading(false);

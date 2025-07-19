@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { BillboardService } from '@/lib/services';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconArrowLeft, IconLoader2 } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -121,18 +121,27 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
         linkUrl: data.linkUrl || undefined,
         linkText: data.linkText || undefined,
         description: data.description || undefined,
-        startDate: data.startDate ? new Date(data.startDate) : undefined,
-        endDate: data.endDate ? new Date(data.endDate) : undefined,
-        createdBy: session.user.id
+        startDate: data.startDate || undefined,
+        endDate: data.endDate || undefined,
       };
 
-      if (initialData) {
-        await BillboardService.updateBillboard(initialData.id, formattedData);
-        toast.success('Billboard updated successfully');
-      } else {
-        await BillboardService.createBillboard(formattedData);
-        toast.success('Billboard created successfully');
+      const url = initialData ? `/api/billboards/${initialData.id}` : '/api/billboards';
+      const method = initialData ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Something went wrong');
       }
+
+      toast.success(initialData ? 'Billboard updated successfully' : 'Billboard created successfully');
       
       router.push('/dashboard/billboards');
       router.refresh();

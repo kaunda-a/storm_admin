@@ -90,20 +90,42 @@ export default function ProductForm({
     try {
       setLoading(true);
 
-      // Log the form data for now - replace with actual API call
-      console.log('Form submitted with values:', values);
+      // Transform form data for API
+      const formData = {
+        ...values,
+        price: parseFloat(values.price),
+        compareAtPrice: values.compareAtPrice ? parseFloat(values.compareAtPrice) : undefined,
+        costPrice: values.costPrice ? parseFloat(values.costPrice) : undefined,
+        quantity: values.quantity ? parseInt(values.quantity) : 0,
+        lowStockThreshold: values.lowStockThreshold ? parseInt(values.lowStockThreshold) : undefined,
+        weight: values.weight ? parseFloat(values.weight) : undefined,
+        // Handle file uploads - for now just pass empty array
+        images: []
+      };
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const url = initialData ? `/api/products/${initialData.id}` : '/api/products';
+      const method = initialData ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Something went wrong');
+      }
 
       toast.success(initialData ? 'Product updated successfully!' : 'Product created successfully!');
-
-      // Redirect to products list
       router.push('/dashboard/products');
+      router.refresh();
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting form:', error);
-      toast.error('Something went wrong. Please try again.');
+      toast.error(error.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -1,10 +1,26 @@
-import { ProductService } from '@/lib/services';
 import { notFound } from 'next/navigation';
 import ProductForm from './product-form';
 
 type TProductViewPageProps = {
   productId: string;
 };
+
+async function getProduct(id: string) {
+  try {
+    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/products/${id}`, {
+      cache: 'no-store'
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return null;
+  }
+}
 
 export default async function ProductViewPage({
   productId
@@ -13,7 +29,7 @@ export default async function ProductViewPage({
   let pageTitle = 'Create New Product';
 
   if (productId !== 'new') {
-    product = await ProductService.getProductById(productId);
+    product = await getProduct(productId);
     if (!product) {
       notFound();
     }

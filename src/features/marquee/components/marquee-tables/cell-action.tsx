@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { MarqueeService } from '@/lib/services';
+
 import { IconEdit, IconEye, IconDots, IconTrash } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -28,10 +28,19 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await MarqueeService.deleteMessage(data.id);
+
+      const response = await fetch(`/api/marquee/${data.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete marquee message');
+      }
+
       toast.success('Marquee message deleted successfully');
       router.refresh();
     } catch (error) {
+      console.error('Error deleting marquee message:', error);
       toast.error('Something went wrong');
     } finally {
       setLoading(false);
