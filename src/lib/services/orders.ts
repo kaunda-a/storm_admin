@@ -218,13 +218,71 @@ export class OrderService {
   static async updateShippingStatus(orderId: string, status: ShippingStatus, trackingNumber?: string) {
     return db.order.update({
       where: { id: orderId },
-      data: { 
+      data: {
         shippingStatus: status,
         ...(trackingNumber && { trackingNumber }),
         ...(status === 'SHIPPED' && { shippedAt: new Date() }),
         ...(status === 'DELIVERED' && { deliveredAt: new Date() })
       }
     })
+  }
+
+  static async updateOrder(orderId: string, data: {
+    status?: OrderStatus
+    paymentStatus?: PaymentStatus
+    shippingStatus?: ShippingStatus
+    notes?: string
+    trackingNumber?: string
+    shippedAt?: Date
+    deliveredAt?: Date
+  }) {
+    return db.order.update({
+      where: { id: orderId },
+      data: {
+        ...data,
+        // Auto-set timestamps based on status changes
+        ...(data.status === 'SHIPPED' && !data.shippedAt && { shippedAt: new Date() }),
+        ...(data.status === 'DELIVERED' && !data.deliveredAt && { deliveredAt: new Date() }),
+        ...(data.shippingStatus === 'SHIPPED' && !data.shippedAt && { shippedAt: new Date() }),
+        ...(data.shippingStatus === 'DELIVERED' && !data.deliveredAt && { deliveredAt: new Date() })
+      },
+      include: {
+        user: true,
+        shippingAddress: true,
+        billingAddress: true,
+        items: {
+          include: {
+            product: {
+              select: {
+                name: true,
+                slug: true,
+                images: {
+                  where: { isPrimary: true },
+                  select: { url: true },
+                  take: 1
+                }
+              }
+            },
+            productVariant: {
+              select: {
+                size: true,
+                color: true,
+                sku: true
+              }
+            }
+          }
+        },
+        payments: {
+          select: {
+            id: true,
+            amount: true,
+            status: true,
+            method: true,
+            processedAt: true
+          }
+        }
+      }
+    }) as Promise<OrderWithDetails>
   }
 
   static async getOrderStats() {
