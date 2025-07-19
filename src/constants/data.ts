@@ -38,24 +38,20 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
-    title: 'Content',
-    url: '#',
-    icon: 'media',
+    title: 'Billboards',
+    url: '/dashboard/billboards',
+    icon: 'announcement',
+    shortcut: ['b', 'b'],
     isActive: false,
-    items: [
-      {
-        title: 'Marquee Messages',
-        url: '/dashboard/marquee',
-        icon: 'notification',
-        shortcut: ['m', 'q']
-      },
-      {
-        title: 'Billboards',
-        url: '/dashboard/billboards',
-        icon: 'announcement',
-        shortcut: ['b', 'b']
-      }
-    ]
+    items: [] // No child items
+  },
+  {
+    title: 'Marquee',
+    url: '/dashboard/marquee',
+    icon: 'notification',
+    shortcut: ['m', 'q'],
+    isActive: false,
+    items: [] // No child items
   },
   {
     title: 'Account',
