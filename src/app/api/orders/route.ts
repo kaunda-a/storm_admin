@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { OrderService } from '@/lib/services';
+import { OrderService, type OrderFilters } from '@/lib/services';
 import { auth } from '@/lib/auth';
+import type { OrderStatus, PaymentStatus } from '@/types/database';
 
 // GET /api/orders - Get all orders
 export async function GET(request: NextRequest) {
@@ -26,8 +27,7 @@ export async function GET(request: NextRequest) {
     const result = await OrderService.getOrders({
       filters,
       page,
-      limit,
-      sort: { field: 'createdAt', direction: 'desc' }
+      limit
     });
 
     return NextResponse.json(result);
