@@ -42,6 +42,8 @@ const marqueeFormSchema = z.object({
   type: z.enum(['INFO', 'SUCCESS', 'WARNING', 'ERROR', 'ALERT', 'PROMOTION', 'SYSTEM', 'INVENTORY']),
   priority: z.number().min(1).max(5),
   isActive: z.boolean(),
+  imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  linkUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   startDate: z.string().optional(),
   endDate: z.string().optional()
 });
@@ -75,6 +77,8 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
     type: initialData?.type || 'INFO',
     priority: initialData?.priority || 1,
     isActive: initialData?.isActive ?? true,
+    imageUrl: initialData?.imageUrl || '',
+    linkUrl: initialData?.linkUrl || '',
     startDate: initialData?.startDate ? new Date(initialData.startDate).toISOString().split('T')[0] : '',
     endDate: initialData?.endDate ? new Date(initialData.endDate).toISOString().split('T')[0] : ''
   };
@@ -95,6 +99,8 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
 
       const formattedData = {
         ...data,
+        imageUrl: data.imageUrl || undefined,
+        linkUrl: data.linkUrl || undefined,
         startDate: data.startDate || undefined,
         endDate: data.endDate || undefined,
       };
@@ -232,7 +238,39 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
                     </FormItem>
                   )}
                 />
+              </div>
 
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <FormField
+                  control={form.control}
+                  name='imageUrl'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image URL (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder='https://example.com/image.jpg' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='linkUrl'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Link URL (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder='https://example.com/link' {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
                   name='startDate'
