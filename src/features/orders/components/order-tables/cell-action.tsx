@@ -23,23 +23,77 @@ import {
 } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 interface CellActionProps {
   data: OrderWithDetails
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
   const onConfirm = async () => {
-    // Handle order cancellation
+    try {
+      setLoading(true);
+
+      const response = await fetch(`/api/orders/${data.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to cancel order');
+      }
+
+      toast.success('Order cancelled successfully');
+      router.refresh();
+    } catch (error: any) {
+      console.error('Error cancelling order:', error);
+      toast.error(error.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
   }
 
-  const handleStatusUpdate = (status: string) => {
-    // Handle status updates
-    console.log(`Updating order ${data.orderNumber} to ${status}`)
+  const handleStatusUpdate = async (status: string) => {
+    try {
+      setLoading(true);
+
+      const updateData: any = { status };
+
+      // Add additional fields based on status
+      if (status === 'SHIPPED') {
+        updateData.shippingStatus = 'SHIPPED';
+        updateData.shippedAt = new Date().toISOString();
+      } else if (status === 'DELIVERED') {
+        updateData.shippingStatus = 'DELIVERED';
+        updateData.deliveredAt = new Date().toISOString();
+      }
+
+      const response = await fetch(`/api/orders/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update order');
+      }
+
+      toast.success(`Order ${status.toLowerCase()} successfully`);
+      router.refresh();
+    } catch (error: any) {
+      console.error('Error updating order:', error);
+      toast.error(error.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   }
 
   const canCancel = data.status === 'PENDING' || data.status === 'PROCESSING'

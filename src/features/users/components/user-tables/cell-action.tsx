@@ -22,18 +22,39 @@ import {
 } from '@tabler/icons-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 interface CellActionProps {
   data: UserWithDetails
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
   const onConfirm = async () => {
-    // Handle user deletion
+    try {
+      setLoading(true);
+
+      const response = await fetch(`/api/users/${data.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete user');
+      }
+
+      toast.success('User deleted successfully');
+      router.refresh();
+    } catch (error: any) {
+      console.error('Error deleting user:', error);
+      toast.error(error.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
   }
 
   const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'MANAGER'].includes(data.role)

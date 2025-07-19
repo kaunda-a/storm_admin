@@ -1,4 +1,4 @@
-import { OrderService, OrderWithDetails } from '@/lib/services'
+import { OrderWithDetails } from '@/lib/services'
 
 // Type for order items with product details
 type OrderItemWithDetails = OrderWithDetails['items'][0]
@@ -52,8 +52,32 @@ const shippingStatusColors: Record<string, string> = {
   RETURNED: 'bg-orange-500/10 text-orange-600 border-orange-200'
 }
 
+async function getOrder(id: string): Promise<OrderWithDetails | null> {
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/orders/${id}`, {
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to fetch order: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    return null;
+  }
+}
+
 export async function OrderViewPage({ orderId }: OrderViewPageProps) {
-  const order = await OrderService.getOrderById(orderId)
+  const order = await getOrder(orderId)
 
   if (!order) {
     notFound()
