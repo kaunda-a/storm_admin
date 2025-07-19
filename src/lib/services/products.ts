@@ -196,6 +196,69 @@ export class ProductService {
     })
   }
 
+  static async getCategoryById(id: string) {
+    return db.category.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { products: true }
+        }
+      }
+    })
+  }
+
+  static async createCategory(data: {
+    name: string
+    description?: string
+    imageUrl?: string
+    isActive: boolean
+    createdBy: string
+  }) {
+    return db.category.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        imageUrl: data.imageUrl,
+        isActive: data.isActive,
+        createdBy: data.createdBy
+      },
+      include: {
+        _count: {
+          select: { products: true }
+        }
+      }
+    })
+  }
+
+  static async updateCategory(id: string, data: {
+    name?: string
+    description?: string
+    imageUrl?: string
+    isActive?: boolean
+  }) {
+    return db.category.update({
+      where: { id },
+      data,
+      include: {
+        _count: {
+          select: { products: true }
+        }
+      }
+    })
+  }
+
+  static async deleteCategory(id: string) {
+    return db.category.delete({
+      where: { id }
+    })
+  }
+
+  static async getProductsCountByCategory(categoryId: string) {
+    return db.product.count({
+      where: { categoryId }
+    })
+  }
+
   static async getBrands() {
     return db.brand.findMany({
       where: { isActive: true },
@@ -205,6 +268,72 @@ export class ProductService {
         }
       },
       orderBy: { name: 'asc' }
+    })
+  }
+
+  static async getBrandById(id: string) {
+    return db.brand.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { products: true }
+        }
+      }
+    })
+  }
+
+  static async createBrand(data: {
+    name: string
+    description?: string
+    logoUrl?: string
+    websiteUrl?: string
+    isActive: boolean
+    createdBy: string
+  }) {
+    return db.brand.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        logoUrl: data.logoUrl,
+        websiteUrl: data.websiteUrl,
+        isActive: data.isActive,
+        createdBy: data.createdBy
+      },
+      include: {
+        _count: {
+          select: { products: true }
+        }
+      }
+    })
+  }
+
+  static async updateBrand(id: string, data: {
+    name?: string
+    description?: string
+    logoUrl?: string
+    websiteUrl?: string
+    isActive?: boolean
+  }) {
+    return db.brand.update({
+      where: { id },
+      data,
+      include: {
+        _count: {
+          select: { products: true }
+        }
+      }
+    })
+  }
+
+  static async deleteBrand(id: string) {
+    return db.brand.delete({
+      where: { id }
+    })
+  }
+
+  static async getProductsCountByBrand(brandId: string) {
+    return db.product.count({
+      where: { brandId }
     })
   }
 
