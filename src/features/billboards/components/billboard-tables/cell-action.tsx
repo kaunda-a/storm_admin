@@ -9,10 +9,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { BillboardService, BillboardWithCreator } from '@/lib/services';
+import { BillboardWithCreator } from '@/lib/services';
 import { IconEdit, IconEye, IconTrash, IconDots } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { toast } from 'sonner';
 
 interface CellActionProps {
@@ -27,10 +28,19 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await BillboardService.deleteBillboard(data.id);
+
+      const response = await fetch(`/api/billboards/${data.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete billboard');
+      }
+
       toast.success('Billboard deleted successfully');
       router.refresh();
     } catch (error) {
+      console.error('Error deleting billboard:', error);
       toast.error('Something went wrong');
     } finally {
       setLoading(false);

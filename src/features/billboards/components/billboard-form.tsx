@@ -11,6 +11,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { FileUploader } from '@/components/file-uploader';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconArrowLeft, IconLoader2 } from '@tabler/icons-react';
@@ -37,9 +39,29 @@ import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import * as z from 'zod';
 
+const MAX_FILE_SIZE = 10000000; // 10MB
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp'
+];
+
 const billboardFormSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
   description: z.string().optional(),
+  image: z
+    .any()
+    .optional()
+    .refine((files) => !files || files?.length === 0 || files?.length >= 1, 'Invalid file selection.')
+    .refine(
+      (files) => !files || files?.length === 0 || files?.[0]?.size <= MAX_FILE_SIZE,
+      `Max file size is 10MB.`
+    )
+    .refine(
+      (files) => !files || files?.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      '.jpg, .jpeg, .png and .webp files are accepted.'
+    ),
   imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   videoUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   linkUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
@@ -88,6 +110,7 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
   const defaultValues: Partial<BillboardFormValues> = {
     title: initialData?.title || '',
     description: initialData?.description || '',
+    image: undefined,
     imageUrl: initialData?.imageUrl || '',
     videoUrl: initialData?.videoUrl || '',
     linkUrl: initialData?.linkUrl || '',
@@ -108,15 +131,25 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
   const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
-      
+
       if (!session?.user?.id) {
         toast.error('You must be logged in to perform this action');
         return;
       }
-      
+
+      // Handle image upload first if there are any
+      let finalImageUrl = data.imageUrl;
+      if (data.image && data.image.length > 0) {
+        // For now, we'll simulate image upload
+        // In production, you would upload to Cloudinary or your preferred service
+        toast.info('Image upload functionality will be implemented with Cloudinary integration');
+        // Simulate uploaded URL
+        finalImageUrl = `https://via.placeholder.com/800x400?text=${encodeURIComponent(data.title)}`;
+      }
+
       const formattedData = {
         ...data,
-        imageUrl: data.imageUrl || undefined,
+        imageUrl: finalImageUrl || undefined,
         videoUrl: data.videoUrl || undefined,
         linkUrl: data.linkUrl || undefined,
         linkText: data.linkText || undefined,
@@ -279,6 +312,37 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
                 />
               </div>
 
+              {/* Image Upload Section */}
+              <div className='space-y-4'>
+                <FormField
+                  control={form.control}
+                  name='image'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Upload Image (Optional)</FormLabel>
+                      <FormControl>
+                        <FileUploader
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          maxFiles={1}
+                          maxSize={10 * 1024 * 1024} // 10MB
+                          accept={{
+                            'image/jpeg': [],
+                            'image/jpg': [],
+                            'image/png': [],
+                            'image/webp': []
+                          }}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Upload an image file (JPG, PNG, WebP) up to 10MB. This will override the Image URL if both are provided.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
@@ -289,6 +353,9 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
                       <FormControl>
                         <Input placeholder='https://example.com/image.jpg' {...field} />
                       </FormControl>
+                      <FormDescription>
+                        Or provide an image URL instead of uploading a file.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
