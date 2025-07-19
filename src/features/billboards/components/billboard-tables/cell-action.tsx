@@ -14,7 +14,6 @@ import { IconEdit, IconEye, IconTrash, IconDots } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { toast } from 'sonner';
 
 interface CellActionProps {
   data: BillboardWithCreator;
