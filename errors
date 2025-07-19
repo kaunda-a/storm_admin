@@ -21,4 +21,21 @@ window.console.error @ 2562-4e442a56e64601b4.js:1
 2562-4e442a56e64601b4.js:1 Error submitting category form: Error: Failed to create category
     at k (page-5d888f4ae4f8efee.js:1:9372)
     at async 9745-1cfbd3e5c3e078ea.js:1:21331
-window.console.error @ 2562-4e442a56e64601b4.js:1
+window.console.error @ 2562-4e442a56e64601b4.js:1                                                                                     
+the products form does does not scroll down enough for me to reach create products, it really needs to be able to scroll on the products page
+
+when i press create new order or create order i get Dashboard : Order Details | Mzansi Footwear Admin404
+Something's missing
+Sorry, the page you are looking for doesn't exist or has been moved.                                  
+
+
+
+when i want to navigate or press the users page
+https://storm-admin.vercel.app/dashboard/users and it shows Application error: a client-side exception has occurred (see the browser console for more information).
+2562-4e442a56e64601b4.js:1 TypeError: Cannot read properties of undefined (reading 'length')
+    at cell (page-1f1afde121ecdca8.js:1:7251)
+    at l2 (6561e2db-7ee4d9ef5c84c386.js:1:50099)
+   
+    at MessagePort.w (2562-4e442a56e64601b4.js:1:12577)
+﻿
+for the order pages like marquee and billboard the form field can not scroll down to reach the button to create and the needs to be more mobile responsiveness on every component, the sidebar should closed afterthe page link is clicked and navigated on mobile and    the icon for opening and closing the sidebar is not shon on desktop it might be due to the marquee container i do not really know check 

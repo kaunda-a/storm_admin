@@ -212,15 +212,13 @@ export class ProductService {
     description?: string
     imageUrl?: string
     isActive: boolean
-    createdBy: string
   }) {
     return db.category.create({
       data: {
         name: data.name,
         description: data.description,
         imageUrl: data.imageUrl,
-        isActive: data.isActive,
-        createdBy: data.createdBy
+        isActive: data.isActive
       },
       include: {
         _count: {

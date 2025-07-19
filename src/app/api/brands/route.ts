@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       logoUrl: body.logoUrl || undefined,
       websiteUrl: body.websiteUrl || undefined,
       isActive: body.isActive !== undefined ? body.isActive : true,
+      createdBy: session.user.id
     };
 
     const brand = await ProductService.createBrand(brandData);

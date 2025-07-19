@@ -190,7 +190,7 @@ export default function ProductForm({
   }
 
   return (
-    <div className='mx-auto w-full max-w-4xl'>
+    <div className='mx-auto w-full max-w-4xl pb-20'>
       <Card>
         <CardHeader>
           <CardTitle className='text-left text-2xl font-bold'>
