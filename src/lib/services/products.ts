@@ -229,6 +229,170 @@ export class ProductService {
     })
   }
 
+  static async createProduct(data: {
+    name: string
+    description: string
+    sku: string
+    price: number
+    compareAtPrice?: number
+    costPrice?: number
+    trackQuantity: boolean
+    quantity: number
+    lowStockThreshold?: number
+    weight?: number
+    categoryId: string
+    brandId: string
+    tags?: string[]
+    isActive: boolean
+    isFeatured: boolean
+    images?: string[]
+    createdBy: string
+  }) {
+    // Generate slug from name
+    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+    return db.product.create({
+      data: {
+        name: data.name,
+        slug,
+        description: data.description,
+        sku: data.sku,
+        categoryId: data.categoryId,
+        brandId: data.brandId,
+        status: data.isActive ? 'ACTIVE' : 'DRAFT',
+        isActive: data.isActive,
+        isFeatured: data.isFeatured,
+        tags: data.tags || [],
+        // Create default variant with pricing info
+        variants: {
+          create: {
+            size: 'Default',
+            color: 'Default',
+            sku: data.sku,
+            price: data.price,
+            comparePrice: data.compareAtPrice,
+            costPrice: data.costPrice,
+            stock: data.quantity,
+            lowStockThreshold: data.lowStockThreshold || 5,
+            weight: data.weight,
+            isActive: true,
+            isDefault: true
+          }
+        },
+        // Create images if provided
+        ...(data.images && data.images.length > 0 && {
+          images: {
+            create: data.images.map((url, index) => ({
+              url,
+              altText: data.name,
+              isPrimary: index === 0,
+              sortOrder: index
+            }))
+          }
+        })
+      },
+      include: {
+        category: true,
+        brand: true,
+        variants: true,
+        images: true,
+        _count: {
+          select: { reviews: true }
+        }
+      }
+    })
+  }
+
+  static async updateProduct(id: string, data: {
+    name?: string
+    description?: string
+    sku?: string
+    price?: number
+    compareAtPrice?: number
+    costPrice?: number
+    trackQuantity?: boolean
+    quantity?: number
+    lowStockThreshold?: number
+    weight?: number
+    categoryId?: string
+    brandId?: string
+    tags?: string[]
+    isActive?: boolean
+    isFeatured?: boolean
+    images?: string[]
+  }) {
+    const updateData: any = {}
+
+    // Update product fields
+    if (data.name) {
+      updateData.name = data.name
+      updateData.slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    }
+    if (data.description !== undefined) updateData.description = data.description
+    if (data.sku) updateData.sku = data.sku
+    if (data.categoryId) updateData.categoryId = data.categoryId
+    if (data.brandId) updateData.brandId = data.brandId
+    if (data.tags !== undefined) updateData.tags = data.tags
+    if (data.isActive !== undefined) {
+      updateData.isActive = data.isActive
+      updateData.status = data.isActive ? 'ACTIVE' : 'DRAFT'
+    }
+    if (data.isFeatured !== undefined) updateData.isFeatured = data.isFeatured
+
+    // Update default variant if pricing/inventory data provided
+    const variantUpdate: any = {}
+    if (data.price !== undefined) variantUpdate.price = data.price
+    if (data.compareAtPrice !== undefined) variantUpdate.comparePrice = data.compareAtPrice
+    if (data.costPrice !== undefined) variantUpdate.costPrice = data.costPrice
+    if (data.quantity !== undefined) variantUpdate.stock = data.quantity
+    if (data.lowStockThreshold !== undefined) variantUpdate.lowStockThreshold = data.lowStockThreshold
+    if (data.weight !== undefined) variantUpdate.weight = data.weight
+
+    return db.product.update({
+      where: { id },
+      data: {
+        ...updateData,
+        // Update default variant if we have variant data
+        ...(Object.keys(variantUpdate).length > 0 && {
+          variants: {
+            updateMany: {
+              where: { isDefault: true },
+              data: variantUpdate
+            }
+          }
+        }),
+        // Handle images update if provided
+        ...(data.images && {
+          images: {
+            deleteMany: {},
+            create: data.images.map((url, index) => ({
+              url,
+              altText: data.name || 'Product image',
+              isPrimary: index === 0,
+              sortOrder: index
+            }))
+          }
+        })
+      },
+      include: {
+        category: true,
+        brand: true,
+        variants: true,
+        images: true,
+        _count: {
+          select: { reviews: true }
+        }
+      }
+    })
+  }
+
+  static async deleteProduct(id: string) {
+    // Delete in correct order due to foreign key constraints
+    await db.productImage.deleteMany({ where: { productId: id } })
+    await db.productVariant.deleteMany({ where: { productId: id } })
+    return db.product.delete({ where: { id } })
+  }
+
   static async getProductStats() {
     const [totalProducts, activeProducts, lowStockVariants, categories] = await Promise.all([
       db.product.count(),

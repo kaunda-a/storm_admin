@@ -4,7 +4,7 @@ import { FileUploader } from '@/components/file-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
+
 import { Textarea } from '@/components/ui/textarea';
 import { ProductWithDetails } from '@/lib/services';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,13 +40,14 @@ const ACCEPTED_IMAGE_TYPES = [
 const formSchema = z.object({
   image: z
     .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
+    .optional()
+    .refine((files) => !files || files?.length === 0 || files?.length >= 1, 'Invalid file selection.')
     .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+      (files) => !files || files?.length === 0 || files?.[0]?.size <= MAX_FILE_SIZE,
       `Max file size is 10MB.`
     )
     .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      (files) => !files || files?.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       '.jpg, .jpeg, .png and .webp files are accepted.'
     ),
   name: z.string().min(2, {
@@ -58,6 +59,13 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.'
   }),
+  price: z.string().min(1, 'Price is required'),
+  compareAtPrice: z.string().optional(),
+  costPrice: z.string().optional(),
+  quantity: z.string().optional(),
+  lowStockThreshold: z.string().optional(),
+  weight: z.string().optional(),
+  trackQuantity: z.boolean().default(false),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false)
 });
@@ -70,6 +78,8 @@ export default function ProductForm({
   pageTitle: string;
 }) {
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
   const router = useRouter();
   const defaultValues = {
     name: initialData?.name || '',
@@ -77,8 +87,16 @@ export default function ProductForm({
     brandId: initialData?.brand?.id || '',
     sku: initialData?.sku || '',
     description: initialData?.description || '',
+    price: initialData?.variants?.[0]?.price?.toString() || '',
+    compareAtPrice: initialData?.variants?.[0]?.comparePrice?.toString() || '',
+    costPrice: initialData?.variants?.[0]?.costPrice?.toString() || '',
+    quantity: initialData?.variants?.[0]?.stock?.toString() || '',
+    lowStockThreshold: initialData?.variants?.[0]?.lowStockThreshold?.toString() || '',
+    weight: initialData?.variants?.[0]?.weight?.toString() || '',
+    trackQuantity: false,
     isActive: initialData?.isActive ?? true,
-    isFeatured: initialData?.isFeatured ?? false
+    isFeatured: initialData?.isFeatured ?? false,
+    image: undefined
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -86,9 +104,47 @@ export default function ProductForm({
     values: defaultValues
   });
 
+  // Load categories and brands on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [categoriesRes, brandsRes] = await Promise.all([
+          fetch('/api/categories'),
+          fetch('/api/brands')
+        ]);
+
+        if (categoriesRes.ok) {
+          const categoriesData = await categoriesRes.json();
+          setCategories(categoriesData);
+        }
+
+        if (brandsRes.ok) {
+          const brandsData = await brandsRes.json();
+          setBrands(brandsData);
+        }
+      } catch (error) {
+        console.error('Error loading categories and brands:', error);
+      }
+    };
+
+    loadData();
+  }, []);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
+
+      // Handle image uploads first if there are any
+      let imageUrls: string[] = [];
+      if (values.image && values.image.length > 0) {
+        // For now, we'll simulate image upload
+        // In production, you would upload to Cloudinary or your preferred service
+        toast.info('Image upload functionality will be implemented with Cloudinary integration');
+        // Simulate uploaded URLs
+        imageUrls = values.image.map((_: any, index: number) =>
+          `https://via.placeholder.com/400x400?text=Product+Image+${index + 1}`
+        );
+      }
 
       // Transform form data for API
       const formData = {
@@ -99,8 +155,7 @@ export default function ProductForm({
         quantity: values.quantity ? parseInt(values.quantity) : 0,
         lowStockThreshold: values.lowStockThreshold ? parseInt(values.lowStockThreshold) : undefined,
         weight: values.weight ? parseFloat(values.weight) : undefined,
-        // Handle file uploads - for now just pass empty array
-        images: []
+        images: imageUrls
       };
 
       const url = initialData ? `/api/products/${initialData.id}` : '/api/products';
@@ -204,10 +259,11 @@ export default function ProductForm({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='1'>Sneakers</SelectItem>
-                        <SelectItem value='2'>Formal Shoes</SelectItem>
-                        <SelectItem value='3'>Boots</SelectItem>
-                        <SelectItem value='4'>Sandals</SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -266,16 +322,131 @@ export default function ProductForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value='1'>Nike</SelectItem>
-                      <SelectItem value='2'>Adidas</SelectItem>
-                      <SelectItem value='3'>Clarks</SelectItem>
-                      <SelectItem value='4'>Veldskoen</SelectItem>
+                      {brands.map((brand) => (
+                        <SelectItem key={brand.id} value={brand.id}>
+                          {brand.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* Pricing and Inventory Fields */}
+            <div className='grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-3'>
+              <FormField
+                control={form.control}
+                name='price'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price (ZAR)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        step='0.01'
+                        placeholder='0.00'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='compareAtPrice'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Compare At Price (ZAR)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        step='0.01'
+                        placeholder='0.00'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='costPrice'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cost Price (ZAR)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        step='0.01'
+                        placeholder='0.00'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Inventory Fields */}
+            <div className='grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-3'>
+              <FormField
+                control={form.control}
+                name='quantity'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quantity</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        placeholder='0'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='lowStockThreshold'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Low Stock Threshold</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        placeholder='5'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='weight'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Weight (kg)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        step='0.01'
+                        placeholder='0.00'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className='flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4'>
               <FormField
@@ -310,6 +481,24 @@ export default function ProductForm({
                       />
                     </FormControl>
                     <FormLabel>Featured</FormLabel>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='trackQuantity'
+                render={({ field }) => (
+                  <FormItem className='flex flex-row items-center space-x-3 space-y-0'>
+                    <FormControl>
+                      <input
+                        type='checkbox'
+                        checked={field.value}
+                        onChange={field.onChange}
+                        className='h-4 w-4'
+                      />
+                    </FormControl>
+                    <FormLabel>Track Quantity</FormLabel>
                   </FormItem>
                 )}
               />

@@ -7,12 +7,19 @@ type TProductViewPageProps = {
 
 async function getProduct(id: string) {
   try {
-    const response = await fetch(`${process.env.NEXTAUTH_URL}/api/products/${id}`, {
-      cache: 'no-store'
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/products/${id}`, {
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {
-      return null;
+      if (response.status === 404) {
+        return null;
+      }
+      throw new Error(`Failed to fetch product: ${response.status}`);
     }
 
     return await response.json();
