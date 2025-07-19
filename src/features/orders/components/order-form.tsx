@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { IconArrowLeft, IconLoader2 } from '@tabler/icons-react';
 import type { OrderWithDetails } from '@/lib/services';
 
-const orderSchema = z.object({
+const orderFormSchema = z.object({
   status: z.enum(['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED']),
   paymentStatus: z.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'CANCELLED', 'REFUNDED']),
   shippingStatus: z.enum(['PENDING', 'PROCESSING', 'SHIPPED', 'IN_TRANSIT', 'DELIVERED', 'RETURNED']),
@@ -25,7 +25,7 @@ const orderSchema = z.object({
   notes: z.string().optional(),
 });
 
-type OrderFormData = z.infer<typeof orderSchema>;
+type OrderFormData = z.infer<typeof orderFormSchema>;
 
 interface OrderFormProps {
   initialData?: OrderWithDetails | null;
@@ -41,7 +41,7 @@ export function OrderForm({ initialData }: OrderFormProps) {
   const action = initialData ? 'Save Changes' : 'Create Order';
 
   const form = useForm<OrderFormData>({
-    resolver: zodResolver(orderSchema),
+    resolver: zodResolver(orderFormSchema),
     defaultValues: initialData ? {
       status: initialData.status,
       paymentStatus: initialData.paymentStatus,
