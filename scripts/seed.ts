@@ -60,7 +60,6 @@ async function main() {
         password: await bcrypt.hash('customer123', 12),
         firstName: 'John',
         lastName: 'Doe',
-        role: 'CUSTOMER',
         emailVerified: new Date()
       }
     }),
@@ -70,7 +69,6 @@ async function main() {
         password: await bcrypt.hash('customer123', 12),
         firstName: 'Jane',
         lastName: 'Smith',
-        role: 'CUSTOMER',
         emailVerified: new Date()
       }
     })
