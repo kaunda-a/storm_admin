@@ -17,8 +17,8 @@ const formSchema = z.object({
   status: z.nativeEnum(OrderStatus),
   paymentStatus: z.nativeEnum(PaymentStatus),
   shippingStatus: z.nativeEnum(ShippingStatus),
-  trackingNumber: z.string().optional(),
-  adminNotes: z.string().optional(),
+  trackingNumber: z.string().nullable().optional(),
+  adminNotes: z.string().nullable().optional(),
 })
 
 interface OrderFormProps {
