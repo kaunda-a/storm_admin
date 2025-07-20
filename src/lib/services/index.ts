@@ -1,7 +1,6 @@
 // Export all services
 export * from './products'
 export * from './orders'
-export * from './users'
 export * from './analytics'
 export * from './marquee'
 export * from './billboard'
@@ -30,13 +29,6 @@ export type {
   OrderWithDetails,
   OrderFilters
 } from './orders'
-
-export type {
-  UserWithDetails,
-  CreateUserData,
-  UpdateUserData,
-  CreateAddressData
-} from './users'
 
 export {
   AnalyticsService
