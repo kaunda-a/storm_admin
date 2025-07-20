@@ -4,6 +4,7 @@ export * from './orders'
 export * from './analytics'
 export * from './marquee'
 export * from './billboard'
+export * from './customer'
 export * from './users'
 
 // Re-export commonly used types
@@ -53,3 +54,10 @@ export type {
   CreateBillboardData,
   UpdateBillboardData
 } from './billboard'
+
+export type {
+  CustomerWithOrders,
+  CreateCustomerData,
+  UpdateCustomerData
+} from './customer';
+
