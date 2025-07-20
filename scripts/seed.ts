@@ -25,11 +25,11 @@ async function main() {
   await prisma.brand.deleteMany()
   await prisma.category.deleteMany()
 
-  // Create admin customers
-  console.log('👤 Creating admin customers...')
+  // Create admin user
+  console.log('👤 Creating admin user...')
   const hashedPassword = await bcrypt.hash('admin123', 12)
   
-  const superAdmin = await prisma.customer.create({
+  const superAdmin = await prisma.user.create({
     data: {
       email: 'admin@mzansifootwear.com',
       password: hashedPassword,
@@ -40,7 +40,7 @@ async function main() {
     }
   })
 
-  const manager = await prisma.customer.create({
+  const manager = await prisma.user.create({
     data: {
       email: 'manager@mzansifootwear.com',
       password: hashedPassword,
