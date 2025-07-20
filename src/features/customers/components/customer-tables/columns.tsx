@@ -6,9 +6,9 @@ import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-h
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Image from 'next/image';
-import { CustomerWithCreator } from '@/lib/services';
+import { CustomerWithOrders } from '@/lib/services';
 
-export const columns: ColumnDef<CustomerWithCreator>[] = [
+export const columns: ColumnDef<CustomerWithOrders>[] = [
   {
     id: 'select',
     header: ({ table }) => (
