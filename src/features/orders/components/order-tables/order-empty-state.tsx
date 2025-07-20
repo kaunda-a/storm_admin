@@ -1,20 +1,23 @@
+import { Button } from '@/components/ui/button';
+import { IconPhoto, IconPlus } from '@tabler/icons-react';
+import Link from 'next/link';
 
-'use client'
-
-import { EmptyState } from '@/components/ui/empty-state'
-import { IconPackage } from '@tabler/icons-react'
-import Link from 'next/link'
-
-export function OrdersEmptyState() {
+export function OrderEmptyState() {
   return (
-    <EmptyState
-      icon={IconPackage}
-      title="No orders found"
-      description="There are no orders to display. You can create a new order by clicking the button below."
-      action={{
-        label: "Create New Order",
-        href: "/dashboard/orders/new"
-      }}
-    />
-  )
+    <div className='flex h-[450px] shrink-0 items-center justify-center rounded-md border border-dashed'>
+      <div className='mx-auto flex max-w-[420px] flex-col items-center justify-center text-center'>
+        <IconPhoto className='h-10 w-10 text-muted-foreground' />
+        <h3 className='mt-4 text-lg font-semibold'>No orders found</h3>
+        <p className='mb-4 mt-2 text-sm text-muted-foreground'>
+          You haven't created any orders yet. Add one below.
+        </p>
+        <Button size='sm' className='relative' asChild>
+          <Link href='/dashboard/orders/new'>
+            <IconPlus className='mr-2 h-4 w-4' />
+            Add Order
+          </Link>
+        </Button>
+      </div>
+    </div>
+  );
 }
