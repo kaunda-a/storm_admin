@@ -59,5 +59,6 @@ export type {
   CustomerWithOrders,
   CreateCustomerData,
   UpdateCustomerData
+  CreateAddressData
 } from './customer';
 

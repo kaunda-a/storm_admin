@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { CustomerWithMeta } from '@/lib/services';
+import { CustomerWithOrders } from '@/lib/services';
 import { IconEdit, IconEye, IconTrash, IconDots } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
