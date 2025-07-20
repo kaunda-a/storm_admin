@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface CellActionProps {
-  data: CustomerWithMeta;
+  data: CustomerWithOrders;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
