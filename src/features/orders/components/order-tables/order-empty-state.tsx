@@ -11,13 +11,10 @@ export function OrdersEmptyState() {
       icon={IconPackage}
       title="No orders found"
       description="There are no orders to display. You can create a new order by clicking the button below."
-      action={
-        <Button size='sm' className='relative' asChild>
-          <Link href="/dashboard/orders/new">
-            Create New Order
-          </Link>
-        </Button>
-      }
+      action={{
+        label: "Create New Order",
+        href: "/dashboard/orders/new"
+      }}
     />
   )
 }
