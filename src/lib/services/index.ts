@@ -56,7 +56,7 @@ export type {
 } from './billboard'
 
 export type {
-  CustomerWithOrders,
+  CustomerWithDetails,
   CreateCustomerData,
   UpdateCustomerData,
   CreateAddressData
