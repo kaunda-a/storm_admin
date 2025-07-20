@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/components/ui/table/data-table'
 import { DataTableToolbar } from '@/components/ui/table/data-table-toolbar'
-import { OrdersEmptyState } from './order-empty-state'
+import { OrderEmptyState } from './order-empty-state'
 import { OrderWithDetails } from '@/lib/services'
 import { useDataTable } from '@/hooks/use-data-table'
 import { ColumnDef } from '@tanstack/react-table'
@@ -28,7 +28,7 @@ export function OrderTable({ data, totalItems, columns }: OrderTableProps) {
 
   // Show empty state if no data
   if (data.length === 0 && totalItems === 0) {
-    return <OrdersEmptyState />;
+    return <OrderEmptyState />;
   }
 
   return (
