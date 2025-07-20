@@ -393,7 +393,8 @@ model Billboard {
 enum UserRole {
   SUPER_ADMIN
   ADMIN
-  GUEST
+  MANAGER
+  STAFF
 }
 
 enum AddressType {
