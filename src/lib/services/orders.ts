@@ -3,7 +3,7 @@ import type { Order, OrderItem, User, Address } from '@prisma/client'
 import type { OrderStatus, PaymentStatus, ShippingStatus } from '@prisma/client'
 
 export type OrderWithDetails = Order & {
-  user: User
+  customer: User
   shippingAddress: Address
   billingAddress: Address
   items: (OrderItem & {
@@ -31,7 +31,7 @@ export type OrderFilters = {
   status?: OrderStatus
   paymentStatus?: PaymentStatus
   shippingStatus?: ShippingStatus
-  userId?: string
+  customerId?: string
   dateFrom?: Date
   dateTo?: Date
   search?: string
@@ -55,7 +55,7 @@ export class OrderService {
     if (filters.status) where.status = filters.status
     if (filters.paymentStatus) where.paymentStatus = filters.paymentStatus
     if (filters.shippingStatus) where.shippingStatus = filters.shippingStatus
-    if (filters.userId) where.userId = filters.userId
+    if (filters.customerId) where.customerId = filters.customerId
 
     if (filters.dateFrom || filters.dateTo) {
       where.createdAt = {
@@ -68,7 +68,7 @@ export class OrderService {
       where.OR = [
         { orderNumber: { contains: filters.search, mode: 'insensitive' } },
         { trackingNumber: { contains: filters.search, mode: 'insensitive' } },
-        { user: { email: { contains: filters.search, mode: 'insensitive' } } }
+        { customer: { email: { contains: filters.search, mode: 'insensitive' } } }
       ]
     }
 
@@ -76,7 +76,7 @@ export class OrderService {
       db.order.findMany({
         where,
         include: {
-          user: true,
+          customer: true,
           shippingAddress: true,
           billingAddress: true,
           items: {
@@ -133,7 +133,7 @@ export class OrderService {
     return db.order.findUnique({
       where: { id },
       include: {
-        user: true,
+        customer: true,
         shippingAddress: true,
         billingAddress: true,
         items: {
@@ -175,7 +175,7 @@ export class OrderService {
     return db.order.findUnique({
       where: { orderNumber },
       include: {
-        user: true,
+        customer: true,
         shippingAddress: true,
         billingAddress: true,
         items: {
@@ -248,7 +248,7 @@ export class OrderService {
         ...(data.shippingStatus === 'DELIVERED' && !data.deliveredAt && { deliveredAt: new Date() })
       },
       include: {
-        user: true,
+        customer: true,
         shippingAddress: true,
         billingAddress: true,
         items: {
@@ -305,7 +305,7 @@ export class OrderService {
         take: 5,
         orderBy: { createdAt: 'desc' },
         include: {
-          user: { select: { firstName: true, lastName: true, email: true } },
+          customer: { select: { firstName: true, lastName: true, email: true } },
           items: {
             take: 1,
             include: {
@@ -362,3 +362,4 @@ export class OrderService {
     })
   }
 }
+

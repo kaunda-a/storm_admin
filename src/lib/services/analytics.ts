@@ -282,7 +282,7 @@ export class AnalyticsService {
         status: 'DELIVERED'
       },
       include: {
-        user: {
+        customer: {
           select: {
             firstName: true,
             lastName: true,
@@ -311,7 +311,7 @@ export class AnalyticsService {
   }
 
   static async getInventoryAlerts() {
-    return db.productVariant.findMany({
+    const variants = await db.productVariant.findMany({
       where: {
         stock: {
           lte: db.productVariant.fields.lowStockThreshold
@@ -333,5 +333,13 @@ export class AnalyticsService {
       },
       orderBy: { stock: 'asc' }
     })
+
+    return variants.map(variant => ({
+      ...variant,
+      price: Number(variant.price),
+      comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
+      costPrice: variant.costPrice ? Number(variant.costPrice) : null,
+      weight: variant.weight ? Number(variant.weight) : null
+    }))
   }
 }

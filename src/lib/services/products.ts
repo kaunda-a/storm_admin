@@ -334,13 +334,21 @@ export class ProductService {
   }
 
   static async getProductVariants(productId: string) {
-    return db.productVariant.findMany({
+    const variants = await db.productVariant.findMany({
       where: {
         productId,
         isActive: true
       },
       orderBy: { price: 'asc' }
     })
+
+    return variants.map(variant => ({
+      ...variant,
+      price: Number(variant.price),
+      comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
+      costPrice: variant.costPrice ? Number(variant.costPrice) : null,
+      weight: variant.weight ? Number(variant.weight) : null
+    }))
   }
 
   static async updateStock(variantId: string, quantity: number) {

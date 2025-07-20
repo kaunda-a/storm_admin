@@ -1,9 +1,8 @@
-
 import { db } from '@/lib/prisma';
 import { User, UserRole } from '@prisma/client';
 
 export type UserWithDetails = User & {
-  // Add any relations you want to include by default
+  // Add any relations you want to include here if needed
 };
 
 export type UpdateUserData = {
@@ -36,5 +35,6 @@ export const UserService = {
     });
   },
 
-  // Add other user-related methods as needed (e.g., getAllUsers, createUser, deleteUser)
+  // Optional: Add getAllUsers, createUser, deleteUser if needed
 };
+

@@ -36,7 +36,7 @@ model Customer {
   imageUrl      String?
   image         String?
   password      String?
-  phone         String? 
+  phone         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   addresses     Address[]
