@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function createAdmin() {
   try {
     const email = 'admin@mzansifootwear.com'
-    const password = 'admin123'
+    const password = 'admin123123'
     
     // Check if admin already exists
     const existingAdmin = await prisma.customer.findUnique({

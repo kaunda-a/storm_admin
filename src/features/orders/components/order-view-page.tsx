@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import OrderForm from './order-form';
+import { OrderForm } from './order-form';
 
 type TOrderViewPageProps = {
   orderId: string;
