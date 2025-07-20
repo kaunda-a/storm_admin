@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER');
+CREATE TYPE "CustomerRole" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'MANAGER', 'STAFF', 'CUSTOMER');
 
 -- CreateEnum
 CREATE TYPE "AddressType" AS ENUM ('SHIPPING', 'BILLING', 'BOTH');
@@ -32,7 +32,7 @@ CREATE TYPE "BillboardType" AS ENUM ('PROMOTIONAL', 'ANNOUNCEMENT', 'PRODUCT_LAU
 CREATE TYPE "BillboardPosition" AS ENUM ('HEADER', 'SIDEBAR', 'FOOTER', 'MODAL', 'DASHBOARD_TOP', 'DASHBOARD_BOTTOM', 'PRODUCT_PAGE', 'CHECKOUT');
 
 -- CreateTable
-CREATE TABLE "users" (
+CREATE TABLE "customers" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "emailVerified" TIMESTAMP(3),
@@ -40,17 +40,17 @@ CREATE TABLE "users" (
     "lastName" TEXT,
     "imageUrl" TEXT,
     "password" TEXT,
-    "role" "UserRole" NOT NULL DEFAULT 'CUSTOMER',
+    "role" "CustomerRole" NOT NULL DEFAULT 'CUSTOMER',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "customers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "accounts" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "provider" TEXT NOT NULL,
     "providerAccountId" TEXT NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE "accounts" (
 CREATE TABLE "sessions" (
     "id" TEXT NOT NULL,
     "sessionToken" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "sessions_pkey" PRIMARY KEY ("id")
@@ -85,7 +85,7 @@ CREATE TABLE "verification_tokens" (
 -- CreateTable
 CREATE TABLE "addresses" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "type" "AddressType" NOT NULL DEFAULT 'SHIPPING',
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
@@ -192,7 +192,7 @@ CREATE TABLE "product_images" (
 CREATE TABLE "orders" (
     "id" TEXT NOT NULL,
     "orderNumber" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "paymentStatus" "PaymentStatus" NOT NULL DEFAULT 'PENDING',
     "shippingStatus" "ShippingStatus" NOT NULL DEFAULT 'PENDING',
@@ -252,7 +252,7 @@ CREATE TABLE "payments" (
 -- CreateTable
 CREATE TABLE "reviews" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "customerId" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "rating" INTEGER NOT NULL,
     "title" TEXT,
@@ -269,12 +269,12 @@ CREATE TABLE "reviews" (
 CREATE TABLE "analytics_events" (
     "id" TEXT NOT NULL,
     "eventType" "AnalyticsEventType" NOT NULL,
-    "userId" TEXT,
+    "customerId" TEXT,
     "sessionId" TEXT,
     "productId" TEXT,
     "orderId" TEXT,
     "data" JSONB,
-    "userAgent" TEXT,
+    "customerAgent" TEXT,
     "ipAddress" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -321,7 +321,7 @@ CREATE TABLE "billboards" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+CREATE UNIQUE INDEX "customers_email_key" ON "customers"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "accounts_provider_providerAccountId_key" ON "accounts"("provider", "providerAccountId");
@@ -363,16 +363,16 @@ CREATE UNIQUE INDEX "product_variants_productId_size_color_key" ON "product_vari
 CREATE UNIQUE INDEX "orders_orderNumber_key" ON "orders"("orderNumber");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "reviews_userId_productId_key" ON "reviews"("userId", "productId");
+CREATE UNIQUE INDEX "reviews_customerId_productId_key" ON "reviews"("customerId", "productId");
 
 -- AddForeignKey
-ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "accounts" ADD CONSTRAINT "accounts_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "addresses" ADD CONSTRAINT "addresses_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "addresses" ADD CONSTRAINT "addresses_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -387,7 +387,7 @@ ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_productId_fkey" 
 ALTER TABLE "product_images" ADD CONSTRAINT "product_images_productId_fkey" FOREIGN KEY ("productId") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "orders" ADD CONSTRAINT "orders_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "orders" ADD CONSTRAINT "orders_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "orders" ADD CONSTRAINT "orders_shippingAddressId_fkey" FOREIGN KEY ("shippingAddressId") REFERENCES "addresses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -408,13 +408,13 @@ ALTER TABLE "order_items" ADD CONSTRAINT "order_items_productVariantId_fkey" FOR
 ALTER TABLE "payments" ADD CONSTRAINT "payments_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "orders"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "reviews" ADD CONSTRAINT "reviews_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_customerId_fkey" FOREIGN KEY ("customerId") REFERENCES "customers"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_productId_fkey" FOREIGN KEY ("productId") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "marquee_messages" ADD CONSTRAINT "marquee_messages_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "marquee_messages" ADD CONSTRAINT "marquee_messages_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "customers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "billboards" ADD CONSTRAINT "billboards_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "billboards" ADD CONSTRAINT "billboards_createdBy_fkey" FOREIGN KEY ("createdBy") REFERENCES "customers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

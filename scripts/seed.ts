@@ -21,15 +21,15 @@ async function main() {
   await prisma.analyticsEvent.deleteMany()
   await prisma.session.deleteMany()
   await prisma.account.deleteMany()
-  await prisma.user.deleteMany()
+  await prisma.customer.deleteMany()
   await prisma.brand.deleteMany()
   await prisma.category.deleteMany()
 
-  // Create admin users
-  console.log('👤 Creating admin users...')
+  // Create admin customers
+  console.log('👤 Creating admin customers...')
   const hashedPassword = await bcrypt.hash('admin123', 12)
   
-  const superAdmin = await prisma.user.create({
+  const superAdmin = await prisma.customer.create({
     data: {
       email: 'admin@mzansifootwear.com',
       password: hashedPassword,
@@ -40,7 +40,7 @@ async function main() {
     }
   })
 
-  const manager = await prisma.user.create({
+  const manager = await prisma.customer.create({
     data: {
       email: 'manager@mzansifootwear.com',
       password: hashedPassword,
@@ -54,7 +54,7 @@ async function main() {
   // Create sample customers
   console.log('👥 Creating sample customers...')
   const customers = await Promise.all([
-    prisma.user.create({
+    prisma.customer.create({
       data: {
         email: 'john.doe@example.com',
         password: await bcrypt.hash('customer123', 12),
@@ -64,7 +64,7 @@ async function main() {
         emailVerified: new Date()
       }
     }),
-    prisma.user.create({
+    prisma.customer.create({
       data: {
         email: 'jane.smith@example.com',
         password: await bcrypt.hash('customer123', 12),
@@ -276,7 +276,7 @@ async function main() {
 
   console.log('✅ Seed completed successfully!')
   console.log(`Created:`)
-  console.log(`- ${2} admin users`)
+  console.log(`- ${2} admin customers`)
   console.log(`- ${customers.length} customers`)
   console.log(`- ${categories.length} categories`)
   console.log(`- ${brands.length} brands`)

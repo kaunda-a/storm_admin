@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/components/ui/table/data-table'
 import { DataTableToolbar } from '@/components/ui/table/data-table-toolbar'
-import { OrdersEmptyState } from '@/components/ui/empty-state'
+import { OrdersEmptyState } from './order-empty-state'
 import { OrderWithDetails } from '@/lib/services'
 import { useDataTable } from '@/hooks/use-data-table'
 import { ColumnDef } from '@tanstack/react-table'

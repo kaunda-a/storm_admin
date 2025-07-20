@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -14,8 +9,8 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// User Management
-model User {
+// Customer Management
+model Customer {
   id            String    @id @default(cuid())
   email         String    @unique
   emailVerified DateTime?
@@ -23,7 +18,7 @@ model User {
   lastName      String?
   imageUrl      String?
   password      String?
-  role          UserRole  @default(CUSTOMER)
+  role          CustomerRole  @default(CUSTOMER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -38,13 +33,13 @@ model User {
   marqueeMessages MarqueeMessage[]
   billboards      Billboard[]
 
-  @@map("users")
+  @@map("customers")
 }
 
 // NextAuth.js required models
 model Account {
   id                String  @id @default(cuid())
-  userId            String
+  customerId            String
   type              String
   provider          String
   providerAccountId String
@@ -56,7 +51,7 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -65,9 +60,9 @@ model Account {
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       String
+  customerId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer         Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -83,7 +78,7 @@ model VerificationToken {
 
 model Address {
   id           String      @id @default(cuid())
-  userId       String
+  customerId       String
   type         AddressType @default(SHIPPING)
   firstName    String
   lastName     String
@@ -100,7 +95,7 @@ model Address {
   updatedAt    DateTime    @updatedAt
 
   // Relations
-  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer           Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   shippingOrders Order[] @relation("ShippingAddress")
   billingOrders  Order[] @relation("BillingAddress")
 
@@ -213,7 +208,7 @@ model ProductImage {
 model Order {
   id              String      @id @default(cuid())
   orderNumber     String      @unique
-  userId          String
+  customerId          String
   status          OrderStatus @default(PENDING)
   paymentStatus   PaymentStatus @default(PENDING)
   shippingStatus  ShippingStatus @default(PENDING)
@@ -242,7 +237,7 @@ model Order {
   updatedAt       DateTime    @updatedAt
 
   // Relations
-  user            User        @relation(fields: [userId], references: [id])
+  customer            Customer        @relation(fields: [customerId], references: [id])
   shippingAddress Address     @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
   billingAddress  Address     @relation("BillingAddress", fields: [billingAddressId], references: [id])
   items           OrderItem[]
@@ -298,7 +293,7 @@ model Payment {
 // Reviews and Ratings
 model Review {
   id        String   @id @default(cuid())
-  userId    String
+  customerId    String
   productId String
   rating    Int      // 1-5 stars
   title     String?
@@ -309,10 +304,10 @@ model Review {
   updatedAt DateTime @updatedAt
 
   // Relations
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, productId]) // One review per user per product
+  @@unique([customerId, productId]) // One review per customer per product
   @@map("reviews")
 }
 
@@ -320,12 +315,12 @@ model Review {
 model AnalyticsEvent {
   id         String            @id @default(cuid())
   eventType  AnalyticsEventType
-  userId     String?
+  customerId     String?
   sessionId  String?
   productId  String?
   orderId    String?
   data       Json?
-  userAgent  String?
+  customerAgent  String?
   ipAddress  String?
   createdAt  DateTime          @default(now())
 
@@ -347,7 +342,7 @@ model MarqueeMessage {
   updatedAt   DateTime      @updatedAt
 
   // Relations
-  creator     User          @relation(fields: [createdBy], references: [id])
+  creator     Customer          @relation(fields: [createdBy], references: [id])
 
   @@map("marquee_messages")
 }
@@ -371,13 +366,13 @@ model Billboard {
   updatedAt   DateTime      @updatedAt
 
   // Relations
-  creator     User          @relation(fields: [createdBy], references: [id])
+  creator     Customer          @relation(fields: [createdBy], references: [id])
 
   @@map("billboards")
 }
 
 // Enums
-enum UserRole {
+enum CustomerRole {
   SUPER_ADMIN
   ADMIN
   MANAGER

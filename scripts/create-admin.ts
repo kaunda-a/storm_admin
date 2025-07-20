@@ -9,36 +9,36 @@ async function createAdmin() {
     const password = 'admin123'
     
     // Check if admin already exists
-    const existingAdmin = await prisma.user.findUnique({
+    const existingAdmin = await prisma.customer.findUnique({
       where: { email }
     })
     
     if (existingAdmin) {
-      console.log('Admin user already exists')
+      console.log('Admin customer already exists')
       return
     }
     
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
     
-    // Create admin user
-    const admin = await prisma.user.create({
+    // Create admin customer
+    const admin = await prisma.customer.create({
       data: {
         email,
         password: hashedPassword,
         firstName: 'Admin',
-        lastName: 'User',
+        lastName: 'Customer',
         role: 'SUPER_ADMIN'
       }
     })
     
-    console.log('Admin user created successfully:')
+    console.log('Admin customer created successfully:')
     console.log('Email:', email)
     console.log('Password:', password)
     console.log('ID:', admin.id)
     
   } catch (error) {
-    console.error('Error creating admin user:', error)
+    console.error('Error creating admin customer:', error)
   } finally {
     await prisma.$disconnect()
   }

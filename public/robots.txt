@@ -1,4 +1,4 @@
-User-agent: *
+Customer-agent: *
 Disallow: /
 
 # Block all search engines from indexing admin dashboard
