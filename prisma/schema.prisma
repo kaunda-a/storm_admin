@@ -9,8 +9,8 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Customer Management
-model Customer {
+// User Management (for internal staff)
+model User {
   id            String    @id @default(cuid())
   email         String    @unique
   emailVerified DateTime?
@@ -18,7 +18,7 @@ model Customer {
   lastName      String?
   imageUrl      String?
   password      String?
-  role          CustomerRole  @default(CUSTOMER)
+  role          UserRole  @default(SUPER_ADMIN)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -27,11 +27,29 @@ model Customer {
   sessions Session[]
 
   // Relations
+  marqueeMessages MarqueeMessage[]
+  billboards      Billboard[]
+
+  @@map("users")
+}
+
+// Customer Management (for shoppers)
+model Customer {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  firstName     String?
+  lastName      String?
+  imageUrl      String?
+  image         String?
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
   orders          Order[]
   reviews         Review[]
   addresses       Address[]
-  marqueeMessages MarqueeMessage[]
-  billboards      Billboard[]
 
   @@map("customers")
 }
@@ -39,7 +57,7 @@ model Customer {
 // NextAuth.js required models
 model Account {
   id                String  @id @default(cuid())
-  customerId            String
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -51,7 +69,7 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -60,9 +78,9 @@ model Account {
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  customerId       String
+  userId       String
   expires      DateTime
-  customer         Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -342,7 +360,7 @@ model MarqueeMessage {
   updatedAt   DateTime      @updatedAt
 
   // Relations
-  creator     Customer          @relation(fields: [createdBy], references: [id])
+  creator     User          @relation(fields: [createdBy], references: [id])
 
   @@map("marquee_messages")
 }
@@ -366,18 +384,16 @@ model Billboard {
   updatedAt   DateTime      @updatedAt
 
   // Relations
-  creator     Customer          @relation(fields: [createdBy], references: [id])
+  creator     User          @relation(fields: [createdBy], references: [id])
 
   @@map("billboards")
 }
 
 // Enums
-enum CustomerRole {
+enum UserRole {
   SUPER_ADMIN
   ADMIN
-  MANAGER
-  STAFF
-  CUSTOMER
+  GUEST
 }
 
 enum AddressType {

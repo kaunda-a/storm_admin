@@ -4,6 +4,7 @@ export * from './orders'
 export * from './analytics'
 export * from './marquee'
 export * from './billboard'
+export * from './users'
 
 // Re-export commonly used types
 export type {
