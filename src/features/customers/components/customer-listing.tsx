@@ -17,7 +17,7 @@ export default async function CustomerListingPage({}: CustomerListingPageProps) 
   };
 
   // Get customers from database
-  const { customers, pagination } = await CustomerService.getAllCustomers({
+  const { customers, pagination } = await CustomerService.getCustomers({
     page: page || 1,
     limit: pageLimit || 10,
     ...filters,
