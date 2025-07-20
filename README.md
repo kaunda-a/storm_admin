@@ -1,2 +1,6 @@
-# storm_admin
-# storm_admin
+
+
+# npx prisma generate
+# npx tsx scripts/seed.ts
+        or
+# ./scripts/reset-and-seed.sh

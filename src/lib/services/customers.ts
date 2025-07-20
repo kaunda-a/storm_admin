@@ -1,31 +1,29 @@
 import { db } from '@/lib/prisma'
-import type { User, Address, UserRole, AddressType } from '@prisma/client'
+import type { Customer, Address, Order, Review, AddressType } from '@prisma/client'
 
-export type UserWithDetails = User & {
+export type CustomerWithDetails = Customer & {
   addresses: Address[]
-  _count: {
-    orders: number
-    reviews: number
-  }
+  orders: Order[]
+  reviews: Review[]
 }
 
-export type CreateUserData = {
+export type CreateCustomerData = {
   email: string
-  firstName?: string
-  lastName?: string
+  firstName: string
+  lastName: string
   imageUrl?: string
-  role?: UserRole
+  phone?: string
 }
 
-export type UpdateUserData = {
+export type UpdateCustomerData = {
   firstName?: string
   lastName?: string
   imageUrl?: string
-  role?: UserRole
+  phone?: string
 }
 
 export type CreateAddressData = {
-  userId: string
+  customerId: string
   type: AddressType
   firstName: string
   lastName: string
@@ -40,96 +38,67 @@ export type CreateAddressData = {
   isDefault?: boolean
 }
 
-export class UserService {
-  static async createUser(data: CreateUserData): Promise<User> {
-    return db.user.create({
-      data: {
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        imageUrl: data.imageUrl,
-        role: data.role || 'CUSTOMER'
+export class CustomerService {
+  static async createCustomer(data: CreateCustomerData): Promise<Customer> {
+    return db.customer.create({ data })
+  }
+
+  static async getCustomerById(id: string): Promise<CustomerWithDetails | null> {
+    return db.customer.findUnique({
+      where: { id },
+      include: {
+        addresses: { orderBy: { isDefault: 'desc' } },
+        orders: true,
+        reviews: true
       }
     })
   }
 
-  
-
-  static async getUserById(id: string): Promise<UserWithDetails | null> {
-    return db.user.findUnique({
-      where: { id },
-      include: {
-        addresses: {
-          orderBy: { isDefault: 'desc' }
-        },
-        _count: {
-          select: {
-            orders: true,
-            reviews: true
-          }
-        }
-      }
-    }) as Promise<UserWithDetails | null>
-  }
-
-  static async updateUser(id: string, data: UpdateUserData): Promise<User> {
-    return db.user.update({
+  static async updateCustomer(id: string, data: UpdateCustomerData): Promise<Customer> {
+    return db.customer.update({
       where: { id },
       data
     })
   }
 
-  static async deleteUser(id: string): Promise<void> {
-    await db.user.delete({
-      where: { id }
-    })
+  static async deleteCustomer(id: string): Promise<void> {
+    await db.customer.delete({ where: { id } })
   }
 
-  static async getUsers({
-    role,
+  static async getCustomers({
     search,
     page = 1,
     limit = 10
   }: {
-    role?: UserRole
     search?: string
     page?: number
     limit?: number
   } = {}) {
     const skip = (page - 1) * limit
 
-    const where: any = {}
-
-    if (role) where.role = role
+    const where: import('@prisma/client').Prisma.CustomerWhereInput = {}
 
     if (search) {
       where.OR = [
         { email: { contains: search, mode: 'insensitive' } },
         { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } }
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } }
       ]
     }
 
-    const [users, total] = await Promise.all([
-      db.user.findMany({
+    const [customers, total] = await Promise.all([
+      db.customer.findMany({
         where,
-        include: {
-          _count: {
-            select: {
-              orders: true,
-              reviews: true
-            }
-          }
-        },
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit
       }),
-      db.user.count({ where })
+      db.customer.count({ where })
     ])
 
     return {
-      users,
+      customers,
       pagination: {
         page,
         limit,
@@ -140,11 +109,10 @@ export class UserService {
   }
 
   static async createAddress(data: CreateAddressData): Promise<Address> {
-    // If this is set as default, unset other default addresses
     if (data.isDefault) {
       await db.address.updateMany({
         where: {
-          userId: data.userId,
+          customerId: data.customerId,
           type: data.type
         },
         data: { isDefault: false }
@@ -153,7 +121,7 @@ export class UserService {
 
     return db.address.create({
       data: {
-        userId: data.userId,
+        customerId: data.customerId,
         type: data.type,
         firstName: data.firstName,
         lastName: data.lastName,
@@ -174,11 +142,10 @@ export class UserService {
     const address = await db.address.findUnique({ where: { id } })
     if (!address) throw new Error('Address not found')
 
-    // If this is set as default, unset other default addresses
     if (data.isDefault) {
       await db.address.updateMany({
         where: {
-          userId: address.userId,
+          customerId: address.customerId,
           type: address.type,
           id: { not: id }
         },
@@ -193,48 +160,33 @@ export class UserService {
   }
 
   static async deleteAddress(id: string): Promise<void> {
-    await db.address.delete({
-      where: { id }
-    })
+    await db.address.delete({ where: { id } })
   }
 
-  static async getUserAddresses(userId: string, type?: AddressType): Promise<Address[]> {
+  static async getCustomerAddresses(customerId: string, type?: AddressType): Promise<Address[]> {
     return db.address.findMany({
       where: {
-        userId,
+        customerId,
         ...(type && { type })
       },
       orderBy: { isDefault: 'desc' }
     })
   }
 
-  static async getDefaultAddress(userId: string, type: AddressType): Promise<Address | null> {
+  static async getDefaultAddress(customerId: string, type: AddressType): Promise<Address | null> {
     return db.address.findFirst({
       where: {
-        userId,
+        customerId,
         type,
         isDefault: true
       }
     })
   }
 
-  static async getUserStats() {
-    const [
-      totalUsers,
-      totalCustomers,
-      totalAdmins,
-      newUsersThisMonth
-    ] = await Promise.all([
-      db.user.count(),
-      db.user.count({ where: { role: 'CUSTOMER' } }),
-      db.user.count({ 
-        where: { 
-          role: { 
-            in: ['ADMIN', 'SUPER_ADMIN', 'MANAGER', 'STAFF'] 
-          } 
-        } 
-      }),
-      db.user.count({
+  static async getCustomerStats() {
+    const [totalCustomers, newCustomersThisMonth] = await Promise.all([
+      db.customer.count(),
+      db.customer.count({
         where: {
           createdAt: {
             gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
@@ -244,12 +196,9 @@ export class UserService {
     ])
 
     return {
-      totalUsers,
       totalCustomers,
-      totalAdmins,
-      newUsersThisMonth
+      newCustomersThisMonth
     }
   }
-
-  
 }
+

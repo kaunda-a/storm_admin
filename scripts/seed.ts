@@ -274,7 +274,7 @@ async function main() {
 
   console.log('✅ Seed completed successfully!')
   console.log(`Created:`)
-  console.log(`- ${2} admin customers`)
+  console.log(`- ${2} admin users`)
   console.log(`- ${customers.length} customers`)
   console.log(`- ${categories.length} categories`)
   console.log(`- ${brands.length} brands`)
