@@ -9,14 +9,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { CustomerWithOrders } from '@/lib/services';
+import { CustomerWithDetails } from '@/lib/services';
 import { IconEdit, IconEye, IconTrash, IconDots } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface CellActionProps {
-  data: CustomerWithOrders;
+  data: CustomerWithDetails;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
