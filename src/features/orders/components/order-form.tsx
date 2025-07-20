@@ -148,7 +148,7 @@ export function OrderForm({ initialData, pageTitle }: OrderFormProps) {
               <FormItem>
                 <FormLabel>Tracking Number</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter tracking number" {...field} />
+                  <Input placeholder="Enter tracking number" {...field} value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -161,7 +161,7 @@ export function OrderForm({ initialData, pageTitle }: OrderFormProps) {
               <FormItem>
                 <FormLabel>Admin Notes</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Enter admin notes" {...field} />
+                  <Textarea placeholder="Enter admin notes" {...field} value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
