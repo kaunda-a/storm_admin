@@ -9,7 +9,7 @@ import { useCallbackRef } from '@/hooks/use-callback-ref';
 type UseControllableStateParams<T> = {
   prop?: T | undefined;
   defaultProp?: T | undefined;
-  onChange?: (state: T) => void;
+  onChange?: (state: T | undefined) => void;
 };
 
 type SetStateFn<T> = (prevState?: T) => T;
