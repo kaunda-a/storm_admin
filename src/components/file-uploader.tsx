@@ -24,9 +24,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   onChange,
 }) => {
   const [imageUrl, setImageUrl] = useControllableState<string | undefined>({
-    value,
+    prop: value,
     onChange,
-    defaultProp: '',
+    
   });
   const [uploading, setUploading] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
