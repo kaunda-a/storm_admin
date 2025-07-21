@@ -73,7 +73,7 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
       />
       <FileUploader
         disabled={loading}
-        onChange={(url) => form.setValue('imageUrl', url)}
+        onChange={(url) => form.setValue('imageUrl', url || '')}
       />
       <Button type="submit" disabled={loading}>
         {loading ? 'Saving...' : 'Save'}
