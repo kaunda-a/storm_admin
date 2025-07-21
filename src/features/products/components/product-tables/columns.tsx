@@ -1,10 +1,12 @@
 'use client';
+
+import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
-import { ProductWithDetails } from '@/lib/services'
+import { ProductWithDetails } from '@/lib/services';
 
 // Type for product images and variants
-type ProductImage = ProductWithDetails['images'][0]
+type ProductImage = ProductWithDetails['images'][0];
 type ProductVariant = ProductWithDetails['variants'][0];
 import { Column, ColumnDef } from '@tanstack/react-table';
 import { CheckCircle2, Text, XCircle, Package } from 'lucide-react';
@@ -142,6 +144,63 @@ export const columns: ColumnDef<ProductWithDetails>[] = [
   },
   {
     id: 'actions',
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => {
+      const product = row.original;
+      const [uploading, setUploading] = useState(false);
+
+      const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!res.ok) {
+            throw new Error('Upload failed');
+          }
+
+          const data = await res.json();
+          const newImageUrl = data.url; // Adjust if your API returns URL differently
+
+          // TODO: Call your product update API here to save newImageUrl for the product
+          // Example:
+          // await fetch(`/api/products/${product.id}`, {
+          //   method: 'PUT',
+          //   headers: { 'Content-Type': 'application/json' },
+          //   body: JSON.stringify({ imageUrl: newImageUrl }),
+          // });
+
+          alert('Image uploaded successfully! Please refresh to see changes.');
+        } catch (error: any) {
+          alert(`Upload error: ${error.message}`);
+        } finally {
+          setUploading(false);
+        }
+      };
+
+      return (
+        <div className='flex items-center space-x-2'>
+          <CellAction data={product} />
+          <label className='cursor-pointer px-2 py-1 bg-blue-500 text-white rounded text-sm'>
+            {uploading ? 'Uploading...' : 'Upload Image'}
+            <input
+              type='file'
+              accept='image/*'
+              onChange={handleFileChange}
+              className='hidden'
+              disabled={uploading}
+            />
+          </label>
+        </div>
+      );
+    }
   }
 ];
+

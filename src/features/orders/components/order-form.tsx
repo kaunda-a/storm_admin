@@ -12,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { Order, OrderStatus, PaymentStatus, ShippingStatus } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { IconArrowLeft } from '@tabler/icons-react'
 
 const formSchema = z.object({
   status: z.nativeEnum(OrderStatus),
@@ -65,8 +67,16 @@ export function OrderForm({ initialData, pageTitle }: OrderFormProps) {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">{pageTitle}</h1>
+    <div className='flex-1 space-y-4 pb-20'>
+      <div className='flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4'>
+        <Button variant='ghost' size='sm' asChild className='w-fit'>
+          <Link href='/dashboard/orders'>
+            <IconArrowLeft className='h-4 w-4 mr-2' />
+            Back to Orders
+          </Link>
+        </Button>
+        <h1 className='text-xl sm:text-2xl font-bold'>{pageTitle}</h1>
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField

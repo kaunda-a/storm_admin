@@ -95,10 +95,10 @@ export class AnalyticsService {
             createdAt: { gte: startDate, lte: endDate }
           }
         }),
-        db.user.count({
+        db.customer.count({
           where: {
             createdAt: { gte: startDate, lte: endDate },
-            role: 'CUSTOMER'
+            phone: 'CUSTOMER'
           }
         }),
         db.product.count({
@@ -254,24 +254,20 @@ export class AnalyticsService {
 
   static async trackEvent(data: {
     eventType: AnalyticsEventType
-    userId?: string
+    customerId?: string
     sessionId?: string
     productId?: string
     orderId?: string
     data?: any
-    userAgent?: string
-    ipAddress?: string
   }) {
     return db.analyticsEvent.create({
       data: {
         eventType: data.eventType,
-        userId: data.userId,
+        customerId: data.customerId,
         sessionId: data.sessionId,
         productId: data.productId,
         orderId: data.orderId,
         data: data.data,
-        userAgent: data.userAgent,
-        ipAddress: data.ipAddress
       }
     })
   }

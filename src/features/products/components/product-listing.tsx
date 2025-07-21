@@ -29,7 +29,7 @@ export default async function ProductListingPage({}: ProductListingPage) {
 
   return (
     <ProductTable
-      data={products}
+      data={products as ProductWithDetails[]}
       totalItems={pagination.total}
       columns={columns}
     />

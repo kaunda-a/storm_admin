@@ -67,10 +67,10 @@ export const columns: ColumnDef<OrderWithDetails>[] = [
         <div className='space-y-1'>
           <div className='font-medium flex items-center'>
             <IconUser className='w-3 h-3 mr-1' />
-            {order.user.firstName} {order.user.lastName}
+            {order.customer.firstName} {order.customer.lastName}
           </div>
           <div className='text-sm text-muted-foreground'>
-            {order.user.email}
+            {order.customer.email}
           </div>
         </div>
       )

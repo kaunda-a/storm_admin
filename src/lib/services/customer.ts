@@ -90,6 +90,11 @@ export class CustomerService {
     const [customers, total] = await Promise.all([
       db.customer.findMany({
         where,
+        include: {
+          addresses: { orderBy: { isDefault: 'desc' } },
+          orders: true,
+          reviews: true,
+        },
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,

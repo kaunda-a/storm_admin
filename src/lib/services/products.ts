@@ -1,10 +1,16 @@
 import { db } from '@/lib/prisma'
-import type { Product, ProductVariant, Category, Brand, ProductStatus } from '@prisma/client'
+import type { Product, Category, Brand, ProductVariant, ProductImage, Prisma, ProductStatus } from '@prisma/client'
+import { Decimal } from '@prisma/client/runtime/library'
 
 export type ProductWithDetails = Product & {
   category: Category
   brand: Brand
-  variants: ProductVariant[]
+  variants: Array<Omit<ProductVariant, 'price' | 'comparePrice' | 'costPrice' | 'weight'> & {
+    price: Decimal;
+    comparePrice: Decimal | null;
+    costPrice: Decimal | null;
+    weight: Decimal | null;
+  }>
   images: { id: string; url: string; altText: string | null; isPrimary: boolean }[]
   _count: {
     reviews: number
@@ -107,7 +113,16 @@ export class ProductService {
     ])
 
     return {
-      products: products as ProductWithDetails[],
+      products: products.map(product => ({
+        ...product,
+        variants: product.variants.map(variant => ({
+          ...variant,
+          price: variant.price,
+          comparePrice: variant.comparePrice,
+          costPrice: variant.costPrice,
+          weight: variant.weight
+        }))
+      })),
       pagination: {
         page,
         limit,
@@ -138,7 +153,7 @@ export class ProductService {
   }
 
   static async getProductById(id: string): Promise<ProductWithDetails | null> {
-    return db.product.findUnique({
+    const product = await db.product.findUnique({
       where: { id },
       include: {
         category: true,
@@ -153,7 +168,20 @@ export class ProductService {
           select: { reviews: true }
         }
       }
-    }) as Promise<ProductWithDetails | null>
+    })
+
+    if (!product) return null
+
+    return {
+      ...product,
+      variants: product.variants.map(variant => ({
+        ...variant,
+        price: variant.price,
+        comparePrice: variant.comparePrice,
+        costPrice: variant.costPrice,
+        weight: variant.weight
+      }))
+    }
   }
 
   static async getFeaturedProducts(limit = 8): Promise<ProductWithDetails[]> {
@@ -181,7 +209,7 @@ export class ProductService {
       },
       take: limit,
       orderBy: { createdAt: 'desc' }
-    }) as Promise<ProductWithDetails[]>
+    })
   }
 
   static async getCategories() {
@@ -213,9 +241,13 @@ export class ProductService {
     imageUrl?: string
     isActive: boolean
   }) {
+    // Generate slug from name
+    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
     return db.category.create({
       data: {
         name: data.name,
+        slug,
         description: data.description,
         imageUrl: data.imageUrl,
         isActive: data.isActive
@@ -287,12 +319,16 @@ export class ProductService {
     websiteUrl?: string
     isActive: boolean
   }) {
+    // Generate slug from name
+    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
     return db.brand.create({
       data: {
         name: data.name,
+        slug,
         description: data.description,
         logoUrl: data.logoUrl,
-        websiteUrl: data.websiteUrl,
+        website: data.websiteUrl,
         isActive: data.isActive
       },
       include: {
@@ -408,8 +444,7 @@ export class ProductService {
             stock: data.quantity,
             lowStockThreshold: data.lowStockThreshold || 5,
             weight: data.weight,
-            isActive: true,
-            isDefault: true
+            isActive: true
           }
         },
         // Create images if provided

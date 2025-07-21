@@ -31,19 +31,19 @@ export const columns: ColumnDef<BillboardWithCreator>[] = [
   {
     accessorKey: 'imageUrl',
     header: 'Image',
-    cell: ({ row }) => {
+ cell: ({ row }) => {
       const imageUrl = row.getValue('imageUrl') as string;
       return imageUrl ? (
-        <div className='relative w-12 h-8 rounded overflow-hidden'>
+        <div className="relative w-12 h-8 rounded overflow-hidden">
           <Image
             src={imageUrl}
-            alt='Billboard'
+            alt={`Billboard`}
             fill
-            className='object-cover'
+            className="object-cover"
           />
         </div>
       ) : (
-        <div className='w-12 h-8 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground'>
+        <div className="w-12 h-8 bg-muted rounded flex items-center justify-center text-xs text-muted-foreground">
           No Image
         </div>
       );

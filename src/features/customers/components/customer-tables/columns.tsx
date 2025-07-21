@@ -3,10 +3,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DataTableColumnHeader } from '@/components/ui/table/data-table-column-header';
+import { CustomerWithDetails } from '@/lib/services';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Image from 'next/image';
-import { CustomerWithDetails } from '@/lib/services';
+import { Customer } from '@prisma/client';
 
 export const columns: ColumnDef<CustomerWithDetails>[] = [
   {

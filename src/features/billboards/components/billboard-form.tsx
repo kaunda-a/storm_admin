@@ -37,6 +37,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
+import { uploadImage } from '@/lib/upload';
 import * as z from 'zod';
 
 const MAX_FILE_SIZE = 10000000; // 10MB
@@ -140,11 +141,15 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
       // Handle image upload first if there are any
       let finalImageUrl = data.imageUrl;
       if (data.image && data.image.length > 0) {
-        // For now, we'll simulate image upload
-        // In production, you would upload to Cloudinary or your preferred service
-        toast.info('Image upload functionality will be implemented with Cloudinary integration');
-        // Simulate uploaded URL
-        finalImageUrl = `https://via.placeholder.com/800x400?text=${encodeURIComponent(data.title)}`;
+        try {
+          const uploadedImage = await uploadImage(data.image[0]);
+          finalImageUrl = uploadedImage.url;
+          toast.success('Image uploaded successfully');
+        } catch (uploadError: any) {
+          toast.error(`Image upload failed: ${uploadError.message}`);
+          setLoading(false);
+          return;
+        }
       }
 
       const formattedData = {

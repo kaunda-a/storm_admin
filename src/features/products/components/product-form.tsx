@@ -190,16 +190,16 @@ export default function ProductForm({
   }
 
   return (
-    <div className='mx-auto w-full max-w-4xl pb-20'>
+    <div className='mx-auto w-full max-w-4xl pb-32 mb-16 min-h-screen'>
       <Card>
         <CardHeader>
           <CardTitle className='text-left text-2xl font-bold'>
             {pageTitle}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className='max-h-none overflow-visible'>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 overflow-visible'>
             <FormField
               control={form.control}
               name='image'
@@ -529,7 +529,7 @@ export default function ProductForm({
               />
             </div>
 
-              <div className='flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-6'>
+              <div className='flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-8 pb-8'>
                 <Button
                   type='submit'
                   disabled={loading}

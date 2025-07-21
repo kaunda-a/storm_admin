@@ -1,9 +1,17 @@
 import { db } from '@/lib/prisma'
-import type { Order, OrderItem, User, Address } from '@prisma/client'
-import type { OrderStatus, PaymentStatus, ShippingStatus } from '@prisma/client'
+import type { Order, OrderItem, Customer, Address, OrderStatus, PaymentStatus, ShippingStatus } from '@prisma/client'
+import { Decimal } from '@prisma/client/runtime/library'
+
+export type Payment = {
+  id: string
+  amount: Decimal
+  status: PaymentStatus
+  method: string
+  processedAt: Date | null
+}
 
 export type OrderWithDetails = Order & {
-  customer: User
+  customer: Customer
   shippingAddress: Address
   billingAddress: Address
   items: (OrderItem & {
@@ -18,13 +26,7 @@ export type OrderWithDetails = Order & {
       sku: string
     }
   })[]
-  payments: {
-    id: string
-    amount: number
-    status: PaymentStatus
-    method: string
-    processedAt: Date | null
-  }[]
+  payments: Payment[]
 }
 
 export type OrderFilters = {
