@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import FileUploader from '@/components/file-uploader';
+import { FileUploader } from '@/components/file-uploader'; // ✅ fixed import
 
 const formSchema = z.object({
   label: z.string().min(2),
@@ -39,8 +39,7 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
       setLoading(true);
       let imageUrl = values.imageUrl;
 
-      // if it's a File, upload it
-      if (typeof imageUrl !== 'string' || imageUrl.startsWith('blob:')) {
+      if (imageUrl.startsWith('blob:')) {
         const file = form.getValues('imageUrl') as unknown as File;
         const uploadResult = await uploadImage(file);
         imageUrl = uploadResult.url;
@@ -83,7 +82,7 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
   );
 }
 
-// ✅ This function is now safe to use on the client
+// ✅ client-safe upload helper
 async function uploadImage(file: File): Promise<{ url: string }> {
   const formData = new FormData();
   formData.append('file', file);
