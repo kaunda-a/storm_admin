@@ -15,7 +15,7 @@ import { cn, formatBytes } from '@/lib/utils';
 interface FileUploaderProps {
   disabled?: boolean;
   value?: string;
-  onChange?: (url: string) => void;
+  onChange?: (url: string | undefined) => void;
 }
 
 export const FileUploader: React.FC<FileUploaderProps> = ({
