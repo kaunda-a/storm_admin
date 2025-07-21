@@ -210,7 +210,7 @@ export default function ProductForm({
                     <FormControl>
                       <FileUploader
                         value={field.value}
-                        onValueChange={field.onChange}
+                        onChange={field.onChange}
                         maxFiles={4}
                         maxSize={10 * 1024 * 1024} // 10MB
                         accept={{
