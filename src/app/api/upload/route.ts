@@ -12,10 +12,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    const imageUrl = await uploadImageToCloudinary(buffer);
+    const { url: imageUrl } = await uploadImageToCloudinary(file);
 
     return NextResponse.json({ url: imageUrl }, { status: 200 });
   } catch (error) {

@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { NextRequest } from 'next/server';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -7,14 +6,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-export async function POST(req: NextRequest) {
-  const formData = await req.formData();
-  const file = formData.get('file') as File;
-
-  if (!file) {
-    return Response.json({ error: 'No file uploaded' }, { status: 400 });
-  }
-
+export async function uploadImageToCloudinary(file: File) {
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
 
@@ -27,6 +19,6 @@ export async function POST(req: NextRequest) {
       .end(buffer);
   });
 
-  return Response.json(upload);
+  return upload;
 }
 
