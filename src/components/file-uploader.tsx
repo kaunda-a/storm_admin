@@ -23,7 +23,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   value,
   onChange,
 }) => {
-  const [imageUrl, setImageUrl] = useControllableState({
+  const [imageUrl, setImageUrl] = useControllableState<string>({
     value,
     onChange,
     defaultProp: '',
