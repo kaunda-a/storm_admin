@@ -211,14 +211,7 @@ export default function ProductForm({
                       <FileUploader
                         value={field.value}
                         onChange={field.onChange}
-                        maxFiles={4}
-                        maxSize={10 * 1024 * 1024} // 10MB
-                        accept={{
-                          'image/jpeg': [],
-                          'image/jpg': [],
-                          'image/png': [],
-                          'image/webp': []
-                        }}
+                        
                         // disabled={loading}
                         // progresses={progresses}
                         // pass the onUpload function here for direct upload
