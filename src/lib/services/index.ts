@@ -1,5 +1,6 @@
 // Export all services
 export * from './products'
+export * from './product-variants'
 export * from './orders'
 export * from './analytics'
 export * from './marquee'
@@ -13,6 +14,15 @@ export type {
   ProductFilters,
   ProductSort
 } from './products'
+
+export type {
+  CreateVariantData,
+  UpdateVariantData,
+  BulkVariantCreate,
+  BulkVariantUpdate,
+  SizeColorMatrix,
+  VariantTemplate
+} from './product-variants'
 
 export type {
   ProductStatus,

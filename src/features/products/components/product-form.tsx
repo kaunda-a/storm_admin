@@ -1,8 +1,10 @@
 'use client';
 
 import { BulkImageUploader, type ProductImage } from '@/components/bulk-image-uploader';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { VariantManager } from './variants/variant-manager';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -178,7 +180,7 @@ export default function ProductForm({
   }
 
   return (
-    <div className='mx-auto w-full max-w-4xl pb-32 mb-16 min-h-screen'>
+    <div className='mx-auto w-full max-w-6xl pb-32 mb-16 min-h-screen'>
       <Card>
         <CardHeader>
           <CardTitle className='text-left text-2xl font-bold'>
@@ -186,8 +188,18 @@ export default function ProductForm({
           </CardTitle>
         </CardHeader>
         <CardContent className='max-h-none overflow-visible'>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 overflow-visible'>
+          <Tabs defaultValue="details" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="details">Product Details</TabsTrigger>
+              <TabsTrigger value="variants" disabled={!initialData}>
+                Variants {initialData && `(${initialData.variants?.length || 0})`}
+              </TabsTrigger>
+              <TabsTrigger value="inventory">Inventory</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="details" className="space-y-6 mt-6">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 overflow-visible'>
             <FormField
               control={form.control}
               name='images'
@@ -506,17 +518,45 @@ export default function ProductForm({
               />
             </div>
 
-              <div className='flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-8 pb-8'>
-                <Button
-                  type='submit'
-                  disabled={loading}
-                  className='w-full sm:w-auto'
-                >
-                  {loading ? 'Saving...' : (initialData ? 'Update Product' : 'Add Product')}
-                </Button>
-              </div>
-            </form>
-          </Form>
+                  <div className='flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-8 pb-8'>
+                    <Button
+                      type='submit'
+                      disabled={loading}
+                      className='w-full sm:w-auto'
+                    >
+                      {loading ? 'Saving...' : (initialData ? 'Update Product' : 'Add Product')}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </TabsContent>
+
+            <TabsContent value="variants" className="space-y-6 mt-6">
+              {initialData && (
+                <VariantManager
+                  productId={initialData.id}
+                  baseSku={initialData.sku}
+                  initialVariants={initialData.variants || []}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="inventory" className="space-y-6 mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Inventory Management</CardTitle>
+                  <CardDescription>
+                    Manage stock levels and inventory settings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Inventory management features will be available here.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>
