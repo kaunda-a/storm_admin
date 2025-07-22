@@ -118,7 +118,7 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? 'Edit Brand' : 'Create Brand'}</DialogTitle>
           <DialogDescription>
@@ -126,15 +126,19 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-1">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Brand Name</FormLabel>
+                  <FormLabel className="text-sm font-medium">Brand Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter brand name" {...field} />
+                    <Input
+                      placeholder="Enter brand name"
+                      className="text-sm"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -146,11 +150,11 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-medium">Description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Enter brand description"
-                      className="min-h-[80px]"
+                      className="min-h-[60px] sm:min-h-[80px] text-sm resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -164,9 +168,13 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
               name="logoUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Logo URL (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-medium">Logo URL (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/logo.jpg" {...field} />
+                    <Input
+                      placeholder="https://example.com/logo.jpg"
+                      className="text-sm"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -178,9 +186,13 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
               name="websiteUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Website URL (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-medium">Website URL (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://brand-website.com" {...field} />
+                    <Input
+                      placeholder="https://brand-website.com"
+                      className="text-sm"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -191,10 +203,10 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
               control={form.control}
               name="isActive"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Active Status</FormLabel>
-                    <div className="text-sm text-muted-foreground">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 sm:p-4">
+                  <div className="space-y-0.5 flex-1 min-w-0">
+                    <FormLabel className="text-sm sm:text-base font-medium">Active Status</FormLabel>
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       Enable this brand to be available for products
                     </div>
                   </div>
@@ -208,18 +220,19 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
                 disabled={loading}
+                className="w-full sm:w-auto text-sm"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="w-full sm:w-auto text-sm">
                 {loading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEdit ? 'Update' : 'Create'}
+                {isEdit ? 'Update Brand' : 'Create Brand'}
               </Button>
             </DialogFooter>
           </form>

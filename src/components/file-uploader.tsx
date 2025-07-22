@@ -73,14 +73,14 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
             <div
               {...getRootProps()}
               className={cn(
-                'border border-dashed border-gray-300 p-6 rounded-lg text-center cursor-pointer hover:bg-gray-100',
+                'border border-dashed border-gray-300 p-4 sm:p-6 rounded-lg text-center cursor-pointer hover:bg-gray-100 transition-colors',
                 disabled && 'opacity-50 cursor-not-allowed'
               )}
             >
               <input {...getInputProps()} />
               <div className="flex flex-col items-center gap-2">
-                <IconUpload className="h-6 w-6 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
+                <IconUpload className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Drag & drop or click to upload image
                 </p>
               </div>
@@ -92,14 +92,14 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       {uploading && <Progress value={progress} />}
 
       {imageUrl && (
-        <div className="relative">
-          <ScrollArea className="rounded-md overflow-hidden max-w-[250px] max-h-[250px] border">
+        <div className="relative w-full max-w-[200px] sm:max-w-[250px] mx-auto">
+          <ScrollArea className="rounded-md overflow-hidden w-full aspect-square border">
             <Image
               src={imageUrl}
               alt="Uploaded image"
               width={250}
               height={250}
-              className="object-cover"
+              className="object-cover w-full h-full"
             />
           </ScrollArea>
 
@@ -107,10 +107,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
             type="button"
             size="icon"
             variant="destructive"
-            className="absolute top-2 right-2 rounded-full"
+            className="absolute top-2 right-2 rounded-full h-6 w-6 sm:h-8 sm:w-8"
             onClick={() => setImageUrl('')}
           >
-            <IconX className="h-4 w-4" />
+            <IconX className="h-3 w-3 sm:h-4 sm:w-4" />
           </Button>
         </div>
       )}

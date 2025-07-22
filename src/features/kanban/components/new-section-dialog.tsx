@@ -34,7 +34,7 @@ export default function NewSectionDialog() {
           ＋ Add New Section
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='w-[95vw] max-w-[425px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>Add New Section</DialogTitle>
           <DialogDescription>
@@ -43,15 +43,15 @@ export default function NewSectionDialog() {
         </DialogHeader>
         <form
           id='todo-form'
-          className='grid gap-4 py-4'
+          className='grid gap-4 py-4 px-1'
           onSubmit={handleSubmit}
         >
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='space-y-2'>
             <Input
               id='title'
               name='title'
               placeholder='Section title...'
-              className='col-span-4'
+              className='w-full text-sm'
             />
           </div>
         </form>

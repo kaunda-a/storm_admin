@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+
 import {
   Table,
   TableBody,
@@ -44,11 +44,7 @@ interface InventoryStats {
   totalVariants: number;
 }
 
-interface StockAdjustment {
-  variantId: string;
-  adjustment: number;
-  reason: string;
-}
+
 
 export function InventoryManager({ productId, productName, initialVariants = [] }: InventoryManagerProps) {
   const [variants, setVariants] = React.useState<ProductVariant[]>(initialVariants);
@@ -202,7 +198,7 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
     <div className="space-y-6">
       {/* Inventory Stats */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Stock</CardTitle>
@@ -357,18 +353,19 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
               </Button>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Variant</TableHead>
-                  <TableHead>SKU</TableHead>
-                  <TableHead>Price</TableHead>
-                  <TableHead>Current Stock</TableHead>
-                  <TableHead>Low Stock Alert</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Value</TableHead>
-                </TableRow>
-              </TableHeader>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[120px]">Variant</TableHead>
+                    <TableHead className="min-w-[100px]">SKU</TableHead>
+                    <TableHead className="min-w-[80px]">Price</TableHead>
+                    <TableHead className="min-w-[100px]">Current Stock</TableHead>
+                    <TableHead className="min-w-[80px] hidden sm:table-cell">Low Stock Alert</TableHead>
+                    <TableHead className="min-w-[100px]">Status</TableHead>
+                    <TableHead className="min-w-[80px] hidden md:table-cell">Value</TableHead>
+                  </TableRow>
+                </TableHeader>
               <TableBody>
                 {variants.map((variant) => (
                   <TableRow key={variant.id}>
@@ -378,7 +375,7 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
                         <Badge variant="outline">{variant.color}</Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{variant.sku}</TableCell>
+                    <TableCell className="font-mono text-sm text-xs sm:text-sm">{variant.sku}</TableCell>
                     <TableCell>{formatCurrency(Number(variant.price))}</TableCell>
                     <TableCell>
                       <Input
@@ -388,19 +385,20 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
                           const newStock = parseInt(e.target.value) || 0;
                           updateVariantStock(variant.id!, newStock);
                         }}
-                        className="w-20"
+                        className="w-16 sm:w-20"
                         min="0"
                       />
                     </TableCell>
-                    <TableCell>{variant.lowStockThreshold}</TableCell>
+                    <TableCell className="hidden sm:table-cell">{variant.lowStockThreshold}</TableCell>
                     <TableCell>{getStockBadge(variant)}</TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       {formatCurrency(variant.stock * Number(variant.price))}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

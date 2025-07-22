@@ -115,7 +115,7 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? 'Edit Category' : 'Create Category'}</DialogTitle>
           <DialogDescription>
@@ -123,15 +123,19 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-1">
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category Name</FormLabel>
+                  <FormLabel className="text-sm font-medium">Category Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter category name" {...field} />
+                    <Input
+                      placeholder="Enter category name"
+                      className="text-sm"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,11 +147,11 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-medium">Description (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Enter category description"
-                      className="min-h-[80px]"
+                      className="min-h-[60px] sm:min-h-[80px] text-sm resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -161,9 +165,13 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Image URL (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-medium">Image URL (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com/image.jpg" {...field} />
+                    <Input
+                      placeholder="https://example.com/image.jpg"
+                      className="text-sm"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,10 +182,10 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               control={form.control}
               name="isActive"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Active Status</FormLabel>
-                    <div className="text-sm text-muted-foreground">
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 sm:p-4">
+                  <div className="space-y-0.5 flex-1 min-w-0">
+                    <FormLabel className="text-sm sm:text-base font-medium">Active Status</FormLabel>
+                    <div className="text-xs sm:text-sm text-muted-foreground">
                       Enable this category to be available for products
                     </div>
                   </div>
@@ -191,18 +199,19 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setOpen(false)}
                 disabled={loading}
+                className="w-full sm:w-auto text-sm"
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="w-full sm:w-auto text-sm">
                 {loading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEdit ? 'Update' : 'Create'}
+                {isEdit ? 'Update Category' : 'Create Category'}
               </Button>
             </DialogFooter>
           </form>

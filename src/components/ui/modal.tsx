@@ -30,12 +30,12 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
-      <DialogContent>
+      <DialogContent className="w-[95vw] max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle className="text-lg sm:text-xl">{title}</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">{description}</DialogDescription>
         </DialogHeader>
-        <div>{children}</div>
+        <div className="px-1">{children}</div>
       </DialogContent>
     </Dialog>
   );

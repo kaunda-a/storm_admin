@@ -153,7 +153,7 @@ export function VariantFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? 'Edit Variant' : 'Add New Variant'}
@@ -171,7 +171,7 @@ export function VariantFormDialog({
             {/* Basic Information */}
             <div className="space-y-4">
               <h4 className="text-sm font-medium">Basic Information</h4>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="size"
@@ -223,7 +223,7 @@ export function VariantFormDialog({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="material"
@@ -270,7 +270,7 @@ export function VariantFormDialog({
             {/* Pricing */}
             <div className="space-y-4">
               <h4 className="text-sm font-medium">Pricing</h4>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="price"
@@ -320,7 +320,7 @@ export function VariantFormDialog({
             {/* Inventory */}
             <div className="space-y-4">
               <h4 className="text-sm font-medium">Inventory</h4>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="stock"

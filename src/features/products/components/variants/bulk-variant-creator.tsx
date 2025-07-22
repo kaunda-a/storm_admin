@@ -143,7 +143,7 @@ export function BulkVariantCreator({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
         <DialogHeader>
           <DialogTitle>Bulk Create Variants</DialogTitle>
           <DialogDescription>
@@ -160,7 +160,7 @@ export function BulkVariantCreator({
               render={() => (
                 <FormItem>
                   <FormLabel className="text-base font-medium">Sizes</FormLabel>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                     {COMMON_SIZES.map((size) => (
                       <FormField
                         key={size}
@@ -209,7 +209,7 @@ export function BulkVariantCreator({
               render={() => (
                 <FormItem>
                   <FormLabel className="text-base font-medium">Colors</FormLabel>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                     {COMMON_COLORS.map((color) => (
                       <FormField
                         key={color}
@@ -310,7 +310,7 @@ export function BulkVariantCreator({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
                       {selectedCombinations.map((combo, index) => (
                         <div
                           key={`${combo.size}-${combo.color}`}

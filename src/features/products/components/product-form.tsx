@@ -1,6 +1,6 @@
 'use client';
 
-import { BulkImageUploader, type ProductImage } from '@/components/bulk-image-uploader';
+import { BulkImageUploader } from '@/components/bulk-image-uploader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VariantManager } from './variants/variant-manager';
 import { InventoryManager } from './inventory/inventory-manager';
@@ -197,13 +197,18 @@ export default function ProductForm({
         </CardHeader>
         <CardContent className='max-h-none overflow-visible'>
           <Tabs defaultValue="details" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="details">Product Details</TabsTrigger>
-              <TabsTrigger value="variants" disabled={!initialData}>
-                Variants {initialData && `(${initialData.variants?.length || 0})`}
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 h-auto sm:h-10">
+              <TabsTrigger value="details" className="text-xs sm:text-sm">
+                <span className="hidden sm:inline">Product </span>Details
               </TabsTrigger>
-              <TabsTrigger value="inventory" disabled={!initialData}>
-                Inventory
+              <TabsTrigger value="variants" disabled={!initialData} className="text-xs sm:text-sm">
+                <span className="hidden sm:inline">Variants </span>
+                <span className="sm:hidden">Var </span>
+                {initialData && `(${initialData.variants?.length || 0})`}
+              </TabsTrigger>
+              <TabsTrigger value="inventory" disabled={!initialData} className="text-xs sm:text-sm">
+                <span className="hidden sm:inline">Inventory</span>
+                <span className="sm:hidden">Inv</span>
               </TabsTrigger>
             </TabsList>
 

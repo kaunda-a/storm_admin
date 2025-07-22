@@ -84,7 +84,7 @@ export function VariantTable({
       accessorKey: 'sku',
       header: 'SKU',
       cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.getValue('sku')}</div>
+        <div className="font-mono text-xs sm:text-sm break-all">{row.getValue('sku')}</div>
       ),
     },
     {
@@ -106,8 +106,9 @@ export function VariantTable({
       header: 'Material',
       cell: ({ row }) => {
         const material = row.getValue('material') as string;
-        return material ? <span className="text-sm">{material}</span> : <span className="text-muted-foreground">-</span>;
+        return material ? <span className="text-xs sm:text-sm">{material}</span> : <span className="text-muted-foreground text-xs sm:text-sm">-</span>;
       },
+
     },
     {
       accessorKey: 'price',
@@ -131,7 +132,7 @@ export function VariantTable({
                 type="number"
                 value={stockValue}
                 onChange={(e) => setStockValue(e.target.value)}
-                className="w-20 h-8"
+                className="w-16 sm:w-20 h-8 text-xs sm:text-sm"
                 min="0"
                 autoFocus
                 onKeyDown={(e) => {
