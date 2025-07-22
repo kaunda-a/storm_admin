@@ -3,10 +3,10 @@ import { ProductVariantService } from '@/lib/services/product-variants';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ productId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { productId } = await params;
+    const { id: productId } = await params;
     const variants = await ProductVariantService.getProductVariants(productId);
     return NextResponse.json(variants);
   } catch (error) {
@@ -20,10 +20,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ productId: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { productId } = await params;
+    const { id: productId } = await params;
     const body = await request.json();
     
     // Check if this is a bulk creation request

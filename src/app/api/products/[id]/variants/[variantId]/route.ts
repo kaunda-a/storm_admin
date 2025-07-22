@@ -3,7 +3,7 @@ import { ProductVariantService } from '@/lib/services/product-variants';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ productId: string; variantId: string }> }
+  { params }: { params: Promise<{ id: string; variantId: string }> }
 ) {
   try {
     const { variantId } = await params;
@@ -28,7 +28,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ productId: string; variantId: string }> }
+  { params }: { params: Promise<{ id: string; variantId: string }> }
 ) {
   try {
     const { variantId } = await params;
@@ -47,7 +47,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ productId: string; variantId: string }> }
+  { params }: { params: Promise<{ id: string; variantId: string }> }
 ) {
   try {
     const { variantId } = await params;

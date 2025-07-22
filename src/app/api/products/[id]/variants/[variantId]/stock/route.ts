@@ -3,7 +3,7 @@ import { ProductVariantService } from '@/lib/services/product-variants';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ productId: string; variantId: string }> }
+  { params }: { params: Promise<{ id: string; variantId: string }> }
 ) {
   try {
     const { variantId } = await params;
