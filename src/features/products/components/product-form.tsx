@@ -76,6 +76,13 @@ export default function ProductForm({
   const [categories, setCategories] = useState<any[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
   const router = useRouter();
+
+  // Debug: Log the initialData to see what we're getting
+  useEffect(() => {
+    console.log('ProductForm initialData:', initialData);
+    console.log('Has ID:', !!initialData?.id);
+    console.log('Variants count:', initialData?.variants?.length || 0);
+  }, [initialData]);
   const defaultValues = {
     name: initialData?.name || '',
     categoryId: initialData?.category?.id || '',
@@ -192,10 +199,10 @@ export default function ProductForm({
           <Tabs defaultValue="details" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="details">Product Details</TabsTrigger>
-              <TabsTrigger value="variants" disabled={!initialData?.id}>
-                Variants {initialData?.id && `(${initialData.variants?.length || 0})`}
+              <TabsTrigger value="variants" disabled={!initialData}>
+                Variants {initialData && `(${initialData.variants?.length || 0})`}
               </TabsTrigger>
-              <TabsTrigger value="inventory" disabled={!initialData?.id}>
+              <TabsTrigger value="inventory" disabled={!initialData}>
                 Inventory
               </TabsTrigger>
             </TabsList>
@@ -535,12 +542,26 @@ export default function ProductForm({
             </TabsContent>
 
             <TabsContent value="variants" className="space-y-6 mt-6">
-              {initialData?.id ? (
+              {initialData && initialData.id ? (
                 <VariantManager
                   productId={initialData.id}
                   baseSku={initialData.sku}
                   initialVariants={initialData.variants || []}
                 />
+              ) : initialData ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Product Variants</CardTitle>
+                    <CardDescription>
+                      Loading product data...
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                    </div>
+                  </CardContent>
+                </Card>
               ) : (
                 <Card>
                   <CardHeader>
@@ -560,11 +581,34 @@ export default function ProductForm({
             </TabsContent>
 
             <TabsContent value="inventory" className="space-y-6 mt-6">
-              <InventoryManager
-                productId={initialData?.id || ''}
-                productName={initialData?.name || 'Product'}
-                initialVariants={initialData?.variants || []}
-              />
+              {initialData && initialData.id ? (
+                <InventoryManager
+                  productId={initialData.id}
+                  productName={initialData.name || 'Product'}
+                  initialVariants={initialData.variants || []}
+                />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Inventory Management</CardTitle>
+                    <CardDescription>
+                      {initialData ? 'Loading product data...' : 'Save the product first to manage inventory'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {initialData ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground">
+                        Inventory management allows you to track stock levels, set low stock alerts, and manage inventory across all product variants.
+                        Complete the product details and save to start managing inventory.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>
