@@ -14,6 +14,7 @@ export type CreateBillboardData = {
   linkText?: string
   type?: BillboardType
   position?: BillboardPosition
+  isActive?: boolean
   startDate?: Date
   endDate?: Date
   sortOrder?: number
@@ -146,6 +147,7 @@ export class BillboardService {
         linkText: data.linkText,
         type: data.type || 'PROMOTIONAL',
         position: data.position || 'HEADER',
+        isActive: data.isActive !== undefined ? data.isActive : true,
         startDate: data.startDate,
         endDate: data.endDate,
         sortOrder: data.sortOrder || 0,
