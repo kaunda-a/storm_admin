@@ -38,7 +38,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       toast.success('Product deleted successfully');
       router.refresh();
     } catch (error) {
-      console.error('Error deleting product:', error);
+      // Error already handled by toast.error below
       toast.error('Something went wrong');
     } finally {
       setLoading(false);
@@ -64,13 +64,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align='end'>
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/products/${data.id}/variants`)}
+          {/* TODO: Create variants route */}
+          {/* <DropdownMenuItem
+            onClick={() => router.push(`/dashboard/product/${data.id}/variants`)}
           >
             <IconEdit className='mr-2 h-4 w-4' /> Manage Variants
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/products/${data.slug}`)}
+            onClick={() => router.push(`/dashboard/product/${data.id}`)}
           >
             <IconEdit className='mr-2 h-4 w-4' /> Edit Product
           </DropdownMenuItem>

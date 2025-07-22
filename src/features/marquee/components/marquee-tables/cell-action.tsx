@@ -40,7 +40,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       toast.success('Marquee message deleted successfully');
       router.refresh();
     } catch (error) {
-      console.error('Error deleting marquee message:', error);
+      // Error already handled by toast.error below
       toast.error('Something went wrong');
     } finally {
       setLoading(false);

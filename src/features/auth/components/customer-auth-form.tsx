@@ -36,7 +36,7 @@ export default function UserAuthForm() {
 
   const onSubmit = async (data: UserFormValue) => {
     startTransition(() => {
-      console.log('continue with email clicked');
+      // User clicked continue with email
       toast.success('Signed In Successfully!');
     });
   };

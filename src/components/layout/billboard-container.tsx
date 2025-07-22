@@ -35,7 +35,7 @@ export async function BillboardContainer({
       />
     )
   } catch (error) {
-    console.error('Error loading billboards:', error)
+    // Error handled by returning null (no billboards shown)
     return null
   }
 }

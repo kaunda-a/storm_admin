@@ -89,7 +89,7 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
       form.reset();
       onSuccess?.();
     } catch (error: any) {
-      console.error('Error submitting category form:', error);
+      // Error already handled by toast.error below
       toast.error(error.message || 'Something went wrong');
     } finally {
       setLoading(false);

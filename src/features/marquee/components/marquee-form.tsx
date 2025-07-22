@@ -125,7 +125,7 @@ export default function MarqueeForm({ initialData, pageTitle }: MarqueeFormProps
       router.push('/dashboard/marquee');
       router.refresh();
     } catch (error: any) {
-      console.error('Error submitting marquee form:', error);
+      // Error already handled by toast.error below
       toast.error(error.message || 'Something went wrong');
     } finally {
       setLoading(false);

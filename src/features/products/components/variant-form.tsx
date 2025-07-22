@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 // Type for product variants - using local definition since ProductVariant isn't exported from Prisma
 type ProductVariant = {
   id: string
@@ -89,9 +90,9 @@ export function VariantForm({ productId, variant, onSubmit }: VariantFormProps) 
   const handleSubmit = async (data: VariantFormValues) => {
     try {
       await onSubmit(data)
-      router.push(`/dashboard/products/${productId}/variants`)
+      router.push(`/dashboard/product/${productId}/variants`)
     } catch (error) {
-      console.error('Error saving variant:', error)
+      toast.error('Failed to save variant. Please try again.')
     }
   }
 
@@ -100,7 +101,7 @@ export function VariantForm({ productId, variant, onSubmit }: VariantFormProps) 
       {/* Header */}
       <div className='flex items-center space-x-4'>
         <Button variant='ghost' size='sm' asChild>
-          <Link href={`/dashboard/products/${productId}/variants`}>
+          <Link href={`/dashboard/product/${productId}/variants`}>
             <IconArrowLeft className='h-4 w-4 mr-2' />
             Back to Variants
           </Link>

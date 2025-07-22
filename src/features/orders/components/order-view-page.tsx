@@ -24,7 +24,7 @@ async function getOrder(id: string) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching order:', error);
+    // Error handled by returning null
     return null;
   }
 }

@@ -92,7 +92,7 @@ export function BrandFormDialog({ brand, onSuccess, trigger }: BrandFormDialogPr
       form.reset();
       onSuccess?.();
     } catch (error: any) {
-      console.error('Error submitting brand form:', error);
+      // Error already handled by toast.error below
       toast.error(error.message || 'Something went wrong');
     } finally {
       setLoading(false);

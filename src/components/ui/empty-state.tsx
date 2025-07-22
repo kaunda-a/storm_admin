@@ -57,7 +57,7 @@ export function ProductsEmptyState() {
       description="Get started by creating your first product. Add footwear items to your inventory and start selling."
       action={{
         label: "Add First Product",
-        href: "/dashboard/products/new"
+        href: "/dashboard/product/new"
       }}
     />
   )

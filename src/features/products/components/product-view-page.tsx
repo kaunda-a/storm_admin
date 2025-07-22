@@ -24,7 +24,7 @@ async function getProduct(id: string) {
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching product:', error);
+    // Error handled by returning null
     return null;
   }
 }

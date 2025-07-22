@@ -62,7 +62,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
       <div className='flex items-center justify-between'>
         <div className='flex items-center space-x-4'>
           <Button variant='ghost' size='sm' asChild>
-            <Link href='/dashboard/products'>
+            <Link href='/dashboard/product'>
               <IconArrowLeft className='h-4 w-4 mr-2' />
               Back to Products
             </Link>
@@ -75,7 +75,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
           </div>
         </div>
         <Button asChild>
-          <Link href={`/dashboard/products/${productId}/variants/new`}>
+          <Link href={`/dashboard/product/${productId}/variants/new`}>
             <IconPlus className='h-4 w-4 mr-2' />
             Add Variant
           </Link>
@@ -192,7 +192,7 @@ export async function ProductVariantsPage({ productId }: ProductVariantsPageProp
                       {/* Actions */}
                       <div className='flex items-center space-x-2'>
                         <Button variant='ghost' size='sm' asChild>
-                          <Link href={`/dashboard/products/${productId}/variants/${variant.id}/edit`}>
+                          <Link href={`/dashboard/product/${productId}/variants/${variant.id}/edit`}>
                             <IconEdit className='h-4 w-4' />
                           </Link>
                         </Button>

@@ -106,7 +106,7 @@ export async function SalesChart() {
     </Card>
   )
   } catch (error) {
-    console.error('Error loading sales chart:', error)
+    // Error handled by fallback UI below
     return (
       <Card className="col-span-4">
         <CardHeader>

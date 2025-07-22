@@ -65,7 +65,7 @@ export default function ProfileForm() {
           });
         }
       } catch (error) {
-        console.error('Error loading profile:', error);
+        toast.error('Failed to load profile data. Please refresh the page.');
       } finally {
         setInitialLoading(false);
       }
@@ -104,7 +104,7 @@ export default function ProfileForm() {
       toast.success('Profile updated successfully');
       router.refresh();
     } catch (error: any) {
-      console.error('Error updating profile:', error);
+      // Error already handled by toast.error below
       toast.error(error.message || 'Something went wrong');
     } finally {
       setLoading(false);

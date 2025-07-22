@@ -39,7 +39,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       toast.success('Customer deleted successfully');
       router.refresh();
     } catch (error) {
-      console.error('Error deleting customer:', error);
+      // Error already handled by toast.error below
       toast.error('Something went wrong');
     } finally {
       setLoading(false);

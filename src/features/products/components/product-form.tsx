@@ -32,27 +32,10 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { IconPlus } from '@tabler/icons-react';
 
-const MAX_FILE_SIZE = 10000000; // 10MB
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp'
-];
+
 
 const formSchema = z.object({
-  image: z
-    .any()
-    .optional()
-    .refine((files) => !files || files?.length === 0 || files?.length >= 1, 'Invalid file selection.')
-    .refine(
-      (files) => !files || files?.length === 0 || files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 10MB.`
-    )
-    .refine(
-      (files) => !files || files?.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
+  imageUrl: z.string().optional(),
   name: z.string().min(2, {
     message: 'Product name must be at least 2 characters.'
   }),
@@ -99,12 +82,12 @@ export default function ProductForm({
     trackQuantity: false,
     isActive: initialData?.isActive ?? true,
     isFeatured: initialData?.isFeatured ?? false,
-    image: undefined
+    imageUrl: initialData?.images?.[0]?.url || ''
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    values: defaultValues
+    defaultValues
   });
 
   // Load categories and brands on component mount
@@ -129,25 +112,13 @@ export default function ProductForm({
         setBrands(brandsData);
       }
     } catch (error) {
-      console.error('Error loading categories and brands:', error);
+      toast.error('Failed to load categories and brands. Please refresh the page.');
     }
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       setLoading(true);
-
-      // Handle image uploads first if there are any
-      let imageUrls: string[] = [];
-      if (values.image && values.image.length > 0) {
-        // For now, we'll simulate image upload
-        // In production, you would upload to Cloudinary or your preferred service
-        toast.info('Image upload functionality will be implemented with Cloudinary integration');
-        // Simulate uploaded URLs
-        imageUrls = values.image.map((_: any, index: number) =>
-          `https://via.placeholder.com/400x400?text=Product+Image+${index + 1}`
-        );
-      }
 
       // Transform form data for API
       const formData = {
@@ -158,7 +129,7 @@ export default function ProductForm({
         quantity: values.quantity ? parseInt(values.quantity) : 0,
         lowStockThreshold: values.lowStockThreshold ? parseInt(values.lowStockThreshold) : undefined,
         weight: values.weight ? parseFloat(values.weight) : undefined,
-        images: imageUrls
+        images: values.imageUrl ? [values.imageUrl] : []
       };
 
       const url = initialData ? `/api/products/${initialData.id}` : '/api/products';
@@ -178,11 +149,11 @@ export default function ProductForm({
       }
 
       toast.success(initialData ? 'Product updated successfully!' : 'Product created successfully!');
-      router.push('/dashboard/products');
+      router.push('/dashboard/product');
       router.refresh();
 
     } catch (error: any) {
-      console.error('Error submitting form:', error);
+      // Error already handled by toast.error below
       toast.error(error.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -202,21 +173,16 @@ export default function ProductForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 overflow-visible'>
             <FormField
               control={form.control}
-              name='image'
+              name='imageUrl'
               render={({ field }) => (
                 <div className='space-y-6'>
                   <FormItem className='w-full'>
-                    <FormLabel>Images</FormLabel>
+                    <FormLabel>Product Image</FormLabel>
                     <FormControl>
                       <FileUploader
                         value={field.value}
                         onChange={field.onChange}
-                        
-                        // disabled={loading}
-                        // progresses={progresses}
-                        // pass the onUpload function here for direct upload
-                        // onUpload={uploadFiles}
-                        // disabled={isUploading}
+                        disabled={loading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -258,7 +224,7 @@ export default function ProductForm({
                     </div>
                     <Select
                       onValueChange={(value) => field.onChange(value)}
-                      value={field.value[field.value.length - 1]}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>

@@ -51,7 +51,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       toast.success('Order cancelled successfully');
       router.refresh();
     } catch (error: any) {
-      console.error('Error cancelling order:', error);
+      // Error already handled by toast.error below
       toast.error(error.message || 'Something went wrong');
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       toast.success(`Order ${status.toLowerCase()} successfully`);
       router.refresh();
     } catch (error: any) {
-      console.error('Error updating order:', error);
+      // Error already handled by toast.error below
       toast.error(error.message || 'Something went wrong');
     } finally {
       setLoading(false);

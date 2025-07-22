@@ -28,7 +28,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail
 } from '@/components/ui/sidebar';
-import { UserAvatarProfile } from '@/components/user-avatar-profile';
+
 import { navItems } from '@/constants/data';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
@@ -37,17 +37,17 @@ import {
   IconChevronRight,
   IconChevronsDown,
   IconCreditCard,
-  IconLogout,
-  IconPhotoUp,
+
   IconUserCircle
 } from '@tabler/icons-react';
 
 import Link from 'next/link';
-import Image from 'next/image';
+
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { OrgSwitcher } from '../org-switcher';
+import { useSidebar } from '@/components/ui/sidebar';
 export const company = {
   name: 'Mzansi Footwear',
   logo: '/logo.svg',
@@ -62,15 +62,34 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const { isOpen } = useMediaQuery();
   const router = useRouter();
+  const { isMobile, setOpenMobile } = useSidebar();
+
   const handleSwitchTenant = (_tenantId: string) => {
     // Tenant switching functionality would be implemented here
   };
 
   const activeTenant = tenants[0];
 
+
+
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [isOpen]);
+
+  // Custom Link component that closes mobile sidebar on navigation
+  const SidebarLink = ({ href, children, ...props }: { href: string; children: React.ReactNode; [key: string]: any }) => (
+    <Link
+      href={href}
+      onClick={() => {
+        if (isMobile) {
+          setOpenMobile(false);
+        }
+      }}
+      {...props}
+    >
+      {children}
+    </Link>
+  );
 
   return (
     <Sidebar collapsible='icon'>
@@ -113,9 +132,9 @@ export default function AppSidebar() {
                               asChild
                               isActive={pathname === subItem.url}
                             >
-                              <Link href={subItem.url}>
+                              <SidebarLink href={subItem.url}>
                                 <span>{subItem.title}</span>
-                              </Link>
+                              </SidebarLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
@@ -130,10 +149,10 @@ export default function AppSidebar() {
                     tooltip={item.title}
                     isActive={pathname === item.url}
                   >
-                    <Link href={item.url}>
+                    <SidebarLink href={item.url}>
                       <Icon />
                       <span>{item.title}</span>
-                    </Link>
+                    </SidebarLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               );
@@ -169,7 +188,12 @@ export default function AppSidebar() {
 
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    onClick={() => router.push('/dashboard/profile')}
+                    onClick={() => {
+                      if (isMobile) {
+                        setOpenMobile(false);
+                      }
+                      router.push('/dashboard/profile');
+                    }}
                   >
                     <IconUserCircle className='mr-2 h-4 w-4' />
                     Profile
