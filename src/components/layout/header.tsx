@@ -5,6 +5,7 @@ import { Breadcrumbs } from '../breadcrumbs';
 import SearchInput from '../search-input';
 import { ThemeSelector } from '../theme-selector';
 import { ModeToggle } from './ThemeToggle/theme-toggle';
+import { UserMenu } from './user-menu';
 
 export default function Header() {
   return (
@@ -21,6 +22,7 @@ export default function Header() {
         </div>
         <ModeToggle />
         <ThemeSelector />
+        <UserMenu />
       </div>
     </header>
   );

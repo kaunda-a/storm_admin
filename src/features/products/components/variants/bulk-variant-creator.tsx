@@ -143,7 +143,7 @@ export function BulkVariantCreator({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto w-[95vw] sm:w-full p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>Bulk Create Variants</DialogTitle>
           <DialogDescription>
@@ -310,16 +310,16 @@ export function BulkVariantCreator({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
-                      {selectedCombinations.map((combo, index) => (
+                    <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto">
+                      {selectedCombinations.map((combo) => (
                         <div
                           key={`${combo.size}-${combo.color}`}
                           className="flex items-center justify-between p-2 border rounded"
                         >
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline">{combo.size}</Badge>
-                            <Badge variant="outline">{combo.color}</Badge>
-                            <span className="text-xs text-muted-foreground font-mono">
+                          <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                            <Badge variant="outline" className="text-xs">{combo.size}</Badge>
+                            <Badge variant="outline" className="text-xs">{combo.color}</Badge>
+                            <span className="text-xs text-muted-foreground font-mono hidden sm:inline">
                               {generateSKU(combo.size, combo.color)}
                             </span>
                           </div>

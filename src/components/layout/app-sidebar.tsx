@@ -37,12 +37,12 @@ import {
   IconChevronRight,
   IconChevronsDown,
   IconCreditCard,
-
+  IconLogout,
   IconUserCircle
 } from '@tabler/icons-react';
 
 import Link from 'next/link';
-
+import { signOut } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
@@ -216,7 +216,18 @@ export default function AppSidebar() {
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                
+                <DropdownMenuItem
+                  onClick={async () => {
+                    if (isMobile) {
+                      setOpenMobile(false);
+                    }
+                    await signOut({ callbackUrl: '/auth/sign-in' });
+                  }}
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                >
+                  <IconLogout className='mr-2 h-4 w-4' />
+                  Sign Out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

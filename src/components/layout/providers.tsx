@@ -1,8 +1,9 @@
 'use client';
-import { useTheme } from 'next-themes';
+
 import React from 'react';
 import { ActiveThemeProvider } from '../active-theme';
 import { AuthProvider } from '@/components/providers/session-provider';
+import { ConfettiProvider } from '@/components/ui/confetti';
 
 export default function Providers({
   activeThemeValue,
@@ -15,7 +16,9 @@ export default function Providers({
     <>
       <ActiveThemeProvider initialTheme={activeThemeValue}>
         <AuthProvider>
-          {children}
+          <ConfettiProvider>
+            {children}
+          </ConfettiProvider>
         </AuthProvider>
       </ActiveThemeProvider>
     </>

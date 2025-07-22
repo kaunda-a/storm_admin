@@ -3,7 +3,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 import { Separator } from '@/components/ui/separator';
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
-import CustomerListingPage from '@/features/customers/components/customer-listing';
+import UserListingPage from '@/features/users/components/user-listing';
 import { searchParamsCache, serialize } from '@/lib/searchparams';
 import { cn } from '@/lib/utils';
 import { IconPlus } from '@tabler/icons-react';
@@ -12,7 +12,7 @@ import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 
 export const metadata = {
-  title: 'Dashboard: Customers'
+  title: 'Dashboard: Admin Users'
 };
 
 type pageProps = {
@@ -24,31 +24,33 @@ export default async function Page(props: pageProps) {
   // Allow nested RSCs to access the search params (in a type-safe way)
   searchParamsCache.parse(searchParams);
 
+  const key = serialize({ ...searchParams });
+
   return (
     <PageContainer scrollable={false}>
       <div className='flex flex-1 flex-col space-y-4'>
-        <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-4 sm:space-y-0'>
+        <div className='flex items-start justify-between'>
           <Heading
-            title='Customers'
-            description='Manage customers (Server side table functionalities.)'
+            title='Users'
+            description='Manage system users and their roles.'
           />
           <Link
-            href='/dashboard/customers/new'
-            className={cn(buttonVariants(), 'text-xs md:text-sm w-fit')}
+            href='/dashboard/users/new'
+            className={cn(buttonVariants(), 'text-xs md:text-sm')}
           >
-      
+            <IconPlus className='mr-2 h-4 w-4' /> New Admin User
           </Link>
         </div>
         <Separator />
         <Suspense
+          key={key}
           fallback={
-            <DataTableSkeleton columnCount={5} rowCount={8} filterCount={2} />
+            <DataTableSkeleton columnCount={6} rowCount={8} filterCount={2} />
           }
         >
-          <CustomerListingPage />
+          <UserListingPage />
         </Suspense>
       </div>
     </PageContainer>
   );
 }
-

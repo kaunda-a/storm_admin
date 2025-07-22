@@ -72,3 +72,8 @@ export type {
   CreateAddressData
 } from './customer';
 
+export type {
+  UserWithDetails,
+  CreateUserData,
+  UpdateUserData
+} from './users'

@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useConfetti } from '@/components/ui/confetti';
 import { CategoryFormDialog } from '@/components/forms/category-form-dialog';
 import { BrandFormDialog } from '@/components/forms/brand-form-dialog';
 import {
@@ -76,6 +77,7 @@ export default function ProductForm({
   const [categories, setCategories] = useState<any[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
   const router = useRouter();
+  const { trigger } = useConfetti();
 
   // Debug: Log the initialData to see what we're getting
   useEffect(() => {
@@ -174,6 +176,13 @@ export default function ProductForm({
         const errorData = await response.json();
         throw new Error(errorData.error || 'Something went wrong');
       }
+
+      // Trigger confetti for successful product creation/update
+      trigger({
+        elementCount: 40,
+        colors: ['#22c55e', '#10b981', '#059669', '#047857'],
+        duration: 2500
+      });
 
       toast.success(initialData ? 'Product updated successfully!' : 'Product created successfully!');
       router.push('/dashboard/product');

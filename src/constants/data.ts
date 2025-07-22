@@ -21,22 +21,7 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [] // No child items
   },
-  {
-    title: 'Orders',
-    url: '/dashboard/orders',
-    icon: 'shoppingBag',
-    shortcut: ['o', 'r'],
-    isActive: false,
-    items: [] // No child items
-  },
-  {
-    title: 'Customers',
-    url: '/dashboard/customers',
-    icon: 'user',
-    shortcut: ['u', 's'],
-    isActive: false,
-    items: [] // No child items
-  },
+
   {
     title: 'Billboards',
     url: '/dashboard/billboards',
@@ -54,6 +39,22 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
+    title: 'Orders',
+    url: '/dashboard/orders',
+    icon: 'shoppingBag',
+    shortcut: ['o', 'r'],
+    isActive: false,
+    items: [] // No child items
+  },
+   {
+    title: 'Customers',
+    url: '/dashboard/customers',
+    icon: 'user',
+    shortcut: ['u', 's'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
     title: 'Account',
     url: '#', // Placeholder as there is no direct link for the parent
     icon: 'billing',
@@ -65,6 +66,14 @@ export const navItems: NavItem[] = [
         url: '/dashboard/profile',
         icon: 'userPen',
         shortcut: ['m', 'm']
+      },
+        {
+        title: 'Users',
+        url: '/dashboard/users',
+        icon: 'user2',
+        shortcut: ['u', 'u'],
+        isActive: false,
+        items: [] // No child items
       },
       {
         title: 'Login',

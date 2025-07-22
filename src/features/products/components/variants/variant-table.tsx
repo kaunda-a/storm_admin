@@ -84,21 +84,21 @@ export function VariantTable({
       accessorKey: 'sku',
       header: 'SKU',
       cell: ({ row }) => (
-        <div className="font-mono text-xs sm:text-sm break-all">{row.getValue('sku')}</div>
+        <div className="font-mono text-xs break-all max-w-[80px] sm:max-w-none">{row.getValue('sku')}</div>
       ),
     },
     {
       accessorKey: 'size',
       header: 'Size',
       cell: ({ row }) => (
-        <Badge variant="outline">{row.getValue('size')}</Badge>
+        <Badge variant="outline" className="text-xs">{row.getValue('size')}</Badge>
       ),
     },
     {
       accessorKey: 'color',
       header: 'Color',
       cell: ({ row }) => (
-        <Badge variant="outline">{row.getValue('color')}</Badge>
+        <Badge variant="outline" className="text-xs">{row.getValue('color')}</Badge>
       ),
     },
     {
@@ -250,9 +250,13 @@ export function VariantTable({
 
   return (
     <div className="space-y-4">
-      <DataTable table={table}>
-        <DataTableToolbar table={table} />
-      </DataTable>
+      <div className="overflow-x-auto -mx-4 sm:mx-0">
+        <div className="min-w-[700px] px-4 sm:px-0">
+          <DataTable table={table}>
+            <DataTableToolbar table={table} />
+          </DataTable>
+        </div>
+      </div>
     </div>
   );
 }

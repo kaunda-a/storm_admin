@@ -353,31 +353,32 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-[120px]">Variant</TableHead>
-                    <TableHead className="min-w-[100px]">SKU</TableHead>
-                    <TableHead className="min-w-[80px]">Price</TableHead>
-                    <TableHead className="min-w-[100px]">Current Stock</TableHead>
-                    <TableHead className="min-w-[80px] hidden sm:table-cell">Low Stock Alert</TableHead>
-                    <TableHead className="min-w-[100px]">Status</TableHead>
-                    <TableHead className="min-w-[80px] hidden md:table-cell">Value</TableHead>
-                  </TableRow>
-                </TableHeader>
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="min-w-[600px] px-4 sm:px-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="min-w-[120px] text-xs sm:text-sm">Variant</TableHead>
+                      <TableHead className="min-w-[80px] text-xs sm:text-sm">SKU</TableHead>
+                      <TableHead className="min-w-[70px] text-xs sm:text-sm">Price</TableHead>
+                      <TableHead className="min-w-[80px] text-xs sm:text-sm">Stock</TableHead>
+                      <TableHead className="min-w-[60px] hidden md:table-cell text-xs sm:text-sm">Alert</TableHead>
+                      <TableHead className="min-w-[80px] text-xs sm:text-sm">Status</TableHead>
+                      <TableHead className="min-w-[70px] hidden lg:table-cell text-xs sm:text-sm">Value</TableHead>
+                    </TableRow>
+                  </TableHeader>
               <TableBody>
                 {variants.map((variant) => (
                   <TableRow key={variant.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline">{variant.size}</Badge>
-                        <Badge variant="outline">{variant.color}</Badge>
+                    <TableCell className="p-2 sm:p-4">
+                      <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                        <Badge variant="outline" className="text-xs">{variant.size}</Badge>
+                        <Badge variant="outline" className="text-xs">{variant.color}</Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-sm text-xs sm:text-sm">{variant.sku}</TableCell>
-                    <TableCell>{formatCurrency(Number(variant.price))}</TableCell>
-                    <TableCell>
+                    <TableCell className="font-mono text-xs p-2 sm:p-4 break-all max-w-[80px]">{variant.sku}</TableCell>
+                    <TableCell className="text-xs sm:text-sm p-2 sm:p-4">{formatCurrency(Number(variant.price))}</TableCell>
+                    <TableCell className="p-2 sm:p-4">
                       <Input
                         type="number"
                         value={variant.stock}
@@ -385,19 +386,20 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
                           const newStock = parseInt(e.target.value) || 0;
                           updateVariantStock(variant.id!, newStock);
                         }}
-                        className="w-16 sm:w-20"
+                        className="w-12 sm:w-16 md:w-20 text-xs sm:text-sm h-8"
                         min="0"
                       />
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell">{variant.lowStockThreshold}</TableCell>
+                    <TableCell className="hidden md:table-cell text-xs sm:text-sm">{variant.lowStockThreshold}</TableCell>
                     <TableCell>{getStockBadge(variant)}</TableCell>
-                    <TableCell className="hidden md:table-cell">
+                    <TableCell className="hidden lg:table-cell text-xs sm:text-sm">
                       {formatCurrency(variant.stock * Number(variant.price))}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
+                </Table>
+              </div>
             </div>
           )}
         </CardContent>

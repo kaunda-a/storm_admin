@@ -7,8 +7,7 @@ import { Plus, Package, TrendingUp, AlertTriangle, BarChart3 } from 'lucide-reac
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -306,21 +305,27 @@ export function VariantManager({ productId, baseSku, initialVariants = [] }: Var
                 Manage size, color, and pricing variations for this product
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <Button
                 variant="outline"
                 onClick={() => setBulkCreatorOpen(true)}
                 disabled={loading}
+                size="sm"
+                className="text-xs sm:text-sm"
               >
-                <Plus className="mr-2 h-4 w-4" />
-                Bulk Create
+                <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Bulk Create</span>
+                <span className="sm:hidden">Bulk</span>
               </Button>
               <Button
                 onClick={() => openVariantForm()}
                 disabled={loading}
+                size="sm"
+                className="text-xs sm:text-sm"
               >
-                <Plus className="mr-2 h-4 w-4" />
-                Add Variant
+                <Plus className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Add Variant</span>
+                <span className="sm:hidden">Add</span>
               </Button>
             </div>
           </div>

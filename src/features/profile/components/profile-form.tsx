@@ -17,14 +17,19 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconLoader2, IconUser } from '@tabler/icons-react';
+import { IconLoader2, IconUser, IconMail, IconCalendar, IconShield } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useConfetti } from '@/components/ui/confetti';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import * as z from 'zod';
+import { ROLE_DISPLAY_NAMES, getRoleColor, formatUserName } from '@/lib/services/users';
+import { FileUploader } from '@/components/file-uploader';
 
 const profileFormSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(50, 'First name must be less than 50 characters'),
@@ -37,8 +42,10 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 export default function ProfileForm() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [profileData, setProfileData] = useState<any>(null);
   const router = useRouter();
   const { data: session } = useSession();
+  const { trigger } = useConfetti();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -53,11 +60,12 @@ export default function ProfileForm() {
   useEffect(() => {
     const loadProfile = async () => {
       if (!session?.user?.id) return;
-      
+
       try {
-        const response = await fetch('/api/profile');
+        const response = await fetch(`/api/users/${session.user.id}`);
         if (response.ok) {
           const profile = await response.json();
+          setProfileData(profile);
           form.reset({
             firstName: profile.firstName || '',
             lastName: profile.lastName || '',
@@ -88,7 +96,7 @@ export default function ProfileForm() {
         imageUrl: data.imageUrl || undefined,
       };
 
-      const response = await fetch('/api/profile', {
+      const response = await fetch(`/api/users/${session.user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -100,6 +108,13 @@ export default function ProfileForm() {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Something went wrong');
       }
+
+      // Trigger confetti for successful profile update
+      trigger({
+        elementCount: 25,
+        colors: ['#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
+        duration: 2000
+      });
 
       toast.success('Profile updated successfully');
       router.refresh();
@@ -121,11 +136,76 @@ export default function ProfileForm() {
 
   return (
     <div className='flex-1 space-y-4'>
+      {/* User Information Card */}
+      {profileData && (
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center space-x-2'>
+              <IconShield className='h-5 w-5' />
+              <span>Account Information</span>
+            </CardTitle>
+            <CardDescription>
+              Your account details and role information.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='space-y-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+              <div className='flex items-center space-x-3'>
+                <IconMail className='h-4 w-4 text-muted-foreground' />
+                <div>
+                  <p className='text-sm font-medium'>Email</p>
+                  <p className='text-sm text-muted-foreground'>{profileData.email}</p>
+                </div>
+              </div>
+
+              <div className='flex items-center space-x-3'>
+                <IconShield className='h-4 w-4 text-muted-foreground' />
+                <div>
+                  <p className='text-sm font-medium'>Role</p>
+                  <Badge className={getRoleColor(profileData.role)}>
+                    {ROLE_DISPLAY_NAMES[profileData.role as keyof typeof ROLE_DISPLAY_NAMES]}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className='flex items-center space-x-3'>
+                <IconCalendar className='h-4 w-4 text-muted-foreground' />
+                <div>
+                  <p className='text-sm font-medium'>Member Since</p>
+                  <p className='text-sm text-muted-foreground'>
+                    {new Date(profileData.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div>
+                <p className='text-sm font-medium mb-1'>Full Name</p>
+                <p className='text-sm text-muted-foreground'>
+                  {formatUserName(profileData.firstName, profileData.lastName)}
+                </p>
+              </div>
+
+              <div>
+                <p className='text-sm font-medium mb-1'>Last Updated</p>
+                <p className='text-sm text-muted-foreground'>
+                  {new Date(profileData.updatedAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Profile Edit Form */}
       <Card>
         <CardHeader>
           <CardTitle className='flex items-center space-x-2'>
             <IconUser className='h-5 w-5' />
-            <span>Profile Settings</span>
+            <span>Edit Profile</span>
           </CardTitle>
           <CardDescription>
             Update your personal information and profile settings.
@@ -168,10 +248,14 @@ export default function ProfileForm() {
                 control={form.control}
                 name='imageUrl'
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Profile Image URL (Optional)</FormLabel>
+                  <FormItem className='col-span-1 sm:col-span-2'>
+                    <FormLabel>Profile Image</FormLabel>
                     <FormControl>
-                      <Input placeholder='https://example.com/your-image.jpg' {...field} />
+                      <FileUploader
+                        value={field.value}
+                        onChange={field.onChange}
+                        disabled={loading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
