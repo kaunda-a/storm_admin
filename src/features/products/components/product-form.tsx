@@ -3,6 +3,7 @@
 import { BulkImageUploader, type ProductImage } from '@/components/bulk-image-uploader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { VariantManager } from './variants/variant-manager';
+import { InventoryManager } from './inventory/inventory-manager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -191,10 +192,12 @@ export default function ProductForm({
           <Tabs defaultValue="details" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="details">Product Details</TabsTrigger>
-              <TabsTrigger value="variants" disabled={!initialData}>
-                Variants {initialData && `(${initialData.variants?.length || 0})`}
+              <TabsTrigger value="variants" disabled={!initialData?.id}>
+                Variants {initialData?.id && `(${initialData.variants?.length || 0})`}
               </TabsTrigger>
-              <TabsTrigger value="inventory">Inventory</TabsTrigger>
+              <TabsTrigger value="inventory" disabled={!initialData?.id}>
+                Inventory
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="space-y-6 mt-6">
@@ -532,29 +535,36 @@ export default function ProductForm({
             </TabsContent>
 
             <TabsContent value="variants" className="space-y-6 mt-6">
-              {initialData && (
+              {initialData?.id ? (
                 <VariantManager
                   productId={initialData.id}
                   baseSku={initialData.sku}
                   initialVariants={initialData.variants || []}
                 />
+              ) : (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Product Variants</CardTitle>
+                    <CardDescription>
+                      Save the product first to manage variants
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">
+                      Variants allow you to create different versions of this product with unique sizes, colors, and pricing.
+                      Complete the product details and save to start adding variants.
+                    </p>
+                  </CardContent>
+                </Card>
               )}
             </TabsContent>
 
             <TabsContent value="inventory" className="space-y-6 mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Inventory Management</CardTitle>
-                  <CardDescription>
-                    Manage stock levels and inventory settings
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Inventory management features will be available here.
-                  </p>
-                </CardContent>
-              </Card>
+              <InventoryManager
+                productId={initialData?.id || ''}
+                productName={initialData?.name || 'Product'}
+                initialVariants={initialData?.variants || []}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
