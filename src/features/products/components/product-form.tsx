@@ -1,6 +1,6 @@
 'use client';
 
-import { FileUploader } from '@/components/file-uploader';
+import { BulkImageUploader, type ProductImage } from '@/components/bulk-image-uploader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -35,7 +35,13 @@ import { IconPlus } from '@tabler/icons-react';
 
 
 const formSchema = z.object({
-  imageUrl: z.string().optional(),
+  images: z.array(z.object({
+    id: z.string().optional(),
+    url: z.string(),
+    altText: z.string().optional(),
+    sortOrder: z.number(),
+    isPrimary: z.boolean(),
+  })).optional(),
   name: z.string().min(2, {
     message: 'Product name must be at least 2 characters.'
   }),
@@ -82,7 +88,13 @@ export default function ProductForm({
     trackQuantity: false,
     isActive: initialData?.isActive ?? true,
     isFeatured: initialData?.isFeatured ?? false,
-    imageUrl: initialData?.images?.[0]?.url || ''
+    images: initialData?.images?.map((img, index) => ({
+      id: img.id,
+      url: img.url,
+      altText: img.altText || '',
+      sortOrder: (img as any).sortOrder || index,
+      isPrimary: img.isPrimary || index === 0,
+    })) || []
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -129,7 +141,12 @@ export default function ProductForm({
         quantity: values.quantity ? parseInt(values.quantity) : 0,
         lowStockThreshold: values.lowStockThreshold ? parseInt(values.lowStockThreshold) : undefined,
         weight: values.weight ? parseFloat(values.weight) : undefined,
-        images: values.imageUrl ? [values.imageUrl] : []
+        images: values.images?.map(img => ({
+          url: img.url,
+          altText: img.altText,
+          sortOrder: img.sortOrder,
+          isPrimary: img.isPrimary
+        })) || []
       };
 
       const url = initialData ? `/api/products/${initialData.id}` : '/api/products';
@@ -173,16 +190,17 @@ export default function ProductForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 overflow-visible'>
             <FormField
               control={form.control}
-              name='imageUrl'
+              name='images'
               render={({ field }) => (
                 <div className='space-y-6'>
                   <FormItem className='w-full'>
-                    <FormLabel>Product Image</FormLabel>
+                    <FormLabel>Product Images</FormLabel>
                     <FormControl>
-                      <FileUploader
+                      <BulkImageUploader
                         value={field.value}
                         onChange={field.onChange}
                         disabled={loading}
+                        maxImages={10}
                       />
                     </FormControl>
                     <FormMessage />

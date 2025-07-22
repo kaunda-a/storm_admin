@@ -87,6 +87,7 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
       // Transform form data for API
       const formData = {
         ...values,
+        imageUrl: values.imageUrl || undefined,
         startDate: values.startDate || undefined,
         endDate: values.endDate || undefined,
         videoUrl: values.videoUrl || undefined,
