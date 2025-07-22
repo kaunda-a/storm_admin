@@ -72,6 +72,13 @@ export default function AppSidebar() {
 
 
 
+  // Close mobile sidebar when pathname changes (navigation occurs)
+  React.useEffect(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [pathname, isMobile, setOpenMobile]);
+
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [isOpen]);
@@ -81,6 +88,7 @@ export default function AppSidebar() {
     <Link
       href={href}
       onClick={() => {
+        // Immediate close for better UX (backup to useEffect)
         if (isMobile) {
           setOpenMobile(false);
         }
