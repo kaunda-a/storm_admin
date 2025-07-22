@@ -353,32 +353,31 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
               </Button>
             </div>
           ) : (
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <div className="min-w-[600px] px-4 sm:px-0">
-                <Table>
+            <div className="rounded-md border">
+              <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="min-w-[120px] text-xs sm:text-sm">Variant</TableHead>
-                      <TableHead className="min-w-[80px] text-xs sm:text-sm">SKU</TableHead>
-                      <TableHead className="min-w-[70px] text-xs sm:text-sm">Price</TableHead>
-                      <TableHead className="min-w-[80px] text-xs sm:text-sm">Stock</TableHead>
-                      <TableHead className="min-w-[60px] hidden md:table-cell text-xs sm:text-sm">Alert</TableHead>
-                      <TableHead className="min-w-[80px] text-xs sm:text-sm">Status</TableHead>
-                      <TableHead className="min-w-[70px] hidden lg:table-cell text-xs sm:text-sm">Value</TableHead>
+                      <TableHead>Variant</TableHead>
+                      <TableHead className="hidden sm:table-cell">SKU</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead>Stock</TableHead>
+                      <TableHead className="hidden md:table-cell">Alert</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="hidden lg:table-cell">Value</TableHead>
                     </TableRow>
                   </TableHeader>
               <TableBody>
                 {variants.map((variant) => (
                   <TableRow key={variant.id}>
-                    <TableCell className="p-2 sm:p-4">
-                      <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                    <TableCell>
+                      <div className="flex items-center gap-1 flex-wrap">
                         <Badge variant="outline" className="text-xs">{variant.size}</Badge>
                         <Badge variant="outline" className="text-xs">{variant.color}</Badge>
                       </div>
                     </TableCell>
-                    <TableCell className="font-mono text-xs p-2 sm:p-4 break-all max-w-[80px]">{variant.sku}</TableCell>
-                    <TableCell className="text-xs sm:text-sm p-2 sm:p-4">{formatCurrency(Number(variant.price))}</TableCell>
-                    <TableCell className="p-2 sm:p-4">
+                    <TableCell className="hidden sm:table-cell font-mono text-xs">{variant.sku}</TableCell>
+                    <TableCell className="text-sm">{formatCurrency(Number(variant.price))}</TableCell>
+                    <TableCell>
                       <Input
                         type="number"
                         value={variant.stock}
@@ -386,20 +385,19 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
                           const newStock = parseInt(e.target.value) || 0;
                           updateVariantStock(variant.id!, newStock);
                         }}
-                        className="w-12 sm:w-16 md:w-20 text-xs sm:text-sm h-8"
+                        className="w-16 text-sm"
                         min="0"
                       />
                     </TableCell>
-                    <TableCell className="hidden md:table-cell text-xs sm:text-sm">{variant.lowStockThreshold}</TableCell>
+                    <TableCell className="hidden md:table-cell text-sm">{variant.lowStockThreshold}</TableCell>
                     <TableCell>{getStockBadge(variant)}</TableCell>
-                    <TableCell className="hidden lg:table-cell text-xs sm:text-sm">
+                    <TableCell className="hidden lg:table-cell text-sm">
                       {formatCurrency(variant.stock * Number(variant.price))}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-                </Table>
-              </div>
+              </Table>
             </div>
           )}
         </CardContent>

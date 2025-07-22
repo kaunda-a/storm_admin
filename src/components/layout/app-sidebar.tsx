@@ -42,10 +42,15 @@ import {
 } from '@tabler/icons-react';
 
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+
 import { usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
+import { useSession } from 'next-auth/react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { getRoleColor, ROLE_DISPLAY_NAMES } from '@/lib/services/users';
+import { UserRole } from '@prisma/client';
 import { OrgSwitcher } from '../org-switcher';
 import { useSidebar } from '@/components/ui/sidebar';
 export const company = {
@@ -63,6 +68,7 @@ export default function AppSidebar() {
   const { isOpen } = useMediaQuery();
   const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
+  const { data: session } = useSession();
 
   const handleSwitchTenant = (_tenantId: string) => {
     // Tenant switching functionality would be implemented here
@@ -168,8 +174,24 @@ export default function AppSidebar() {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-sidebar-border">
         <SidebarMenu>
+          {/* Quick Sign Out for Mobile */}
+          <SidebarMenuItem className="md:hidden">
+            <SidebarMenuButton
+              onClick={() => {
+                if (isMobile) {
+                  setOpenMobile(false);
+                }
+                router.push('/auth/sign-out');
+              }}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <IconLogout className='h-4 w-4' />
+              <span>Sign Out</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -177,7 +199,19 @@ export default function AppSidebar() {
                   size='lg'
                   className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
                 >
-                  
+                  <Avatar className='h-8 w-8 rounded-lg'>
+                    <AvatarFallback className='rounded-lg text-xs'>
+                      {session?.user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className='grid flex-1 text-left text-sm leading-tight'>
+                    <span className='truncate font-semibold'>
+                      {session?.user?.email?.split('@')[0] || 'User'}
+                    </span>
+                    <span className='truncate text-xs text-muted-foreground'>
+                      {session?.user?.email || 'user@example.com'}
+                    </span>
+                  </div>
                   <IconChevronsDown className='ml-auto size-4' />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
@@ -188,8 +222,30 @@ export default function AppSidebar() {
                 sideOffset={4}
               >
                 <DropdownMenuLabel className='p-0 font-normal'>
-                  <div className='px-1 py-1.5'>
-                    
+                  <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
+                    <Avatar className='h-8 w-8 rounded-lg'>
+                      <AvatarFallback className='rounded-lg text-xs'>
+                        {session?.user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className='grid flex-1 text-left text-sm leading-tight'>
+                      <span className='truncate font-semibold'>
+                        {session?.user?.email?.split('@')[0] || 'User'}
+                      </span>
+                      <div className='flex items-center gap-1'>
+                        <span className='truncate text-xs text-muted-foreground'>
+                          {session?.user?.email || 'user@example.com'}
+                        </span>
+                        {session?.user?.role && (
+                          <Badge
+                            className={`${getRoleColor(session.user.role as UserRole)} text-xs px-1 py-0`}
+                            variant="secondary"
+                          >
+                            {ROLE_DISPLAY_NAMES[session.user.role as UserRole]}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -217,11 +273,11 @@ export default function AppSidebar() {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={async () => {
+                  onClick={() => {
                     if (isMobile) {
                       setOpenMobile(false);
                     }
-                    await signOut({ callbackUrl: '/auth/sign-in' });
+                    router.push('/auth/sign-out');
                   }}
                   className="text-red-600 focus:text-red-600 focus:bg-red-50"
                 >

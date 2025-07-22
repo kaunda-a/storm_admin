@@ -32,12 +32,7 @@ export default async function Page(props: pageProps) {
             title='Customers'
             description='Manage customers (Server side table functionalities.)'
           />
-          <Link
-            href='/dashboard/customers/new'
-            className={cn(buttonVariants(), 'text-xs md:text-sm w-fit')}
-          >
-      
-          </Link>
+
         </div>
         <Separator />
         <Suspense

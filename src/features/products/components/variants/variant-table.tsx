@@ -250,13 +250,9 @@ export function VariantTable({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-x-auto -mx-4 sm:mx-0">
-        <div className="min-w-[700px] px-4 sm:px-0">
-          <DataTable table={table}>
-            <DataTableToolbar table={table} />
-          </DataTable>
-        </div>
-      </div>
+      <DataTable table={table}>
+        <DataTableToolbar table={table} />
+      </DataTable>
     </div>
   );
 }

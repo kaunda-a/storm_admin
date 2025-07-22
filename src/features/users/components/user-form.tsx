@@ -23,7 +23,7 @@ import { Separator } from '@/components/ui/separator';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconLoader2, IconMail, IconCalendar, IconShield } from '@tabler/icons-react';
 import { useState } from 'react';
-import { useConfetti } from '@/components/ui/confetti';
+
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import * as z from 'zod';
@@ -60,7 +60,6 @@ export default function UserForm({ initialData, pageTitle }: UserFormProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
-  const { trigger } = useConfetti();
   const isEdit = !!initialData;
 
   const form = useForm<UserFormValues>({
@@ -110,13 +109,6 @@ export default function UserForm({ initialData, pageTitle }: UserFormProps) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Something went wrong');
       }
-
-      // Trigger confetti for successful user creation/update
-      trigger({
-        elementCount: 35,
-        colors: ['#3b82f6', '#1d4ed8', '#1e40af', '#1e3a8a'],
-        duration: 2500
-      });
 
       toast.success(initialData ? 'User updated successfully!' : 'User created successfully!');
       router.push('/dashboard/users');

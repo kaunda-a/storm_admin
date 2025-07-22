@@ -24,7 +24,7 @@ import { IconLoader2, IconUser, IconMail, IconCalendar, IconShield } from '@tabl
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useConfetti } from '@/components/ui/confetti';
+
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import * as z from 'zod';
@@ -45,7 +45,6 @@ export default function ProfileForm() {
   const [profileData, setProfileData] = useState<any>(null);
   const router = useRouter();
   const { data: session } = useSession();
-  const { trigger } = useConfetti();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -108,13 +107,6 @@ export default function ProfileForm() {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Something went wrong');
       }
-
-      // Trigger confetti for successful profile update
-      trigger({
-        elementCount: 25,
-        colors: ['#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6'],
-        duration: 2000
-      });
 
       toast.success('Profile updated successfully');
       router.refresh();
