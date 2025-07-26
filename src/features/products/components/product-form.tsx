@@ -103,7 +103,7 @@ export default function ProductForm({
       id: img.id,
       url: img.url,
       altText: img.altText || '',
-      sortOrder: (img as any).sortOrder || index,
+      sortOrder: img.sortOrder || index,
       isPrimary: img.isPrimary || index === 0,
     })) || []
   };

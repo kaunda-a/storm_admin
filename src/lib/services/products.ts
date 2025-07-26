@@ -11,7 +11,7 @@ export type ProductWithDetails = Product & {
     costPrice: number | null;
     weight: number | null;
   }>
-  images: { id: string; url: string; altText: string | null; isPrimary: boolean }[]
+  images: { id: string; url: string; altText: string | null; isPrimary: boolean; sortOrder: number }[]
   _count: {
     reviews: number
   }
