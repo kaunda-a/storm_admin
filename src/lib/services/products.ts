@@ -133,7 +133,6 @@ export class ProductService {
   }
 
   static async getProductBySlug(slug: string): Promise<ProductWithDetails | null> {
-    const product = await db.product.findUnique({
     return db.product.findUnique({
       where: { slug },
       include: {
@@ -195,17 +194,12 @@ export class ProductService {
         comparePrice: variant.comparePrice?.toNumber() || null,
         costPrice: variant.costPrice?.toNumber() || null,
         weight: variant.weight?.toNumber() || null
-        price: variant.price,
-        comparePrice: variant.comparePrice,
-        costPrice: variant.costPrice,
-        weight: variant.weight
       }))
     }
   }
 
   static async getFeaturedProducts(limit = 8): Promise<ProductWithDetails[]> {
     const products = await db.product.findMany({
-    return db.product.findMany({
       where: {
         isFeatured: true,
         isActive: true,
