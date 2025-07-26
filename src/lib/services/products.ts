@@ -10,10 +10,6 @@ export type ProductWithDetails = Product & {
     comparePrice: number | null;
     costPrice: number | null;
     weight: number | null;
-    price: Decimal;
-    comparePrice: Decimal | null;
-    costPrice: Decimal | null;
-    weight: Decimal | null;
   }>
   images: { id: string; url: string; altText: string | null; isPrimary: boolean }[]
   _count: {
