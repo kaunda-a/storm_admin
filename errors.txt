@@ -1,0 +1,28 @@
+
+[19:13:41.535] ./src/lib/services/products.ts
+[19:13:41.535] Error:   [31mx[0m Expected ',', got 'price'
+[19:13:41.536]      ,-[[36;1;4m/vercel/path0/src/lib/services/products.ts[0m:128:1]
+[19:13:41.536]  [2m125[0m |           comparePrice: variant.comparePrice?.toNumber() || null,
+[19:13:41.536]  [2m126[0m |           costPrice: variant.costPrice?.toNumber() || null,
+[19:13:41.537]  [2m127[0m |           weight: variant.weight?.toNumber() || null
+[19:13:41.537]  [2m128[0m |           price: variant.price,
+[19:13:41.537]      : [35;1m          ^^^^^[0m
+[19:13:41.538]  [2m129[0m |           comparePrice: variant.comparePrice,
+[19:13:41.538]  [2m130[0m |           costPrice: variant.costPrice,
+[19:13:41.538]  [2m131[0m |           weight: variant.weight
+[19:13:41.538]      `----
+[19:13:41.539] 
+[19:13:41.539] Caused by:
+[19:13:41.539]     Syntax Error
+[19:13:41.539] 
+[19:13:41.540] Import trace for requested module:
+[19:13:41.540] ./src/lib/services/products.ts
+[19:13:41.540] ./src/lib/services/index.ts
+[19:13:41.541] ./src/app/api/billboards/route.ts
+[19:13:41.541] 
+[19:13:41.544] 
+[19:13:41.544] > Build failed because of webpack errors
+[19:13:41.575]  ELIFECYCLE  Command failed with exit code 1.
+[19:13:41.624] Error: Command "pnpm run build" exited with 1
+[19:13:42.329] 
+[19:13:45.422] Exiting build container

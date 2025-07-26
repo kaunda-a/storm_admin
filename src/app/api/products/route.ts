@@ -67,15 +67,8 @@ export async function POST(request: NextRequest) {
       isFeatured: body.isFeatured || false,
       images: body.images || [],
       dimensions: body.dimensions || undefined,
-      categoryId: body.categoryId || undefined,
-      brandId: body.brandId || undefined,
-      tags: body.tags || [],
-      isActive: body.isActive !== undefined ? body.isActive : true,
-      isFeatured: body.isFeatured || false,
       seoTitle: body.seoTitle || undefined,
       seoDescription: body.seoDescription || undefined,
-      // Handle images - for now just store URLs, later integrate with file upload
-      images: body.images || [],
       // Handle variants if provided
       variants: body.variants || [],
       createdBy: session.user.id

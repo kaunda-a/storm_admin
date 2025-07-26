@@ -125,10 +125,6 @@ export class ProductService {
           comparePrice: variant.comparePrice?.toNumber() || null,
           costPrice: variant.costPrice?.toNumber() || null,
           weight: variant.weight?.toNumber() || null
-          price: variant.price,
-          comparePrice: variant.comparePrice,
-          costPrice: variant.costPrice,
-          weight: variant.weight
         }))
       })),
       pagination: {
@@ -457,7 +453,7 @@ export class ProductService {
     tags?: string[]
     isActive: boolean
     isFeatured: boolean
-    images?: string[]
+    images?: Array<{url: string, altText?: string, sortOrder: number, isPrimary: boolean}>
     createdBy: string
   }) {
     // Generate slug from name
@@ -481,7 +477,6 @@ export class ProductService {
             size: 'Default',
             color: 'Default',
             sku: `${data.sku}-DEFAULT-DEF`,
-            sku: data.sku,
             price: data.price,
             comparePrice: data.compareAtPrice,
             costPrice: data.costPrice,
@@ -494,11 +489,11 @@ export class ProductService {
         // Create images if provided
         ...(data.images && data.images.length > 0 && {
           images: {
-            create: data.images.map((url, index) => ({
-              url,
-              altText: data.name,
-              isPrimary: index === 0,
-              sortOrder: index
+            create: data.images.map((img) => ({
+              url: img.url,
+              altText: img.altText || data.name,
+              isPrimary: img.isPrimary,
+              sortOrder: img.sortOrder
             }))
           }
         })
@@ -531,7 +526,7 @@ export class ProductService {
     tags?: string[]
     isActive?: boolean
     isFeatured?: boolean
-    images?: string[]
+    images?: Array<{url: string, altText?: string, sortOrder: number, isPrimary: boolean}>
   }) {
     const updateData: any = {}
 
@@ -572,7 +567,6 @@ export class ProductService {
                 size: 'Default',
                 color: 'Default'
               },
-              where: { isDefault: true },
               data: variantUpdate
             }
           }
@@ -581,11 +575,11 @@ export class ProductService {
         ...(data.images && {
           images: {
             deleteMany: {},
-            create: data.images.map((url, index) => ({
-              url,
-              altText: data.name || 'Product image',
-              isPrimary: index === 0,
-              sortOrder: index
+            create: data.images.map((img) => ({
+              url: img.url,
+              altText: img.altText || data.name || 'Product image',
+              isPrimary: img.isPrimary,
+              sortOrder: img.sortOrder
             }))
           }
         })
