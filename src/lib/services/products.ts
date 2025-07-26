@@ -133,7 +133,7 @@ export class ProductService {
   }
 
   static async getProductBySlug(slug: string): Promise<ProductWithDetails | null> {
-    return db.product.findUnique({
+    const product = await db.product.findUnique({
       where: { slug },
       include: {
         category: true,
@@ -162,8 +162,7 @@ export class ProductService {
         costPrice: variant.costPrice?.toNumber() || null,
         weight: variant.weight?.toNumber() || null
       }))
-    }
-    }) as Promise<ProductWithDetails | null>
+    } as ProductWithDetails
   }
 
   static async getProductById(id: string): Promise<ProductWithDetails | null> {
@@ -195,7 +194,7 @@ export class ProductService {
         costPrice: variant.costPrice?.toNumber() || null,
         weight: variant.weight?.toNumber() || null
       }))
-    }
+    } as ProductWithDetails
   }
 
   static async getFeaturedProducts(limit = 8): Promise<ProductWithDetails[]> {
@@ -409,10 +408,6 @@ export class ProductService {
       comparePrice: variant.comparePrice?.toNumber() || null,
       costPrice: variant.costPrice?.toNumber() || null,
       weight: variant.weight?.toNumber() || null
-      price: Number(variant.price),
-      comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
-      costPrice: variant.costPrice ? Number(variant.costPrice) : null,
-      weight: variant.weight ? Number(variant.weight) : null
     }))
   }
 
@@ -599,9 +594,7 @@ export class ProductService {
       db.product.count({ where: { isActive: true, status: 'ACTIVE' } }),
       db.productVariant.count({
         where: {
-          stock: {
-            lte: db.productVariant.fields.lowStockThreshold
-          }
+          stock: { lte: 5 } // Using default threshold of 5
         }
       }),
       db.category.count({ where: { isActive: true } })
