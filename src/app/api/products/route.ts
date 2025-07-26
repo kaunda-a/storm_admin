@@ -48,14 +48,6 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     
-    // Validate required fields
-    if (!body.name || !body.description || !body.sku || !body.price || !body.categoryId || !body.brandId) {
-      return NextResponse.json(
-        { error: 'Missing required fields: name, description, sku, price, categoryId, and brandId are required' },
-        { status: 400 }
-      );
-    }
-
     // Transform the data to match ProductService expectations
     const productData = {
       name: body.name,
@@ -74,6 +66,18 @@ export async function POST(request: NextRequest) {
       isActive: body.isActive !== undefined ? body.isActive : true,
       isFeatured: body.isFeatured || false,
       images: body.images || [],
+      dimensions: body.dimensions || undefined,
+      categoryId: body.categoryId || undefined,
+      brandId: body.brandId || undefined,
+      tags: body.tags || [],
+      isActive: body.isActive !== undefined ? body.isActive : true,
+      isFeatured: body.isFeatured || false,
+      seoTitle: body.seoTitle || undefined,
+      seoDescription: body.seoDescription || undefined,
+      // Handle images - for now just store URLs, later integrate with file upload
+      images: body.images || [],
+      // Handle variants if provided
+      variants: body.variants || [],
       createdBy: session.user.id
     };
 

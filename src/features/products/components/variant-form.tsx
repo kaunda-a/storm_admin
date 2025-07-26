@@ -25,6 +25,7 @@ type ProductVariant = {
   weight?: number | null
   isActive: boolean
 
+  isDefault?: boolean
   createdAt: Date
   updatedAt: Date
 }
@@ -45,6 +46,7 @@ const variantFormSchema = z.object({
   weight: z.string().optional(),
   isActive: z.boolean().default(true),
 
+  isDefault: z.boolean().default(false)
 })
 
 type VariantFormValues = z.infer<typeof variantFormSchema>
@@ -84,6 +86,7 @@ export function VariantForm({ productId, variant, onSubmit }: VariantFormProps) 
       weight: variant?.weight?.toString() || '',
       isActive: variant?.isActive ?? true,
 
+      isDefault: variant?.isDefault ?? false
     }
   })
 
@@ -334,6 +337,26 @@ export function VariantForm({ productId, variant, onSubmit }: VariantFormProps) 
               />
 
 
+              <FormField
+                control={form.control}
+                name='isDefault'
+                render={({ field }) => (
+                  <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                    <div className='space-y-0.5'>
+                      <FormLabel className='text-base'>Default Variant</FormLabel>
+                      <FormDescription>
+                        Show this variant by default on product pages
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 

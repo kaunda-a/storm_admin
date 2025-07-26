@@ -10,6 +10,10 @@ export type ProductWithDetails = Product & {
     comparePrice: number | null;
     costPrice: number | null;
     weight: number | null;
+    price: Decimal;
+    comparePrice: Decimal | null;
+    costPrice: Decimal | null;
+    weight: Decimal | null;
   }>
   images: { id: string; url: string; altText: string | null; isPrimary: boolean }[]
   _count: {
@@ -121,6 +125,10 @@ export class ProductService {
           comparePrice: variant.comparePrice?.toNumber() || null,
           costPrice: variant.costPrice?.toNumber() || null,
           weight: variant.weight?.toNumber() || null
+          price: variant.price,
+          comparePrice: variant.comparePrice,
+          costPrice: variant.costPrice,
+          weight: variant.weight
         }))
       })),
       pagination: {
@@ -134,6 +142,7 @@ export class ProductService {
 
   static async getProductBySlug(slug: string): Promise<ProductWithDetails | null> {
     const product = await db.product.findUnique({
+    return db.product.findUnique({
       where: { slug },
       include: {
         category: true,
@@ -163,6 +172,7 @@ export class ProductService {
         weight: variant.weight?.toNumber() || null
       }))
     }
+    }) as Promise<ProductWithDetails | null>
   }
 
   static async getProductById(id: string): Promise<ProductWithDetails | null> {
@@ -193,12 +203,17 @@ export class ProductService {
         comparePrice: variant.comparePrice?.toNumber() || null,
         costPrice: variant.costPrice?.toNumber() || null,
         weight: variant.weight?.toNumber() || null
+        price: variant.price,
+        comparePrice: variant.comparePrice,
+        costPrice: variant.costPrice,
+        weight: variant.weight
       }))
     }
   }
 
   static async getFeaturedProducts(limit = 8): Promise<ProductWithDetails[]> {
     const products = await db.product.findMany({
+    return db.product.findMany({
       where: {
         isFeatured: true,
         isActive: true,
@@ -408,6 +423,10 @@ export class ProductService {
       comparePrice: variant.comparePrice?.toNumber() || null,
       costPrice: variant.costPrice?.toNumber() || null,
       weight: variant.weight?.toNumber() || null
+      price: Number(variant.price),
+      comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
+      costPrice: variant.costPrice ? Number(variant.costPrice) : null,
+      weight: variant.weight ? Number(variant.weight) : null
     }))
   }
 
@@ -462,6 +481,7 @@ export class ProductService {
             size: 'Default',
             color: 'Default',
             sku: `${data.sku}-DEFAULT-DEF`,
+            sku: data.sku,
             price: data.price,
             comparePrice: data.compareAtPrice,
             costPrice: data.costPrice,
@@ -552,6 +572,7 @@ export class ProductService {
                 size: 'Default',
                 color: 'Default'
               },
+              where: { isDefault: true },
               data: variantUpdate
             }
           }

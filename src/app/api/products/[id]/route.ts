@@ -52,16 +52,20 @@ export async function PUT(
       price: body.price ? parseFloat(body.price) : undefined,
       compareAtPrice: body.compareAtPrice ? parseFloat(body.compareAtPrice) : undefined,
       costPrice: body.costPrice ? parseFloat(body.costPrice) : undefined,
-      trackQuantity: body.trackQuantity,
-      quantity: body.quantity ? parseInt(body.quantity) : undefined,
+      trackQuantity: body.trackQuantity || false,
+      quantity: body.quantity ? parseInt(body.quantity) : 0,
       lowStockThreshold: body.lowStockThreshold ? parseInt(body.lowStockThreshold) : undefined,
       weight: body.weight ? parseFloat(body.weight) : undefined,
+      dimensions: body.dimensions || undefined,
       categoryId: body.categoryId,
       brandId: body.brandId,
-      tags: body.tags,
-      isActive: body.isActive,
-      isFeatured: body.isFeatured,
-      images: body.images
+      tags: body.tags || [],
+      isActive: body.isActive !== undefined ? body.isActive : true,
+      isFeatured: body.isFeatured || false,
+      seoTitle: body.seoTitle || undefined,
+      seoDescription: body.seoDescription || undefined,
+      images: body.images || [],
+      variants: body.variants || []
     };
 
     const product = await ProductService.updateProduct(id, productData);
