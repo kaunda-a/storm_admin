@@ -11,6 +11,7 @@ export * from './users'
 // Re-export commonly used types
 export type {
   ProductWithDetails,
+  TransformedProductVariant,
   ProductFilters,
   ProductSort
 } from './products'

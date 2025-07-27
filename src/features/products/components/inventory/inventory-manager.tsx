@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ProductVariant } from '@prisma/client';
+import { TransformedProductVariant } from '@/lib/services';
 import { toast } from 'sonner';
 import { Package, TrendingDown, TrendingUp, AlertTriangle, DollarSign, BarChart3 } from 'lucide-react';
 
@@ -32,7 +33,7 @@ import {
 interface InventoryManagerProps {
   productId: string;
   productName: string;
-  initialVariants?: ProductVariant[];
+  initialVariants?: TransformedProductVariant[];
 }
 
 interface InventoryStats {
@@ -47,7 +48,7 @@ interface InventoryStats {
 
 
 export function InventoryManager({ productId, productName, initialVariants = [] }: InventoryManagerProps) {
-  const [variants, setVariants] = React.useState<ProductVariant[]>(initialVariants);
+  const [variants, setVariants] = React.useState<TransformedProductVariant[]>(initialVariants);
   const [loading, setLoading] = React.useState(false);
   const [stats, setStats] = React.useState<InventoryStats | null>(null);
   const [bulkAdjustmentOpen, setBulkAdjustmentOpen] = React.useState(false);
@@ -149,13 +150,13 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
     }
   };
 
-  const getStockStatus = (variant: ProductVariant) => {
+  const getStockStatus = (variant: TransformedProductVariant) => {
     if (variant.stock === 0) return 'out';
     if (variant.stock <= variant.lowStockThreshold) return 'low';
     return 'good';
   };
 
-  const getStockBadge = (variant: ProductVariant) => {
+  const getStockBadge = (variant: TransformedProductVariant) => {
     const status = getStockStatus(variant);
     
     switch (status) {
@@ -392,7 +393,7 @@ export function InventoryManager({ productId, productName, initialVariants = [] 
                     <TableCell className="hidden md:table-cell text-sm">{variant.lowStockThreshold}</TableCell>
                     <TableCell>{getStockBadge(variant)}</TableCell>
                     <TableCell className="hidden lg:table-cell text-sm">
-                      {formatCurrency(variant.stock * Number(variant.price))}
+                      {formatCurrency(variant.stock * variant.price)}
                     </TableCell>
                   </TableRow>
                 ))}

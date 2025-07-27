@@ -2,15 +2,17 @@ import { db } from '@/lib/prisma'
 import type { Product, Category, Brand, ProductVariant, ProductImage, Prisma, ProductStatus } from '@prisma/client'
 import { Decimal } from '@prisma/client/runtime/library'
 
+export type TransformedProductVariant = Omit<ProductVariant, 'price' | 'comparePrice' | 'costPrice' | 'weight'> & {
+  price: number;
+  comparePrice: number | null;
+  costPrice: number | null;
+  weight: number | null;
+}
+
 export type ProductWithDetails = Product & {
   category: Category
   brand: Brand
-  variants: Array<Omit<ProductVariant, 'price' | 'comparePrice' | 'costPrice' | 'weight'> & {
-    price: number;
-    comparePrice: number | null;
-    costPrice: number | null;
-    weight: number | null;
-  }>
+  variants: TransformedProductVariant[]
   images: { id: string; url: string; altText: string | null; isPrimary: boolean; sortOrder: number }[]
   _count: {
     reviews: number

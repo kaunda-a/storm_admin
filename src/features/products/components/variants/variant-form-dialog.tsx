@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ProductVariant } from '@prisma/client';
+import { TransformedProductVariant } from '@/lib/services';
 import { toast } from 'sonner';
 
 import {
@@ -54,7 +55,7 @@ type VariantFormValues = z.infer<typeof variantFormSchema>;
 interface VariantFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  variant?: ProductVariant | null;
+  variant?: TransformedProductVariant | null;
   productId: string;
   baseSku: string;
   onSave: (data: any) => Promise<void>;

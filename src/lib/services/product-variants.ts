@@ -1,6 +1,13 @@
 import { db } from '@/lib/prisma';
 import type { ProductVariant } from '@prisma/client';
 
+export type TransformedProductVariant = Omit<ProductVariant, 'price' | 'comparePrice' | 'costPrice' | 'weight'> & {
+  price: number;
+  comparePrice: number | null;
+  costPrice: number | null;
+  weight: number | null;
+};
+
 export type CreateVariantData = {
   productId: string;
   size: string;
@@ -60,26 +67,50 @@ export type VariantTemplate = {
 };
 
 export class ProductVariantService {
+  // Helper function to transform a single variant
+  private static transformVariant(variant: ProductVariant): TransformedProductVariant {
+    return {
+      ...variant,
+      price: variant.price.toNumber(),
+      comparePrice: variant.comparePrice?.toNumber() || null,
+      costPrice: variant.costPrice?.toNumber() || null,
+      weight: variant.weight?.toNumber() || null
+    };
+  }
+
+  // Helper function to transform multiple variants
+  private static transformVariants(variants: ProductVariant[]): TransformedProductVariant[] {
+    return variants.map(this.transformVariant);
+  }
   // Get all variants for a product
-  static async getProductVariants(productId: string): Promise<ProductVariant[]> {
-    return db.productVariant.findMany({
+  static async getProductVariants(productId: string): Promise<TransformedProductVariant[]> {
+    const variants = await db.productVariant.findMany({
       where: { productId },
       orderBy: [
         { size: 'asc' },
         { color: 'asc' }
       ]
     });
+
+    return variants.map(variant => ({
+      ...variant,
+      price: variant.price.toNumber(),
+      comparePrice: variant.comparePrice?.toNumber() || null,
+      costPrice: variant.costPrice?.toNumber() || null,
+      weight: variant.weight?.toNumber() || null
+    }));
   }
 
   // Get single variant by ID
-  static async getVariantById(id: string): Promise<ProductVariant | null> {
-    return db.productVariant.findUnique({
+  static async getVariantById(id: string): Promise<TransformedProductVariant | null> {
+    const variant = await db.productVariant.findUnique({
       where: { id }
     });
+    return variant ? this.transformVariant(variant) : null;
   }
 
   // Create single variant
-  static async createVariant(data: CreateVariantData): Promise<ProductVariant> {
+  static async createVariant(data: CreateVariantData): Promise<TransformedProductVariant> {
     // Check for duplicate size/color combination
     const existing = await db.productVariant.findFirst({
       where: {
@@ -93,16 +124,18 @@ export class ProductVariantService {
       throw new Error(`Variant with size "${data.size}" and color "${data.color}" already exists`);
     }
 
-    return db.productVariant.create({
+    const variant = await db.productVariant.create({
       data: {
         ...data,
         isActive: data.isActive ?? true
       }
     });
+
+    return this.transformVariant(variant);
   }
 
   // Update variant
-  static async updateVariant(id: string, data: UpdateVariantData): Promise<ProductVariant> {
+  static async updateVariant(id: string, data: UpdateVariantData): Promise<TransformedProductVariant> {
     // If updating size/color, check for duplicates
     if (data.size || data.color) {
       const variant = await this.getVariantById(id);
@@ -124,10 +157,12 @@ export class ProductVariantService {
       }
     }
 
-    return db.productVariant.update({
+    const variant = await db.productVariant.update({
       where: { id },
       data
     });
+
+    return this.transformVariant(variant);
   }
 
   // Delete variant
@@ -138,7 +173,7 @@ export class ProductVariantService {
   }
 
   // Bulk create variants from size/color matrix
-  static async createVariantsFromMatrix(data: SizeColorMatrix & { productId: string; baseSku: string }): Promise<ProductVariant[]> {
+  static async createVariantsFromMatrix(data: SizeColorMatrix & { productId: string; baseSku: string }): Promise<TransformedProductVariant[]> {
     const variants: CreateVariantData[] = [];
 
     for (const combination of data.selectedCombinations) {
@@ -178,7 +213,7 @@ export class ProductVariantService {
   }
 
   // Bulk update variants
-  static async bulkUpdateVariants(data: BulkVariantUpdate): Promise<ProductVariant[]> {
+  static async bulkUpdateVariants(data: BulkVariantUpdate): Promise<TransformedProductVariant[]> {
     await db.productVariant.updateMany({
       where: {
         id: { in: data.variantIds }
@@ -186,48 +221,44 @@ export class ProductVariantService {
       data: data.updates
     });
 
-    return db.productVariant.findMany({
+    const variants = await db.productVariant.findMany({
       where: {
         id: { in: data.variantIds }
       }
     });
+
+    return this.transformVariants(variants);
   }
 
   // Update stock for variant
-  static async updateVariantStock(id: string, quantity: number): Promise<ProductVariant> {
-    return db.productVariant.update({
+  static async updateVariantStock(id: string, quantity: number): Promise<TransformedProductVariant> {
+    const variant = await db.productVariant.update({
       where: { id },
       data: { stock: quantity }
     });
+    return this.transformVariant(variant);
   }
 
   // Adjust stock (add/subtract)
-  static async adjustVariantStock(id: string, adjustment: number): Promise<ProductVariant> {
+  static async adjustVariantStock(id: string, adjustment: number): Promise<TransformedProductVariant> {
     const variant = await this.getVariantById(id);
     if (!variant) {
       throw new Error('Variant not found');
     }
 
     const newStock = Math.max(0, variant.stock + adjustment);
-    
+
     return this.updateVariantStock(id, newStock);
   }
 
   // Get low stock variants
-  static async getLowStockVariants(productId?: string): Promise<ProductVariant[]> {
-    const where: any = {
-      isActive: true,
-      stock: {
-        lte: db.productVariant.fields.lowStockThreshold
-      }
-    };
-
-    if (productId) {
-      where.productId = productId;
-    }
-
-    return db.productVariant.findMany({
-      where,
+  static async getLowStockVariants(productId?: string): Promise<TransformedProductVariant[]> {
+    // First get all variants, then filter by low stock threshold
+    const variants = await db.productVariant.findMany({
+      where: {
+        isActive: true,
+        ...(productId && { productId })
+      },
       include: {
         product: {
           select: {
@@ -241,6 +272,10 @@ export class ProductVariantService {
         { product: { name: 'asc' } }
       ]
     });
+
+    // Filter variants where stock is less than or equal to their low stock threshold
+    const lowStockVariants = variants.filter(variant => variant.stock <= variant.lowStockThreshold);
+    return this.transformVariants(lowStockVariants);
   }
 
   // Generate SKU
@@ -284,7 +319,7 @@ export class ProductVariantService {
   }
 
   // Duplicate variant with modifications
-  static async duplicateVariant(id: string, modifications: Partial<CreateVariantData>): Promise<ProductVariant> {
+  static async duplicateVariant(id: string, modifications: Partial<CreateVariantData>): Promise<TransformedProductVariant> {
     const original = await this.getVariantById(id);
     if (!original) {
       throw new Error('Original variant not found');
@@ -296,12 +331,12 @@ export class ProductVariantService {
       color: modifications.color || original.color,
       material: modifications.material || original.material || undefined,
       sku: modifications.sku || this.generateSKU(original.sku.split('-')[0], modifications.size || original.size, modifications.color || original.color),
-      price: modifications.price || Number(original.price),
-      comparePrice: modifications.comparePrice || (original.comparePrice ? Number(original.comparePrice) : undefined),
-      costPrice: modifications.costPrice || (original.costPrice ? Number(original.costPrice) : undefined),
+      price: modifications.price || original.price,
+      comparePrice: modifications.comparePrice || original.comparePrice || undefined,
+      costPrice: modifications.costPrice || original.costPrice || undefined,
       stock: modifications.stock || original.stock,
       lowStockThreshold: modifications.lowStockThreshold || original.lowStockThreshold,
-      weight: modifications.weight || (original.weight ? Number(original.weight) : undefined),
+      weight: modifications.weight || original.weight || undefined,
       isActive: modifications.isActive ?? original.isActive
     };
 

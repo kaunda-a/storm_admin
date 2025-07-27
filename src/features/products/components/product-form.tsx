@@ -552,7 +552,7 @@ export default function ProductForm({
                 <VariantManager
                   productId={initialData.id}
                   baseSku={initialData.sku}
-                  initialVariants={initialData.variants || []}
+                  initialVariants={(initialData.variants || []) as any}
                 />
               ) : initialData ? (
                 <Card>
@@ -591,7 +591,7 @@ export default function ProductForm({
                 <InventoryManager
                   productId={initialData.id}
                   productName={initialData.name || 'Product'}
-                  initialVariants={initialData.variants || []}
+                  initialVariants={(initialData.variants || []) as any}
                 />
               ) : (
                 <Card>

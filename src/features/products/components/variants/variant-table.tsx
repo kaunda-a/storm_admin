@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ProductVariant } from '@prisma/client';
+import { TransformedProductVariant } from '@/lib/services';
 import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal, Edit, Trash2, Copy, AlertTriangle } from 'lucide-react';
 
@@ -22,10 +23,10 @@ import { useDataTable } from '@/hooks/use-data-table';
 import { cn } from '@/lib/utils';
 
 interface VariantTableProps {
-  variants: ProductVariant[];
-  onEdit: (variant: ProductVariant) => void;
-  onDelete: (variant: ProductVariant) => void;
-  onDuplicate: (variant: ProductVariant) => void;
+  variants: TransformedProductVariant[];
+  onEdit: (variant: TransformedProductVariant) => void;
+  onDelete: (variant: TransformedProductVariant) => void;
+  onDuplicate: (variant: TransformedProductVariant) => void;
   onStockUpdate: (variantId: string, newStock: number) => void;
   loading?: boolean;
 }
@@ -41,7 +42,7 @@ export function VariantTable({
   const [editingStock, setEditingStock] = React.useState<string | null>(null);
   const [stockValue, setStockValue] = React.useState<string>('');
 
-  const handleStockEdit = (variant: ProductVariant) => {
+  const handleStockEdit = (variant: TransformedProductVariant) => {
     setEditingStock(variant.id!);
     setStockValue(variant.stock.toString());
   };
@@ -60,15 +61,15 @@ export function VariantTable({
     setStockValue('');
   };
 
-  const getStockStatus = (variant: ProductVariant) => {
+  const getStockStatus = (variant: TransformedProductVariant) => {
     if (variant.stock === 0) return 'out';
     if (variant.stock <= variant.lowStockThreshold) return 'low';
     return 'good';
   };
 
-  const getStockBadge = (variant: ProductVariant) => {
+  const getStockBadge = (variant: TransformedProductVariant) => {
     const status = getStockStatus(variant);
-    
+
     switch (status) {
       case 'out':
         return <Badge variant="destructive">Out of Stock</Badge>;
@@ -79,7 +80,7 @@ export function VariantTable({
     }
   };
 
-  const columns: ColumnDef<ProductVariant>[] = [
+  const columns: ColumnDef<TransformedProductVariant>[] = [
     {
       accessorKey: 'sku',
       header: 'SKU',

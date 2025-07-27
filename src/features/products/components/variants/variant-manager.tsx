@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ProductVariant } from '@prisma/client';
+import { TransformedProductVariant } from '@/lib/services';
 import { toast } from 'sonner';
 import { Plus, Package, TrendingUp, AlertTriangle, BarChart3 } from 'lucide-react';
 
@@ -26,11 +27,11 @@ import { BulkVariantCreator } from './bulk-variant-creator';
 interface VariantManagerProps {
   productId: string;
   baseSku: string;
-  initialVariants?: ProductVariant[];
+  initialVariants?: TransformedProductVariant[];
 }
 
 export function VariantManager({ productId, baseSku, initialVariants = [] }: VariantManagerProps) {
-  const [variants, setVariants] = React.useState<ProductVariant[]>(initialVariants);
+  const [variants, setVariants] = React.useState<TransformedProductVariant[]>(initialVariants);
   const [loading, setLoading] = React.useState(false);
   const [stats, setStats] = React.useState<any>(null);
   
@@ -40,7 +41,7 @@ export function VariantManager({ productId, baseSku, initialVariants = [] }: Var
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   
   // Current variant being edited/deleted
-  const [currentVariant, setCurrentVariant] = React.useState<ProductVariant | null>(null);
+  const [currentVariant, setCurrentVariant] = React.useState<TransformedProductVariant | null>(null);
 
   // Load variants and stats
   const loadData = React.useCallback(async () => {
@@ -54,11 +55,11 @@ export function VariantManager({ productId, baseSku, initialVariants = [] }: Var
       setVariants(variantsData);
 
       // Calculate stats from variants data
-      const totalStock = variantsData.reduce((sum: number, v: ProductVariant) => sum + v.stock, 0);
-      const totalValue = variantsData.reduce((sum: number, v: ProductVariant) => sum + (v.stock * Number(v.price)), 0);
-      const lowStockCount = variantsData.filter((v: ProductVariant) => v.stock <= v.lowStockThreshold).length;
-      const outOfStockCount = variantsData.filter((v: ProductVariant) => v.stock === 0).length;
-      const activeCount = variantsData.filter((v: ProductVariant) => v.isActive).length;
+      const totalStock = variantsData.reduce((sum: number, v: TransformedProductVariant) => sum + v.stock, 0);
+      const totalValue = variantsData.reduce((sum: number, v: TransformedProductVariant) => sum + (v.stock * v.price), 0);
+      const lowStockCount = variantsData.filter((v: TransformedProductVariant) => v.stock <= v.lowStockThreshold).length;
+      const outOfStockCount = variantsData.filter((v: TransformedProductVariant) => v.stock === 0).length;
+      const activeCount = variantsData.filter((v: TransformedProductVariant) => v.isActive).length;
 
       setStats({
         totalVariants: variantsData.length,
@@ -67,7 +68,7 @@ export function VariantManager({ productId, baseSku, initialVariants = [] }: Var
         totalValue,
         lowStockCount,
         outOfStockCount,
-        averagePrice: variantsData.length > 0 ? variantsData.reduce((sum: number, v: ProductVariant) => sum + Number(v.price), 0) / variantsData.length : 0
+        averagePrice: variantsData.length > 0 ? variantsData.reduce((sum: number, v: TransformedProductVariant) => sum + v.price, 0) / variantsData.length : 0
       });
     } catch (error) {
       toast.error('Failed to load variant data');
@@ -179,7 +180,7 @@ export function VariantManager({ productId, baseSku, initialVariants = [] }: Var
   };
 
   // Handle variant duplication
-  const handleVariantDuplicate = async (variant: ProductVariant) => {
+  const handleVariantDuplicate = async (variant: TransformedProductVariant) => {
     try {
       setLoading(true);
       // Create a new variant based on the existing one
@@ -189,12 +190,12 @@ export function VariantManager({ productId, baseSku, initialVariants = [] }: Var
         color: variant.color,
         material: variant.material,
         sku: `${variant.sku}-COPY`,
-        price: Number(variant.price),
-        comparePrice: variant.comparePrice ? Number(variant.comparePrice) : undefined,
-        costPrice: variant.costPrice ? Number(variant.costPrice) : undefined,
+        price: variant.price,
+        comparePrice: variant.comparePrice,
+        costPrice: variant.costPrice,
         stock: variant.stock,
         lowStockThreshold: variant.lowStockThreshold,
-        weight: variant.weight ? Number(variant.weight) : undefined,
+        weight: variant.weight,
         isActive: variant.isActive
       };
 
@@ -219,12 +220,12 @@ export function VariantManager({ productId, baseSku, initialVariants = [] }: Var
   };
 
   // Dialog handlers
-  const openVariantForm = (variant?: ProductVariant) => {
+  const openVariantForm = (variant?: TransformedProductVariant) => {
     setCurrentVariant(variant || null);
     setVariantFormOpen(true);
   };
 
-  const openDeleteDialog = (variant: ProductVariant) => {
+  const openDeleteDialog = (variant: TransformedProductVariant) => {
     setCurrentVariant(variant);
     setDeleteDialogOpen(true);
   };
