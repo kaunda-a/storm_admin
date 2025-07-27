@@ -443,8 +443,30 @@ export class ProductService {
     images?: Array<{url: string, altText?: string, sortOrder: number, isPrimary: boolean}>
     createdBy: string
   }) {
-    // Generate slug from name
-    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    // Generate unique slug from name
+    const baseSlug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    let slug = baseSlug
+    let counter = 1
+
+    // Check for existing slugs and append number if needed
+    while (await db.product.findUnique({ where: { slug } })) {
+      slug = `${baseSlug}-${counter}`
+      counter++
+    }
+
+    // Check for existing SKU
+    const existingSku = await db.product.findUnique({ where: { sku: data.sku } })
+    if (existingSku) {
+      throw new Error(`A product with SKU "${data.sku}" already exists`)
+    }
+
+    // Check for existing variant SKU
+    const existingVariantSku = await db.productVariant.findUnique({
+      where: { sku: `${data.sku}-DEFAULT-DEF` }
+    })
+    if (existingVariantSku) {
+      throw new Error(`A variant with SKU "${data.sku}-DEFAULT-DEF" already exists`)
+    }
 
     return db.product.create({
       data: {

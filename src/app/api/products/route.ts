@@ -78,6 +78,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error('Error creating product:', error);
+
+    // Handle specific error types
+    if (error instanceof Error) {
+      // Handle duplicate SKU or slug errors
+      if (error.message.includes('already exists')) {
+        return NextResponse.json(
+          { error: error.message },
+          { status: 409 }
+        );
+      }
+
+      // Handle Prisma unique constraint violations
+      if (error.message.includes('Unique constraint')) {
+        return NextResponse.json(
+          { error: 'A product with this SKU or name already exists' },
+          { status: 409 }
+        );
+      }
+    }
+
     return NextResponse.json(
       { error: 'Failed to create product' },
       { status: 500 }
