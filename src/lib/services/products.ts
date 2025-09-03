@@ -265,6 +265,7 @@ export class ProductService {
 
     return products.map(product => ({
       ...product,
+      averageRating: product.averageRating ? product.averageRating.toNumber() : 0,
       variants: product.variants.map(variant => ({
         ...variant,
         price: variant.price.toNumber(),
