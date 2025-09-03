@@ -9,6 +9,7 @@ export type CreateBillboardData = {
   title: string
   description?: string
   imageUrl?: string
+  images?: Array<{url: string, altText?: string, sortOrder: number, isPrimary: boolean}>
   videoUrl?: string
   linkUrl?: string
   linkText?: string
@@ -25,6 +26,7 @@ export type UpdateBillboardData = {
   title?: string
   description?: string
   imageUrl?: string
+  images?: Array<{url: string, altText?: string, sortOrder: number, isPrimary: boolean}>
   videoUrl?: string
   linkUrl?: string
   linkText?: string
@@ -137,11 +139,16 @@ export class BillboardService {
   }
 
   static async createBillboard(data: CreateBillboardData): Promise<Billboard> {
+    // Use the first image from the images array if available, otherwise use the imageUrl
+    const imageUrl = data.images && data.images.length > 0 
+      ? data.images[0].url 
+      : data.imageUrl;
+
     return db.billboard.create({
       data: {
         title: data.title,
         description: data.description,
-        imageUrl: data.imageUrl,
+        imageUrl,
         videoUrl: data.videoUrl,
         linkUrl: data.linkUrl,
         linkText: data.linkText,
@@ -157,9 +164,17 @@ export class BillboardService {
   }
 
   static async updateBillboard(id: string, data: UpdateBillboardData): Promise<Billboard> {
+    // Use the first image from the images array if available, otherwise use the imageUrl
+    const imageUrl = data.images && data.images.length > 0 
+      ? data.images[0].url 
+      : data.imageUrl;
+
     return db.billboard.update({
       where: { id },
-      data
+      data: {
+        ...data,
+        imageUrl
+      }
     })
   }
 
