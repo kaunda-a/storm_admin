@@ -10,6 +10,7 @@ datasource db {
 
 model User {
   id              String           @id @default(cuid())
+  name            String?
   email           String           @unique
   emailVerified   DateTime?
   firstName       String?
@@ -19,16 +20,25 @@ model User {
   role            UserRole         @default(SUPER_ADMIN)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  accounts        Account[]
+  accounts        UserAccount[]
+  sessions        UserSession[]
   billboards      Billboard[]
   marqueeMessages MarqueeMessage[]
-  sessions        Session[]
+  emails          Email[]
+  notifications   Notification[]
+  createdBoards   KanbanBoard[]
+  assignedCards   KanbanCard[]
+  createdChatbots Chatbot[]
+  posts           Post[]
+  postComments    PostComment[]
+  postReactions   PostReaction[]
 
   @@map("users")
 }
 
 model Customer {
   id            String    @id @default(cuid())
+  name          String?
   email         String    @unique
   emailVerified DateTime?
   firstName     String?
@@ -39,14 +49,46 @@ model Customer {
   phone         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
   addresses     Address[]
   orders        Order[]
   reviews       Review[]
+  conversations ChatbotConversation[]
 
   @@map("customers")
 }
 
 model Account {
+  id                String   @id @default(cuid())
+  customerId        String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  customer          Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  customerId   String
+  expires      DateTime
+  customer     Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model UserAccount {
   id                String  @id @default(cuid())
   userId            String
   type              String
@@ -62,17 +104,17 @@ model Account {
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@map("accounts")
+  @@map("user_accounts")
 }
 
-model Session {
+model UserSession {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("sessions")
+  @@map("user_sessions")
 }
 
 model VerificationToken {
@@ -153,6 +195,8 @@ model Product {
   tags             String[]
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+  averageRating    Decimal?         @default(0) @db.Decimal(3, 2)
+  reviewCount      Int              @default(0)
   orderItems       OrderItem[]
   images           ProductImage[]
   variants         ProductVariant[]
@@ -338,6 +382,232 @@ model Billboard {
   @@map("billboards")
 }
 
+// Email Model
+model Email {
+  id        String      @id @default(cuid())
+  from      String
+  to        String
+  subject   String
+  body      String      @db.Text
+  status    EmailStatus @default(DRAFT)
+  sentAt    DateTime?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("emails")
+}
+
+// Notification Model
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@map("notifications")
+}
+
+// Chatbot Models
+model Chatbot {
+  id            String                @id @default(cuid())
+  name          String
+  description   String?
+  status        ChatbotStatus         @default(INACTIVE)
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  creatorId     String
+  creator       User                  @relation(fields: [creatorId], references: [id])
+  conversations ChatbotConversation[]
+
+  @@map("chatbots")
+}
+
+model ChatbotConversation {
+  id         String        @id @default(cuid())
+  chatbotId  String
+  chatbot    Chatbot       @relation(fields: [chatbotId], references: [id], onDelete: Cascade)
+  customerId String?
+  customer   Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  messages   ChatMessage[]
+  startedAt  DateTime      @default(now())
+  endedAt    DateTime?
+
+  @@map("chatbot_conversations")
+}
+
+model ChatMessage {
+  id             String              @id @default(cuid())
+  conversationId String
+  conversation   ChatbotConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         ChatMessageSender   @default(BOT)
+  message        String              @db.Text
+  timestamp      DateTime            @default(now())
+
+  @@map("chat_messages")
+}
+
+// Kanban Models
+model KanbanBoard {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  creatorId   String
+  creator     User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  lists       KanbanList[]
+
+  @@map("kanban_boards")
+}
+
+model KanbanList {
+  id        String       @id @default(cuid())
+  name      String
+  boardId   String
+  board     KanbanBoard  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  order     Int
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  cards     KanbanCard[]
+
+  @@map("kanban_lists")
+}
+
+model KanbanCard {
+  id          String    @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  listId      String
+  list        KanbanList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  order       Int
+  assigneeId  String?
+  assignee    User?     @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("kanban_cards")
+}
+
+// Blog Models
+model Post {
+  id              String         @id @default(cuid())
+  title           String
+  slug            String         @unique
+  content         Json?
+  excerpt         String?
+  coverImageUrl   String?
+  authorId        String
+  author          User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  status          PostStatus     @default(DRAFT)
+  publishedAt     DateTime?
+  scheduledFor    DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  metaTitle       String?
+  metaDescription String?
+  views           Int            @default(0)
+  categories      PostCategory[]
+  tags            PostTag[]
+  comments        PostComment[]
+  reactions       PostReaction[]
+  images          PostImage[]
+
+  @@map("posts")
+}
+
+model PostImage {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("post_images")
+}
+
+model BlogCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  posts       PostCategory[]
+
+  @@map("blog_categories")
+}
+
+model PostCategory {
+  post       Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     String
+  category   BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  assignedAt DateTime     @default(now())
+  assignedBy String
+
+  @@id([postId, categoryId])
+  @@map("post_categories")
+}
+
+model BlogTag {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  posts PostTag[]
+
+  @@map("blog_tags")
+}
+
+model PostTag {
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     String
+  tag        BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId      String
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+model PostComment {
+  id        String        @id @default(cuid())
+  content   String        @db.Text
+  postId    String
+  post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    PostComment?  @relation("ThreadedComments", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   PostComment[] @relation("ThreadedComments")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("post_comments")
+}
+
+model PostReaction {
+  id        String       @id @default(cuid())
+  type      ReactionType
+  postId    String
+  post      Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+
+  @@unique([postId, userId, type])
+  @@map("post_reactions")
+}
+
 enum UserRole {
   SUPER_ADMIN
   ADMIN
@@ -401,7 +671,6 @@ enum PaymentMethod {
   SNAPSCAN
   ZAPPER
   MASTERPASS
-  VISA_CHECKOUT
   MOBICRED
   PAYFLEX
   LAYUP
@@ -460,4 +729,70 @@ enum BillboardPosition {
   DASHBOARD_BOTTOM
   PRODUCT_PAGE
   CHECKOUT
+}
+
+enum EmailStatus {
+  SENT
+  DRAFT
+  FAILED
+}
+
+enum NotificationType {
+  NEW_ORDER
+  NEW_MESSAGE
+  SYSTEM_ALERT
+  USER_MENTION
+  PROJECT_UPDATE
+}
+
+enum ChatbotStatus {
+  ACTIVE
+  INACTIVE
+  TRAINING
+  ARCHIVED
+}
+
+enum ChatMessageSender {
+  USER
+  BOT
+  AGENT
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ReactionType {
+  LIKE
+  HEART
+  ROCKET
+  THUMBS_UP
+  THUMBS_DOWN
+  LAUGH
+  HOORAY
+  CONFUSED
+  EYES
+}
+
+enum BlogCategoryType {
+  FEATURED
+  LATEST
+  POPULAR
+  TRENDING
+}
+
+enum BlogTagType {
+  FEATURED
+  LATEST
+  POPULAR
+  TRENDING
+}
+
+enum BlogPostType {
+  FEATURED
+  LATEST
+  POPULAR
+  TRENDING
 }

@@ -50,7 +50,7 @@ import { useSession } from 'next-auth/react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { getRoleColor, ROLE_DISPLAY_NAMES } from '@/lib/services/users';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@/lib/types/client-safe';
 import { OrgSwitcher } from '../org-switcher';
 import { useSidebar } from '@/components/ui/sidebar';
 export const company = {

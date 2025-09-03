@@ -1,6 +1,6 @@
 
 
-# npx prisma generate
-# npx tsx scripts/seed.ts
-        or
-# ./scripts/reset-and-seed.sh
+pnpm run db:reset --force
+pnpm run db:generate  
+pnpm run db:migrate
+pnpm run db:seed

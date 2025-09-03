@@ -9,7 +9,7 @@ export type TransformedProductVariant = Omit<ProductVariant, 'price' | 'compareP
   weight: number | null;
 }
 
-export type ProductWithDetails = Product & {
+export type ProductWithDetails = Omit<Product, 'averageRating'> & {
   category: Category
   brand: Brand
   variants: TransformedProductVariant[]
@@ -17,6 +17,8 @@ export type ProductWithDetails = Product & {
   _count: {
     reviews: number
   }
+  averageRating: number
+  reviewCount: number
 }
 
 export type ProductFilters = {
@@ -105,6 +107,9 @@ export class ProductService {
           },
           _count: {
             select: { reviews: true }
+          },
+          reviews: {
+            select: { rating: true }
           }
         },
         orderBy,
@@ -115,16 +120,26 @@ export class ProductService {
     ])
 
     return {
-      products: products.map(product => ({
-        ...product,
-        variants: product.variants.map(variant => ({
-          ...variant,
-          price: variant.price.toNumber(),
-          comparePrice: variant.comparePrice?.toNumber() || null,
-          costPrice: variant.costPrice?.toNumber() || null,
-          weight: variant.weight?.toNumber() || null
-        }))
-      })),
+      products: products.map(product => {
+        // Calculate average rating from reviews
+        const reviews = (product as any).reviews || []
+        const averageRating = reviews.length > 0
+          ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
+          : 0
+
+        return {
+          ...product,
+          variants: product.variants.map(variant => ({
+            ...variant,
+            price: variant.price.toNumber(),
+            comparePrice: variant.comparePrice?.toNumber() || null,
+            costPrice: variant.costPrice?.toNumber() || null,
+            weight: variant.weight?.toNumber() || null
+          })),
+          averageRating,
+          reviewCount: product._count.reviews
+        }
+      }),
       pagination: {
         page,
         limit,
@@ -149,11 +164,20 @@ export class ProductService {
         },
         _count: {
           select: { reviews: true }
+        },
+        reviews: {
+          select: { rating: true }
         }
       }
     })
 
     if (!product) return null
+
+    // Calculate average rating from reviews
+    const reviews = (product as any).reviews || []
+    const averageRating = reviews.length > 0
+      ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
+      : 0
 
     return {
       ...product,
@@ -163,7 +187,9 @@ export class ProductService {
         comparePrice: variant.comparePrice?.toNumber() || null,
         costPrice: variant.costPrice?.toNumber() || null,
         weight: variant.weight?.toNumber() || null
-      }))
+      })),
+      averageRating,
+      reviewCount: product._count.reviews
     } as ProductWithDetails
   }
 
@@ -181,11 +207,20 @@ export class ProductService {
         },
         _count: {
           select: { reviews: true }
+        },
+        reviews: {
+          select: { rating: true }
         }
       }
     })
 
     if (!product) return null
+
+    // Calculate average rating from reviews
+    const reviews = (product as any).reviews || []
+    const averageRating = reviews.length > 0
+      ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
+      : 0
 
     return {
       ...product,
@@ -195,7 +230,9 @@ export class ProductService {
         comparePrice: variant.comparePrice?.toNumber() || null,
         costPrice: variant.costPrice?.toNumber() || null,
         weight: variant.weight?.toNumber() || null
-      }))
+      })),
+      averageRating,
+      reviewCount: product._count.reviews
     } as ProductWithDetails
   }
 

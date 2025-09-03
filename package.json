@@ -4,24 +4,35 @@
   "private": true,
   "author": {
     "name": "Ndumis_Banda",
-    "url": "https://github.com/kaunda-a"
+    "url": "https://github.com/kaunda-a/Storm_admin.git"
   },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "eslint src --fix && pnpm format",
+    "lint:fix": "eslint src --fix && npm run format",
     "lint:strict": "eslint --max-warnings=0 src",
     "format": "prettier --write .",
     "format:check": "prettier -c -w .",
     "prepare": "husky",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "clean": "rm -rf .next && rm -rf dist && rm -rf tsconfig.tsbuildinfo",
+    "clean:deps": "rm -rf node_modules && npm install",
+    "analyze": "ANALYZE=true npm run build",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
+    "db:migrate:prod": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
     "db:seed": "tsx scripts/seed.ts",
+    "db:backup": "pg_dump $DATABASE_URL > backup.sql",
+    "admin:dev": "npm run dev",
+    "admin:build": "npm run clean && npm run type-check && npm run build",
+    "admin:deploy": "npm run admin:build && npm run start",
+    "admin:test": "npm run type-check && npm run lint:strict",
     "postinstall": "prisma generate"
   },
   "lint-staged": {
