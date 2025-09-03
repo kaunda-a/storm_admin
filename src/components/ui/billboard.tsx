@@ -66,6 +66,7 @@ export function Billboard({
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Background Image/Video */}
+      {/* TODO: Currently only displays the first image from potential array of images */}
       {currentBillboard.imageUrl && (
         <div className='absolute inset-0'>
           <Image

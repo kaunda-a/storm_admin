@@ -13,7 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileUploader } from '@/components/file-uploader';
+import { BulkImageUploader } from '@/components/bulk-image-uploader';
 
 const billboardTypes = [
   { value: 'PROMOTIONAL', label: 'Promotional' },
@@ -39,7 +39,12 @@ const billboardPositions = [
 const formSchema = z.object({
   title: z.string().min(2, 'Title must be at least 2 characters'),
   description: z.string().optional(),
-  imageUrl: z.string().optional(),
+  images: z.array(z.object({
+    url: z.string(),
+    altText: z.string().optional(),
+    sortOrder: z.number(),
+    isPrimary: z.boolean(),
+  })).optional(),
   videoUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   linkUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
   linkText: z.string().optional(),
@@ -67,7 +72,12 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
     defaultValues: {
       title: initialData?.title || '',
       description: initialData?.description || '',
-      imageUrl: initialData?.imageUrl || '',
+      images: initialData?.imageUrl ? [{ 
+        url: initialData.imageUrl, 
+        altText: initialData.title || '', 
+        sortOrder: 0, 
+        isPrimary: true 
+      }] : [],
       videoUrl: initialData?.videoUrl || '',
       linkUrl: initialData?.linkUrl || '',
       linkText: initialData?.linkText || '',
@@ -87,7 +97,7 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
       // Transform form data for API
       const formData = {
         ...values,
-        imageUrl: values.imageUrl || undefined,
+        imageUrl: values.images && values.images.length > 0 ? values.images[0].url : undefined,
         startDate: values.startDate || undefined,
         endDate: values.endDate || undefined,
         videoUrl: values.videoUrl || undefined,
@@ -170,15 +180,16 @@ export default function BillboardForm({ initialData, pageTitle }: BillboardFormP
               {/* Image Upload */}
               <FormField
                 control={form.control}
-                name="imageUrl"
+                name="images"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image (Optional)</FormLabel>
+                    <FormLabel>Images (Optional)</FormLabel>
                     <FormControl>
-                      <FileUploader
+                      <BulkImageUploader
                         value={field.value}
                         onChange={field.onChange}
                         disabled={loading}
+                        maxImages={5}
                       />
                     </FormControl>
                     <FormMessage />
